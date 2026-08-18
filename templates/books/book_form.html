@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'books:my_books' %}" class="back-link">← {% trans "Mening kitoblarim" %}</a>
+
+  <div class="card">
+    <h1>{{ title }}</h1>
+    <p>
+      <a href="{% url 'books:author_create' %}">+ {% trans "Yangi muallif qo'shish" %}</a>
+      &nbsp;·&nbsp;
+      <a href="{% url 'books:genre_create' %}">+ {% trans "Yangi janr qo'shish" %}</a>
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="styled-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-row">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.name == "description" %}
+            <div class="ai-hint">
+              <button type="button" class="btn btn-outline btn-sm" id="aiDescribe">
+                ✨ {% trans "AI tavsif yozib bersin" %}
+              </button>
+              <span class="text-muted" id="aiDescribeStatus"></span>
+            </div>
+          {% endif %}
+          {% if field.name == "file" %}
+            <small class="text-muted">{% trans "Faqat PDF fayl qabul qilinadi." %}</small>
+          {% endif %}
+          {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <div><button type="submit" class="btn btn-primary">{% trans "Saqlash" %}</button></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var btn = document.getElementById("aiDescribe");
+  if (!btn) return;
+  var status = document.getElementById("aiDescribeStatus");
+
+  btn.addEventListener("click", function () {
+    var title = document.getElementById("id_title");
+    var desc = document.getElementById("id_description");
+    var authorSel = document.getElementById("id_author");
+    var genreSel = document.getElementById("id_genre");
+    var langSel = document.getElementById("id_language");
+
+    if (!title || !title.value.trim()) {
+      status.textContent = "{% trans 'Avval kitob nomini kiriting.' %}";
+      return;
+    }
+    status.textContent = "…";
+    btn.disabled = true;
+
+    fetch("{% url 'core:ai_describe' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+      },
+      body: JSON.stringify({
+        title: title.value,
+        author: authorSel ? authorSel.options[authorSel.selectedIndex].text : "",
+        genre: genreSel && genreSel.selectedIndex >= 0 ? genreSel.options[genreSel.selectedIndex].text : "",
+        language: langSel ? langSel.value : "uz"
+      })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        btn.disabled = false;
+        if (res.ok) {
+          desc.value = res.data.description;
+          status.textContent = "";
+        } else {
+          status.textContent = res.data.error || "Xatolik";
+        }
+      })
+      .catch(function () {
+        btn.disabled = false;
+        status.textContent = "Tarmoq xatosi";
+      });
+  });
+})();
+</script>
+{% endblock %}

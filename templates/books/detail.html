@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load i18n book_extras %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+
+<a href="{% url 'books:catalog' %}" class="back-link">← {% trans "Kitoblar katalogi" %}</a>
+
+<div class="detail-grid">
+  <div class="detail-media">
+    {% if book.cover %}
+      <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="detail-cover" />
+    {% else %}
+      <div class="detail-cover placeholder">📖</div>
+    {% endif %}
+  </div>
+
+  <div class="detail-info">
+    <h1>{{ book.title }}</h1>
+    <p class="book-author" style="font-size:1rem">
+      {% trans "Muallif" %}:
+      <a href="{% url 'books:author_detail' book.author.pk %}">{{ book.author.full_name }}</a>
+    </p>
+
+    <div class="chip-row">
+      <span class="badge muted">{{ book.get_language_display }}</span>
+      {% if book.genre %}<span class="badge muted">{{ book.genre.name }}</span>{% endif %}
+      <span class="badge muted">{{ book.pages }} {% trans "bet" %}</span>
+      {% if book.publish_year %}<span class="badge muted">{{ book.publish_year }}</span>{% endif %}
+    </div>
+
+    <div class="rating-row">
+      <span class="stars" style="font-size:1.2rem">{{ book.average_rating|stars }}</span>
+      <span class="text-muted">{{ book.average_rating|default:"0" }} · {{ book.reviews_count }} {% trans "sharh" %}</span>
+      <span class="text-muted">· ❤ {{ book.likes_count }}</span>
+    </div>
+
+    <div class="price-block">{{ book.price }} <span>{% trans "so'm" %}</span></div>
+
+    {% if book.description %}<p>{{ book.description|linebreaks }}</p>{% endif %}
+    <p class="text-muted">{% trans "Sotuvchi" %}: {{ book.seller.username }}</p>
+
+    <div class="detail-actions">
+      {% if user.is_authenticated and user.is_buyer %}
+        {% if has_purchased %}
+          <span class="badge success">✓ {% trans "Siz bu kitobni sotib olgansiz" %}</span>
+          {% if book.file %}
+            <a href="{% url 'books:read' book.pk %}" class="btn btn-primary">📖 {% trans "O'qish" %}</a>
+            <a href="{% url 'books:book_download' book.pk %}" class="btn btn-outline">⬇ {% trans "Yuklab olish" %}</a>
+          {% endif %}
+        {% else %}
+          <a href="{% url 'books:buy' book.pk %}" class="btn btn-primary btn-lg">{% trans "Sotib olish" %}</a>
+        {% endif %}
+      {% elif not user.is_authenticated %}
+        {% comment %}
+        Kitobni ko'rish uchun ro'yxatdan o'tish shart emas — u faqat shu
+        yerda, sotib olish uchun so'raladi. `next` bilan foydalanuvchi
+        ro'yxatdan o'tgach shu kitobga qaytadi.
+        {% endcomment %}
+        <a href="{% url 'accounts:register' %}?next={{ request.path|urlencode }}"
+           class="btn btn-primary btn-lg">{% trans "Sotib olish uchun ro'yxatdan o'ting" %}</a>
+        <a href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}"
+           class="btn btn-outline">{% trans "Hisobim bor" %}</a>
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <form action="{% url 'books:toggle_like' book.pk %}" method="post">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+          <button type="submit" class="like-btn {% if book|liked:user %}liked{% endif %}">
+            <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
+            <span class="like-count">{{ book.likes_count }}</span>
+          </button>
+        </form>
+
+        {% if not has_purchased %}
+          <form action="{% url 'books:toggle_wish' book.pk %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <button type="submit" class="btn btn-outline">
+              {% if wished %}★ {% trans "Istaklarda" %}{% else %}☆ {% trans "Istaklarga" %}{% endif %}
+            </button>
+          </form>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    {% if user.is_authenticated and book.seller_id != user.pk %}
+      <div class="ask-seller">
+        {% if conversation %}
+          <a href="{% url 'books:conversation' conversation.pk %}" class="btn btn-outline btn-sm">
+            💬 {% trans "Sotuvchi bilan suhbat" %}
+          </a>
+        {% else %}
+          <form method="post" action="{% url 'books:conversation_start' book.pk %}" class="ask-form">
+            {% csrf_token %}
+            <input type="text" name="text" maxlength="2000" required
+                   placeholder="{% trans 'Sotuvchiga savol yozing...' %}" />
+            <button type="submit" class="btn btn-outline btn-sm">{% trans "Yuborish" %}</button>
+          </form>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<section class="section-title">
+  <h2>{% trans "Sharhlar" %}</h2>
+  <span class="text-muted">❤ {{ book.likes_count }} · 💬 {{ book.reviews_count }}</span>
+</section>
+
+{% if review_form %}
+<div class="card" style="margin-bottom:18px">
+  <div class="card-title">
+    {% if my_review %}{% trans "Sharhingizni tahrirlash" %}{% else %}{% trans "Baholang va fikr bildiring" %}{% endif %}
+  </div>
+  <form method="post" action="{% url 'books:review_create' book.pk %}" class="styled-form">
+    {% csrf_token %}
+    <div class="form-row">
+      <label>{% trans "Yulduzcha" %}</label>
+      <div class="star-picker">
+        {% for radio in review_form.rating %}
+          <label>{{ radio.tag }}<span class="star-option">{{ radio.choice_label }}</span></label>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-row">{{ review_form.comment }}</div>
+    <div><button type="submit" class="btn btn-primary">{% trans "Yuborish" %}</button></div>
+  </form>
+</div>
+{% endif %}
+
+{% include "books/_reviews.html" %}
+{% endblock %}

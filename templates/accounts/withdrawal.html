@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load i18n book_extras %}
+{% block title %}{% trans "Pul yechish" %}{% endblock %}
+
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'books:seller_dashboard' %}" class="back-link">← {% trans "Kabinetga" %}</a>
+  <h1>{% trans "Pul yechish" %}</h1>
+
+  <div class="card">
+    <div class="flex-between">
+      <div>
+        <div class="card-title" style="margin:0">{% trans "Mavjud balans" %}</div>
+        <span class="text-muted">{% trans "Kitob sotuvidan tushgan mablag'" %}</span>
+      </div>
+      <strong style="font-size:1.5rem">{{ user.balance|money }} {% trans "so'm" %}</strong>
+    </div>
+  </div>
+
+  {% if pending %}
+    <div class="card">
+      <div class="card-title">⏳ {% trans "So'rov ko'rib chiqilmoqda" %}</div>
+      <p class="card-hint">
+        {% blocktrans with amount=pending.amount|money card=pending.card_masked %}
+          {{ amount }} so'm {{ card }} kartasiga o'tkazilishi kutilmoqda.
+        {% endblocktrans %}
+      </p>
+      <p class="text-muted">
+        {% trans "Yangi so'rov yuborish uchun avval shu so'rov ko'rib chiqilishi kerak." %}
+      </p>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-title">{% trans "Yangi so'rov" %}</div>
+      <p class="card-hint">
+        {% blocktrans with min=min_amount|money %}Eng kam summa — {{ min }} so'm.{% endblocktrans %}
+        {% trans "Summa so'rov yuborilishi bilan balansdan ushlab qolinadi." %}
+      </p>
+
+      <form method="post" class="styled-form">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<span class="text-muted" style="font-size:.8rem">{{ field.help_text }}</span>{% endif %}
+            {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block">{% trans "So'rov yuborish" %}</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-title">{% trans "So'rovlar tarixi" %}</div>
+    {% for w in history %}
+      <div class="wd-row">
+        <span>
+          {{ w.created_at|date:"d.m.Y H:i" }} · {{ w.card_masked }}
+          {% if w.comment %}<div class="text-muted" style="font-size:.78rem">{{ w.comment }}</div>{% endif %}
+        </span>
+        <span>
+          <strong>{{ w.amount|money }}</strong>
+          <span class="badge {% if w.status == 'approved' %}success{% elif w.status == 'rejected' %}danger{% else %}muted{% endif %}">
+            {{ w.get_status_display }}
+          </span>
+        </span>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Hali so'rov yuborilmagan." %}</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

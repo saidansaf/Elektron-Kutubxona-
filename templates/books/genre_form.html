@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Janr qo'shish" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'books:book_create' %}" class="back-link">← {% trans "Kitob qo'shishga" %}</a>
+  <h1>{% trans "Janr qo'shish" %}</h1>
+
+  <div class="card">
+    <p class="card-hint">
+      {% trans "Kitobingizga mos janr ro'yxatda bo'lmasa, shu yerdan qo'shing." %}
+    </p>
+    <form method="post" class="styled-form">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-row">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary btn-block">{% trans "Qo'shish" %}</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title">{% trans "Mavjud janrlar" %}</div>
+    <div class="chip-row">
+      {% for genre in genres %}
+        <span class="badge">{{ genre.name }}</span>
+      {% empty %}
+        <p class="text-muted">{% trans "Hali janr qo'shilmagan." %}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

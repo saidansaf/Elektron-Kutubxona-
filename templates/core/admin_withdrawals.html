@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n book_extras %}
+{% block title %}{% trans "Pul yechish so'rovlari" %}{% endblock %}
+
+{% block content %}
+<a href="{% url 'core:admin_dashboard' %}" class="back-link">← {% trans "Statistikaga" %}</a>
+<h1>{% trans "Pul yechish so'rovlari" %}</h1>
+
+<div class="card">
+  <div class="card-title">⏳ {% trans "Kutayotgan so'rovlar" %}</div>
+  {% for w in pending %}
+    <div class="wd-card">
+      <div class="wd-card-info">
+        <a href="{% url 'core:admin_user_detail' w.seller.pk %}"><strong>{{ w.seller.username }}</strong></a>
+        <div class="text-muted" style="font-size:.82rem">
+          {{ w.created_at|date:"d.m.Y H:i" }} · {% trans "Karta" %}: {{ w.card_number }}
+        </div>
+      </div>
+      <div class="wd-card-amount">{{ w.amount|money }} {% trans "so'm" %}</div>
+      <form method="post" action="{% url 'core:admin_withdrawal_decide' w.pk %}" class="wd-card-actions">
+        {% csrf_token %}
+        <input type="text" name="comment" placeholder="{% trans 'Izoh (ixtiyoriy)' %}" maxlength="255" />
+        <button type="submit" name="decision" value="approve" class="btn btn-primary btn-sm">
+          ✓ {% trans "To'landi" %}
+        </button>
+        <button type="submit" name="decision" value="reject" class="btn btn-outline btn-sm">
+          ✕ {% trans "Rad etish" %}
+        </button>
+      </form>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Kutayotgan so'rov yo'q." %}</p>
+  {% endfor %}
+</div>
+
+<div class="card">
+  <div class="card-title">{% trans "Ko'rib chiqilganlar" %}</div>
+  {% for w in processed %}
+    <div class="wd-row">
+      <span>
+        {{ w.processed_at|date:"d.m.Y" }} · {{ w.seller.username }}
+        {% if w.comment %}<div class="text-muted" style="font-size:.78rem">{{ w.comment }}</div>{% endif %}
+      </span>
+      <span>
+        <strong>{{ w.amount|money }}</strong>
+        <span class="badge {% if w.status == 'approved' %}success{% else %}danger{% endif %}">
+          {{ w.get_status_display }}
+        </span>
+      </span>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Hozircha bo'sh." %}</p>
+  {% endfor %}
+</div>
+{% endblock %}

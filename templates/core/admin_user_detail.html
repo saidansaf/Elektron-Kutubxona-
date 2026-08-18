@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ user_obj.username }}{% endblock %}
+{% block content %}
+
+<a href="{% url 'core:admin_users' %}" class="back-link">← {% trans "Foydalanuvchilar" %}</a>
+
+<div class="card">
+  <div class="flex-between">
+    <div class="flex">
+      <span class="user-menu-avatar" style="width:56px;height:56px;font-size:1.3rem">
+        {% if user_obj.avatar %}<img src="{{ user_obj.avatar.url }}" alt="" />{% else %}{{ user_obj.initials }}{% endif %}
+      </span>
+      <div>
+        <h1 style="margin:0 0 4px">{{ user_obj.username }}</h1>
+        <span class="text-muted">{{ user_obj.email|default:"—" }}</span>
+      </div>
+    </div>
+    <div>
+      {% if user_obj.is_superuser %}<span class="badge">{% trans "Admin" %}</span>
+      {% elif user_obj.is_blocked %}<span class="badge" style="background:var(--danger)">{% trans "Bloklangan" %}</span>
+      {% else %}<span class="badge success">{% trans "Faol" %}</span>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="value">{{ user_obj.books_total }}</div><div class="label">{% trans "Kitoblar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ user_obj.purchases_total }}</div><div class="label">{% trans "Xaridlar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ user_obj.balance|floatformat:0 }}</div><div class="label">{% trans "Balans" %}</div></div>
+</div>
+
+<div class="card">
+  <div class="card-title">{% trans "Ma'lumotlar" %}</div>
+  <div class="summary-rows">
+    <div class="summary-row"><span class="text-muted">{% trans "Rol" %}</span><span>{{ user_obj.get_role_display }}</span></div>
+    <div class="summary-row"><span class="text-muted">{% trans "Telefon raqami" %}</span><span>{{ user_obj.phone|default:"—" }}</span></div>
+    <div class="summary-row"><span class="text-muted">{% trans "Til" %}</span><span>{{ user_obj.get_language_display }}</span></div>
+    <div class="summary-row"><span class="text-muted">{% trans "Ro'yxatdan o'tgan" %}</span><span>{{ user_obj.date_joined|date:"Y-m-d H:i" }}</span></div>
+    <div class="summary-row"><span class="text-muted">{% trans "Oxirgi kirish" %}</span><span>{{ user_obj.last_login|date:"Y-m-d H:i"|default:"—" }}</span></div>
+    {% if user_obj.is_blocked and user_obj.blocked_reason %}
+      <div class="summary-row"><span class="text-muted">{% trans "Bloklash sababi" %}</span><span>{{ user_obj.blocked_reason }}</span></div>
+    {% endif %}
+  </div>
+</div>
+
+{% if not user_obj.is_superuser %}
+<div class="card">
+  <div class="card-title">💬 {% trans "Xabar yuborish" %}</div>
+  <p class="card-hint">{% trans "Foydalanuvchi saytga kirganda bu xabarni ko'radi." %}</p>
+  <form method="post" action="{% url 'core:admin_user_message' user_obj.pk %}" class="styled-form">
+    {% csrf_token %}
+    <div class="form-row">
+      <label for="{{ message_form.subject.id_for_label }}">{{ message_form.subject.label }}</label>
+      {{ message_form.subject }}
+    </div>
+    <div class="form-row">
+      <label for="{{ message_form.body.id_for_label }}">{{ message_form.body.label }}</label>
+      {{ message_form.body }}
+    </div>
+    <div><button type="submit" class="btn btn-primary">{% trans "Yuborish" %}</button></div>
+  </form>
+
+  {% if sent_messages %}
+    <div class="menu-divider"></div>
+    <div class="menu-label">{% trans "Yuborilgan xabarlar" %}</div>
+    {% for m in sent_messages %}
+      <div class="review-item">
+        {% if m.subject %}<strong>{{ m.subject }}</strong><br />{% endif %}
+        {{ m.body }}
+        <div class="text-muted" style="font-size:.82rem">{{ m.created_at|date:"Y-m-d H:i" }}</div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-title">🔑 {% trans "Parolni yangilash" %}</div>
+  <p class="card-hint">
+    {% trans "Mavjud parolni ko'rsatib bo'lmaydi - u bir tomonlama shifrlangan holda saqlanadi va ochib bo'lmaydi. Yangi parol belgilashingiz mumkin." %}
+  </p>
+  <form method="post" action="{% url 'core:admin_user_password' user_obj.pk %}" class="styled-form">
+    {% csrf_token %}
+    <div class="form-row">
+      <label for="{{ password_form.new_password.id_for_label }}">{{ password_form.new_password.label }}</label>
+      {{ password_form.new_password }}
+    </div>
+    <div><button type="submit" class="btn btn-outline">{% trans "Parolni o'rnatish" %}</button></div>
+  </form>
+</div>
+
+<div class="card danger-zone">
+  <div class="card-title">⚠ {% trans "Xavfli amallar" %}</div>
+
+  <form method="post" action="{% url 'core:admin_user_block' user_obj.pk %}" class="styled-form">
+    {% csrf_token %}
+    {% if not user_obj.is_blocked %}
+      <div class="form-row">
+        <label for="{{ block_form.reason.id_for_label }}">{{ block_form.reason.label }}</label>
+        {{ block_form.reason }}
+      </div>
+    {% endif %}
+    <div>
+      <button type="submit" class="btn {% if user_obj.is_blocked %}btn-outline{% else %}btn-danger{% endif %}">
+        {% if user_obj.is_blocked %}{% trans "Blokni olib tashlash" %}{% else %}{% trans "Bloklash" %}{% endif %}
+      </button>
+    </div>
+  </form>
+
+  <div class="menu-divider"></div>
+
+  <form method="post" action="{% url 'core:admin_user_delete' user_obj.pk %}"
+        onsubmit="return confirm('{% trans "Foydalanuvchi butunlay ochiriladi. Davom etamizmi?" %}');">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">{% trans "Foydalanuvchini o'chirish" %}</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load i18n l10n book_extras %}
+{% block title %}{% trans "Sotuvchi kabineti" %}{% endblock %}
+
+{% block content %}
+<a href="{% url 'core:home' %}" class="back-link">← {% trans "Orqaga" %}</a>
+
+<div class="dash-head">
+  <div>
+    <h1>{% trans "Sotuvchi kabineti" %}</h1>
+    <p class="text-muted">{% trans "Kitoblaringiz qanday sotilayotgani." %}</p>
+  </div>
+  <div class="dash-head-actions">
+    <a href="{% url 'books:export_sales_excel' %}" class="btn btn-outline btn-sm">⬇ {% trans "Savdo hisoboti (Excel)" %}</a>
+    <a href="{% url 'books:book_create' %}" class="btn btn-primary btn-sm">+ {% trans "Kitob qo'shish" %}</a>
+  </div>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi kpi-accent">
+    <div class="kpi-label">{% trans "Umumiy daromad" %}</div>
+    <div class="kpi-value">{{ revenue|money }}</div>
+    <div class="kpi-note">{% trans "so'm" %}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">{% trans "Sotilgan nusxalar" %}</div>
+    <div class="kpi-value">{{ sales_count }}</div>
+    <div class="kpi-note">{% trans "ta xarid" %}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">{% trans "Xaridorlar" %}</div>
+    <div class="kpi-value">{{ buyers_count }}</div>
+    <div class="kpi-note">{% trans "ta noyob xaridor" %}</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">{% trans "Kitoblar" %}</div>
+    <div class="kpi-value">{{ books_count }}</div>
+    <div class="kpi-note">{{ active_books }} {% trans "tasi sotuvda" %}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="flex-between" style="margin-bottom:14px">
+    <div>
+      <div class="card-title" style="margin:0">{% trans "Oxirgi 30 kun" %}</div>
+      <span class="text-muted">{{ month_revenue|money }} {% trans "so'm" %}</span>
+    </div>
+  </div>
+
+  <div class="chart-bars">
+    {% for point in chart %}
+      <div class="chart-bar" title="{{ point.day|date:'d.m.Y' }} · {{ point.amount|money }}">
+        <span style="height:{{ point.height|unlocalize }}%"></span>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="chart-axis">
+    <span>{{ chart.0.day|date:"d M" }}</span>
+    {% with last_point=chart|last %}<span>{{ last_point.day|date:"d M" }}</span>{% endwith %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">{% trans "Kitoblar kesimida" %}</div>
+  {% if books %}
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{% trans "Kitob" %}</th>
+            <th class="num">{% trans "Narx" %}</th>
+            <th class="num">{% trans "Sotildi" %}</th>
+            <th class="num">{% trans "Daromad" %}</th>
+            <th class="num">{% trans "Reyting" %}</th>
+            <th class="num">{% trans "Yoqtirish" %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+            <tr>
+              <td>
+                <a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a>
+                <div class="text-muted" style="font-size:.78rem">{{ book.author.full_name }}</div>
+              </td>
+              <td class="num">{{ book.price|money }}</td>
+              <td class="num">{{ book.sales_count }}</td>
+              <td class="num"><strong>{{ book.revenue|money }}</strong></td>
+              <td class="num">{% if book.avg_rating %}{{ book.avg_rating|floatformat:1 }} ★{% else %}—{% endif %}</td>
+              <td class="num">{{ book.likes_total }}</td>
+              <td class="num">
+                {% if not book.is_active %}<span class="badge muted">{% trans "Sotuvda emas" %}</span>{% endif %}
+                <a href="{% url 'books:book_update' book.pk %}" class="btn btn-ghost btn-sm">{% trans "Tahrirlash" %}</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">{% trans "Hali kitob qo'shmagansiz." %}</p>
+  {% endif %}
+</div>
+
+<div class="dash-columns">
+  <div class="card">
+    <div class="card-title">{% trans "Oxirgi sotuvlar" %}</div>
+    {% for sale in recent_sales %}
+      <div class="sale-row">
+        <div>
+          <strong>{{ sale.book.title }}</strong>
+          <div class="text-muted" style="font-size:.78rem">
+            {{ sale.buyer.username }} · {{ sale.purchased_at|date:"d.m.Y H:i" }}
+          </div>
+        </div>
+        <span class="sale-amount">+{{ sale.price_paid|money }}</span>
+      </div>
+    {% empty %}
+      <p class="text-muted">{% trans "Hali sotuv bo'lmagan." %}</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <div class="flex-between">
+      <div>
+        <div class="card-title" style="margin:0">{% trans "Balans" %}</div>
+        <strong style="font-size:1.4rem">{{ user.balance|money }} {% trans "so'm" %}</strong>
+      </div>
+      <a href="{% url 'accounts:withdrawal' %}" class="btn btn-primary btn-sm">{% trans "Pul yechish" %}</a>
+    </div>
+
+    {% if withdrawals %}
+      <div class="wd-list">
+        {% for w in withdrawals %}
+          <div class="wd-row">
+            <span>{{ w.created_at|date:"d.m.Y" }} · {{ w.card_masked }}</span>
+            <span>
+              <strong>{{ w.amount|money }}</strong>
+              <span class="badge {% if w.status == 'approved' %}success{% elif w.status == 'rejected' %}danger{% else %}muted{% endif %}">
+                {{ w.get_status_display }}
+              </span>
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted" style="margin-top:14px">
+        {% trans "Sotuvdan tushgan pulni istalgan vaqtda kartangizga yechib olishingiz mumkin." %}
+      </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

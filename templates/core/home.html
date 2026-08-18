@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load i18n cache %}
+{% block content %}
+<section class="hero">
+  <h1><span class="hero-emoji">📚</span> <span class="gradient-text">{% trans "Elektron Kutubxona bozori" %}</span></h1>
+  <p>{% trans "Elektron kitoblarni soting va sotib oling. O'zbek, rus va ingliz tillaridagi kitoblar bir joyda." %}</p>
+  <div class="hero-actions">
+    <a href="{% url 'books:catalog' %}" class="btn btn-primary">{% trans "Kitoblarni ko'rish" %}</a>
+    {% if not user.is_authenticated %}
+      <a href="{% url 'accounts:register' %}" class="btn btn-outline">{% trans "Ro'yxatdan o'tish" %}</a>
+    {% endif %}
+  </div>
+</section>
+
+{# Uchta asosiy yo'nalish - mokapdagi katta kartochkalar #}
+<div class="tile-row">
+  <a href="{% url 'books:catalog' %}" class="tile">
+    <span class="tile-icon">📘</span>
+    <span class="tile-title">{% trans "Kitoblar" %}</span>
+    <span class="tile-note">{% blocktrans count counter=stats.books_count %}{{ counter }} ta kitob{% plural %}{{ counter }} ta kitob{% endblocktrans %}</span>
+  </a>
+  <a href="{% url 'books:author_list' %}" class="tile">
+    <span class="tile-icon">✍</span>
+    <span class="tile-title">{% trans "Mualliflar" %}</span>
+    <span class="tile-note">{% blocktrans count counter=stats.authors_count %}{{ counter }} ta muallif{% plural %}{{ counter }} ta muallif{% endblocktrans %}</span>
+  </a>
+  {% if user.is_authenticated and user.is_buyer %}
+    <a href="{% url 'books:my_library' %}" class="tile">
+      <span class="tile-icon">📖</span>
+      <span class="tile-title">{% trans "Mening kutubxonam" %}</span>
+      <span class="tile-note">{% trans "Sotib olingan kitoblar" %}</span>
+    </a>
+  {% elif user.is_authenticated and user.is_seller %}
+    <a href="{% url 'books:seller_dashboard' %}" class="tile">
+      <span class="tile-icon">📊</span>
+      <span class="tile-title">{% trans "Kabinet" %}</span>
+      <span class="tile-note">{% trans "Savdo statistikasi" %}</span>
+    </a>
+  {% else %}
+    <a href="{% url 'accounts:register' %}" class="tile">
+      <span class="tile-icon">🚀</span>
+      <span class="tile-title">{% trans "Ro'yxatdan o'tish" %}</span>
+      <span class="tile-note">{% blocktrans count counter=stats.users_count %}{{ counter }} ta foydalanuvchi{% plural %}{{ counter }} ta foydalanuvchi{% endblocktrans %}</span>
+    </a>
+  {% endif %}
+</div>
+
+{# Qolgan bo'limlar - kichik tugmalar #}
+<div class="quick-links">
+  {% if user.is_authenticated %}
+    <a href="{% url 'books:wishlist' %}" class="quick-link">
+      <span class="quick-link-icon">⭐</span>
+      <span class="quick-link-text">{% trans "Istaklarim" %}</span>
+    </a>
+    <a href="{% url 'books:conversations' %}" class="quick-link">
+      <span class="quick-link-icon">💬</span>
+      <span class="quick-link-text">
+        {% trans "Xabarlar" %}{% if unread_messages %} <span class="chat-badge">{{ unread_messages }}</span>{% endif %}
+      </span>
+    </a>
+  {% endif %}
+
+  {% if user.is_authenticated and user.is_seller %}
+    <a href="{% url 'books:book_create' %}" class="quick-link">
+      <span class="quick-link-icon">➕</span>
+      <span class="quick-link-text">{% trans "Kitob qo'shish" %}</span>
+    </a>
+    <a href="{% url 'books:my_books' %}" class="quick-link">
+      <span class="quick-link-icon">📚</span>
+      <span class="quick-link-text">{% trans "Mening kitoblarim" %}</span>
+    </a>
+  {% endif %}
+
+  {% if user.is_authenticated and user.is_buyer %}
+    <a href="{% url 'accounts:topup' %}" class="quick-link">
+      <span class="quick-link-icon">💳</span>
+      <span class="quick-link-text">{% trans "Hisobni to'ldirish" %}</span>
+    </a>
+  {% endif %}
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'core:ai_assistant' %}" class="quick-link">
+      <span class="quick-link-icon">✨</span>
+      <span class="quick-link-text">{% trans "AI yordamchi" %}</span>
+    </a>
+    <a href="{% url 'accounts:telegram' %}" class="quick-link">
+      <span class="quick-link-icon">✈</span>
+      <span class="quick-link-text">{% trans "Telegram bot" %}</span>
+    </a>
+  {% endif %}
+
+  <a href="{% url 'core:weather' %}" class="quick-link">
+    <span class="quick-link-icon">🌤</span>
+    <span class="quick-link-text">{% trans "Ob-havo" %}</span>
+  </a>
+
+  {% if user.is_authenticated %}
+    <a href="{% url 'accounts:settings' %}" class="quick-link">
+      <span class="quick-link-icon">⚙</span>
+      <span class="quick-link-text">{% trans "Sozlamalar" %}</span>
+    </a>
+  {% else %}
+    <a href="{% url 'accounts:login' %}" class="quick-link">
+      <span class="quick-link-icon">🔑</span>
+      <span class="quick-link-text">{% trans "Kirish" %}</span>
+    </a>
+  {% endif %}
+
+  <a href="{{ admin_telegram }}" target="_blank" rel="noopener" class="quick-link">
+    <span class="quick-link-icon">🛟</span>
+    <span class="quick-link-text">{% trans "Administrator bilan bog'lanish" %}</span>
+  </a>
+</div>
+
+{% comment %}
+Kitob kartochkalarida foydalanuvchiga xos ma'lumot yo'q, shuning uchun ularni
+hamma uchun bitta nusxada keshlash mumkin. Kalitga til va kontent versiyasi
+qo'shiladi: kitob o'zgarsa versiya oshadi va kesh yangilanadi.
+{% endcomment %}
+{% cache cache_timeout_home home-latest LANGUAGE_CODE cache_version %}
+  <div class="section-title"><h2>{% trans "Yangi kitoblar" %}</h2></div>
+  <div class="grid grid-3">
+    {% for book in latest_books %}
+      {% include "books/_book_card.html" %}
+    {% empty %}
+      <p class="text-muted">{% trans "Hozircha kitoblar yo'q." %}</p>
+    {% endfor %}
+  </div>
+{% endcache %}
+
+{% cache cache_timeout_home home-top LANGUAGE_CODE cache_version %}
+  <div class="section-title"><h2>{% trans "Eng yuqori baholangan" %}</h2></div>
+  <div class="grid grid-3">
+    {% for book in top_books %}
+      {% include "books/_book_card.html" %}
+    {% empty %}
+      <p class="text-muted">{% trans "Hozircha baholangan kitoblar yo'q." %}</p>
+    {% endfor %}
+  </div>
+{% endcache %}
+{% endblock %}

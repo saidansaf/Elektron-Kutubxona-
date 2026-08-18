@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n cache %}
+{% block title %}{% trans "Kitoblar katalogi" %}{% endblock %}
+{% block content %}
+<div class="page-head"><h1 style="margin:0">{% trans "Kitoblar katalogi" %}</h1></div>
+
+<form method="get" class="filter-bar">
+  <div class="form-row">
+    {{ filter_form.q.label_tag }}
+    {{ filter_form.q }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.language.label_tag }}
+    {{ filter_form.language }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.genre.label_tag }}
+    {{ filter_form.genre }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.author.label_tag }}
+    {{ filter_form.author }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.min_price.label_tag }}
+    {{ filter_form.min_price }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.max_price.label_tag }}
+    {{ filter_form.max_price }}
+  </div>
+  <div class="form-row">
+    {{ filter_form.sort.label_tag }}
+    {{ filter_form.sort }}
+  </div>
+  <button type="submit" class="btn btn-primary">{% trans "Filtrlash" %}</button>
+</form>
+
+{% comment %}
+Natijalar ro'yxati foydalanuvchiga bog'liq emas, shuning uchun bir xil filtr +
+sahifa uchun bitta nusxa keshlanadi. `catalog_key` filtrlarni birlashtirgan
+kalit (apps/books/views.py).
+{% endcomment %}
+{% cache cache_timeout_catalog catalog-grid LANGUAGE_CODE cache_version catalog_key %}
+  <div class="grid grid-3">
+    {% for book in page_obj %}
+      {% include "books/_book_card.html" %}
+    {% empty %}
+      <p class="text-muted">{% trans "Hech narsa topilmadi." %}</p>
+    {% endfor %}
+  </div>
+{% endcache %}
+
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">←</a>
+  {% endif %}
+  <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">→</a>
+  {% endif %}
+</div>
+{% endblock %}

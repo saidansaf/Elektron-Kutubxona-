@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ author.full_name }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ author.full_name }}</h1>
+  {% if author.birth_date %}<p class="text-muted">{% trans "Tug'ilgan sana" %}: {{ author.birth_date }}</p>{% endif %}
+  <p>{{ author.bio|linebreaks }}</p>
+</div>
+
+<div class="section-title"><h2>{% trans "Kitoblari" %}</h2></div>
+<div class="grid grid-3">
+  {% for book in books %}
+    {% include "books/_book_card.html" %}
+  {% empty %}
+    <p class="text-muted">{% trans "Bu muallifning kitoblari yo'q." %}</p>
+  {% endfor %}
+</div>
+{% endblock %}

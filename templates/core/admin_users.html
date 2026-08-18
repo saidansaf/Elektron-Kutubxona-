@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Foydalanuvchilar" %}{% endblock %}
+{% block content %}
+
+<a href="{% url 'core:admin_dashboard' %}" class="back-link">← {% trans "Statistika" %}</a>
+
+<div class="page-head">
+  <h1 style="margin:0">{% trans "Foydalanuvchilar" %}</h1>
+  <a href="{% url 'core:admin_broadcast' %}" class="btn btn-primary">📢 {% trans "Hammaga e'lon" %}</a>
+</div>
+
+<form method="get" class="filter-bar" style="grid-template-columns:1fr auto">
+  <div class="form-row">
+    <input type="text" name="q" value="{{ q }}" placeholder="{% trans 'Username yoki email' %}" />
+  </div>
+  <button type="submit" class="btn btn-outline">{% trans "Qidirish" %}</button>
+</form>
+
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>{% trans "Foydalanuvchi" %}</th>
+        <th>{% trans "Email" %}</th>
+        <th>{% trans "Rol" %}</th>
+        <th>{% trans "Holat" %}</th>
+        <th>{% trans "Sana" %}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in page_obj %}
+        <tr>
+          <td>
+            <div class="flex">
+              <span class="review-avatar sm">{{ u.initials }}</span>
+              <a href="{% url 'core:admin_user_detail' u.pk %}"><strong>{{ u.username }}</strong></a>
+            </div>
+          </td>
+          <td>{{ u.email|default:"—" }}</td>
+          <td>{{ u.get_role_display }}</td>
+          <td>
+            {% if u.is_superuser %}<span class="badge">{% trans "Admin" %}</span>
+            {% elif u.is_blocked %}<span class="badge" style="background:var(--danger)">{% trans "Bloklangan" %}</span>
+            {% else %}<span class="badge success">{% trans "Faol" %}</span>{% endif %}
+          </td>
+          <td>{{ u.date_joined|date:"Y-m-d H:i" }}</td>
+          <td><a href="{% url 'core:admin_user_detail' u.pk %}" class="btn btn-outline btn-sm">{% trans "Boshqarish" %}</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted">{% trans "Hech narsa topilmadi." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="pagination">
+  {% if page_obj.has_previous %}<a href="?q={{ q }}&page={{ page_obj.previous_page_number }}">←</a>{% endif %}
+  <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a href="?q={{ q }}&page={{ page_obj.next_page_number }}">→</a>{% endif %}
+</div>
+{% endblock %}

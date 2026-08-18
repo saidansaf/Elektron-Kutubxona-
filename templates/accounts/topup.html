@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Hisobni to'ldirish" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'accounts:settings' %}" class="back-link">← {% trans "Sozlamalar" %}</a>
+  <h1>{% trans "Hisobni to'ldirish" %}</h1>
+
+  <div class="card">
+    <div class="flex-between" style="margin-bottom:16px">
+      <span class="text-muted">{% trans "Joriy balans" %}</span>
+      <strong style="font-size:1.3rem">{{ user.balance }} {% trans "so'm" %}</strong>
+    </div>
+
+    <form method="post" class="styled-form">
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+        {{ form.amount }}
+        <div class="quick-amounts">
+          <button type="button" class="chip-btn" data-amount="50000">50 000</button>
+          <button type="button" class="chip-btn" data-amount="100000">100 000</button>
+          <button type="button" class="chip-btn" data-amount="250000">250 000</button>
+          <button type="button" class="chip-btn" data-amount="500000">500 000</button>
+        </div>
+        {% if form.amount.errors %}<div class="form-errors">{{ form.amount.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.card_number.id_for_label }}">{{ form.card_number.label }}</label>
+        {{ form.card_number }}
+        {% if form.card_number.errors %}<div class="form-errors">{{ form.card_number.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="form-row">
+        <label for="{{ form.card_expiry.id_for_label }}">{{ form.card_expiry.label }}</label>
+        {{ form.card_expiry }}
+        {% if form.card_expiry.errors %}<div class="form-errors">{{ form.card_expiry.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <p class="note">
+        🔒 {% trans "Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari saqlanmaydi." %}
+      </p>
+
+      <div><button type="submit" class="btn btn-primary btn-lg">{% trans "To'ldirish" %}</button></div>
+    </form>
+  </div>
+
+  {% if history %}
+    <div class="section-title"><h2>{% trans "To'ldirishlar tarixi" %}</h2></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>{% trans "Sana" %}</th><th>{% trans "Summa" %}</th><th>{% trans "Karta" %}</th></tr></thead>
+        <tbody>
+          {% for t in history %}
+            <tr>
+              <td>{{ t.created_at|date:"Y-m-d H:i" }}</td>
+              <td><strong>+{{ t.amount }} {% trans "so'm" %}</strong></td>
+              <td class="text-muted">{% if t.card_last4 %}•••• {{ t.card_last4 }}{% else %}—{% endif %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.querySelectorAll(".quick-amounts .chip-btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.getElementById("id_amount").value = b.dataset.amount;
+    });
+  });
+</script>
+{% endblock %}

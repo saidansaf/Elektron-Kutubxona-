@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Telegram" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'accounts:settings' %}" class="back-link">← {% trans "Sozlamalarga" %}</a>
+  <h1>✈ {% trans "Telegram bot" %}</h1>
+
+  {% if not bot_configured %}
+    <div class="messages"><li class="warning" style="list-style:none">
+      {% trans "Bot hali sozlanmagan. .env faylida TELEGRAM_BOT_TOKEN ni to'ldiring." %}
+    </li></div>
+  {% endif %}
+
+  {% if link.is_linked %}
+    <div class="card">
+      <div class="flex-between">
+        <div>
+          <div class="card-title" style="margin:0">✅ {% trans "Telegram ulangan" %}</div>
+          <span class="text-muted">
+            {% if link.username %}@{{ link.username }} · {% endif %}
+            {% trans "ulangan" %}: {{ link.linked_at|date:"d.m.Y" }}
+          </span>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" name="action" value="unlink" class="btn btn-outline btn-sm">
+            {% trans "Uzish" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="flex-between">
+        <div>
+          <div class="card-title" style="margin:0">{% trans "Bildirishnomalar" %}</div>
+          <p class="card-hint" style="margin:4px 0 0">
+            {% trans "Kitobingiz sotilganda, xabar kelganda va to'lov tasdiqlanganda Telegram'ga xabar keladi." %}
+          </p>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" name="action" value="notifications"
+                  class="btn btn-sm {% if link.notifications %}btn-primary{% else %}btn-outline{% endif %}">
+            {% if link.notifications %}{% trans "Yoqilgan" %}{% else %}{% trans "O'chirilgan" %}{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-title">{% trans "Botni ulash" %}</div>
+      <ol class="tg-steps">
+        <li>
+          {% if bot_username %}
+            {% blocktrans %}Telegram'da botni oching:{% endblocktrans %}
+            <a href="https://t.me/{{ bot_username }}" target="_blank" rel="noopener">@{{ bot_username }}</a>
+          {% else %}
+            {% trans "Telegram'da botni oching va /start yuboring" %}
+          {% endif %}
+        </li>
+        <li>{% trans "Quyidagi kodni botga yuboring" %}</li>
+      </ol>
+
+      {% if link.code and link.code_is_fresh %}
+        <div class="tg-code">{{ link.code }}</div>
+        <p class="text-muted" style="text-align:center">
+          {% trans "Kod 15 daqiqa amal qiladi." %}
+        </p>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-block">
+          {% if link.code %}{% trans "Yangi kod olish" %}{% else %}{% trans "Kod olish" %}{% endif %}
+        </button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="card-title">{% trans "Bot nima qila oladi" %}</div>
+    <ul class="tg-features">
+      <li>📚 {% trans "Katalogni ko'rish va qidirish" %}</li>
+      <li>💳 {% trans "Balansdan kitob sotib olish" %}</li>
+      <li>📥 {% trans "Sotib olingan kitobni PDF ko'rinishida olish" %}</li>
+      <li>⭐ {% trans "Istaklar ro'yxatini boshqarish" %}</li>
+      <li>🔔 {% trans "Sotuv va xabarlar haqida bildirishnoma" %}</li>
+    </ul>
+    <p class="card-hint">
+      {% trans "Kitob qo'shish, balansni to'ldirish va sozlamalar saytda bajariladi." %}
+    </p>
+  </div>
+</div>
+{% endblock %}

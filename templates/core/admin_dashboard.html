@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Admin statistika" %}{% endblock %}
+{% block content %}
+<h1>📊 {% trans "Boshqaruv paneli - statistika" %}</h1>
+<div class="flex" style="flex-wrap:wrap;margin-bottom:8px">
+  <a href="{% url 'core:admin_users' %}" class="btn btn-primary btn-sm">👥 {% trans "Foydalanuvchilarni boshqarish" %}</a>
+  <a href="{% url 'core:admin_broadcast' %}" class="btn btn-outline btn-sm">📢 {% trans "Hammaga e'lon" %}</a>
+  <a href="/django-boshqaruv-x9f2/" class="btn btn-outline btn-sm">{% trans "To'liq Django admin panelga o'tish" %}</a>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="value">{{ stats.total_users }}</div><div class="label">{% trans "Jami foydalanuvchilar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_sellers }}</div><div class="label">{% trans "Sotuvchilar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_buyers }}</div><div class="label">{% trans "Xaridorlar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_authors }}</div><div class="label">{% trans "Mualliflar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_genres }}</div><div class="label">{% trans "Janrlar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_books }}</div><div class="label">{% trans "Jami kitoblar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_active_books }}</div><div class="label">{% trans "Sotuvdagi kitoblar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_purchases }}</div><div class="label">{% trans "Xaridlar soni" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_reviews }}</div><div class="label">{% trans "Sharhlar" %}</div></div>
+  <div class="stat-card"><div class="value">{{ stats.total_sales_sum }}</div><div class="label">{% trans "Umumiy savdo (so'm)" %}</div></div>
+</div>
+
+<div class="export-bar">
+  <a href="{% url 'books:export_books_excel' %}" class="btn btn-outline btn-sm">⬇ {% trans "Kitoblar Excel" %}</a>
+  <a href="{% url 'books:export_books_pdf' %}" class="btn btn-outline btn-sm">⬇ {% trans "Kitoblar PDF" %}</a>
+  <a href="{% url 'books:export_authors_excel' %}" class="btn btn-outline btn-sm">⬇ {% trans "Mualliflar Excel" %}</a>
+  <a href="{% url 'books:export_authors_pdf' %}" class="btn btn-outline btn-sm">⬇ {% trans "Mualliflar PDF" %}</a>
+</div>
+
+<div class="section-title"><h2>{% trans "So'nggi ro'yxatdan o'tganlar" %}</h2></div>
+<div class="table-wrap">
+<table class="data-table">
+  <thead>
+    <tr><th>#</th><th>{% trans "Foydalanuvchi nomi" %}</th><th>{% trans "Email" %}</th><th>{% trans "Rol" %}</th><th>{% trans "Sana" %}</th></tr>
+  </thead>
+  <tbody>
+    {% for u in recent_users %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td><a href="{% url 'core:admin_user_detail' u.pk %}">{{ u.username }}</a></td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.get_role_display }}</td>
+      <td>{{ u.date_joined|date:"Y-m-d H:i" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+<p class="text-muted" style="margin-top:8px;">
+  {% trans "Parollar bir tomonlama shifrlangan holda saqlanadi va ularni ochib bo'lmaydi. Foydalanuvchi kartasida yangi parol belgilashingiz mumkin." %}
+</p>
+
+<div class="section-title"><h2>{% trans "Eng faol sotuvchilar" %}</h2></div>
+<div class="table-wrap">
+<table class="data-table">
+  <thead><tr><th>#</th><th>{% trans "Sotuvchi" %}</th><th>{% trans "Kitoblar soni" %}</th></tr></thead>
+  <tbody>
+    {% for s in top_sellers %}
+    <tr><td>{{ forloop.counter }}</td><td>{{ s.username }}</td><td>{{ s.books_total }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

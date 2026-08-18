@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+{% load i18n static %}
+{% block title %}{{ book.title }} — {% trans "O'qish" %}{% endblock %}
+
+{% block content %}
+<div class="reader" id="reader"
+     data-file="{% url 'books:book_file' book.pk %}"
+     data-progress-url="{% url 'books:reading_progress' book.pk %}"
+     data-worker="{% static 'vendor/pdfjs/pdf.worker.min.mjs' %}"
+     data-start-page="{{ start_page }}"
+     data-error="{% trans "Kitobni ochib bo'lmadi." %}">
+  {% csrf_token %}
+
+  <div class="reader-bar">
+    <div class="reader-bar-left">
+      <a href="{% url 'books:detail' book.pk %}" class="reader-btn" title="{% trans 'Orqaga' %}">←</a>
+      <div class="reader-title">
+        <strong>{{ book.title }}</strong>
+        <span>{{ book.author.full_name }}</span>
+      </div>
+    </div>
+
+    <div class="reader-bar-center">
+      <button type="button" class="reader-btn" id="rdPrev" title="{% trans 'Oldingi sahifa' %}">‹</button>
+      <span class="reader-pages">
+        <input type="number" id="rdPage" min="1" value="{{ start_page }}" aria-label="{% trans 'Sahifa' %}" />
+        <span class="reader-total">/ <span id="rdTotal">–</span></span>
+      </span>
+      <button type="button" class="reader-btn" id="rdNext" title="{% trans 'Keyingi sahifa' %}">›</button>
+    </div>
+
+    <div class="reader-bar-right">
+      <button type="button" class="reader-btn" id="rdZoomOut" title="{% trans 'Kichraytirish' %}">−</button>
+      <span class="reader-zoom" id="rdZoomLabel">100%</span>
+      <button type="button" class="reader-btn" id="rdZoomIn" title="{% trans 'Kattalashtirish' %}">+</button>
+      <button type="button" class="reader-btn" id="rdFull" title="{% trans 'Butun ekran' %}">⛶</button>
+      <a href="{% url 'books:book_download' book.pk %}" class="reader-btn" title="{% trans 'Yuklab olish' %}">⬇</a>
+    </div>
+  </div>
+
+  <div class="reader-progress"><span id="rdProgressBar"></span></div>
+
+  <div class="reader-stage" id="rdStage">
+    <div class="reader-status" id="rdStatus">
+      <div class="reader-spinner"></div>
+      <p>{% trans "Kitob yuklanmoqda…" %}</p>
+    </div>
+    <div class="reader-pages-wrap" id="rdPagesWrap" hidden></div>
+  </div>
+
+  <div class="reader-hint">
+    {% trans "← → tugmalari bilan varaqlang. To'xtagan joyingiz avtomatik saqlanadi." %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module">
+import * as pdfjsLib from "{% static 'vendor/pdfjs/pdf.min.mjs' %}";
+
+const root = document.getElementById("reader");
+pdfjsLib.GlobalWorkerOptions.workerSrc = root.dataset.worker;
+
+const stage = document.getElementById("rdStage");
+const wrap = document.getElementById("rdPagesWrap");
+const statusEl = document.getElementById("rdStatus");
+const pageInput = document.getElementById("rdPage");
+const totalEl = document.getElementById("rdTotal");
+const zoomLabel = document.getElementById("rdZoomLabel");
+const progressBar = document.getElementById("rdProgressBar");
+const csrf = root.querySelector("[name=csrfmiddlewaretoken]").value;
+
+const MSG_ERROR = root.dataset.error;
+
+let pdf = null;
+let total = 0;
+let scale = 1;
+let baseWidth = 0;          // 100% masshtabdagi sahifa kengligi
+let current = Math.max(1, parseInt(root.dataset.startPage, 10) || 1);
+const holders = [];         // har bir sahifaning konteyneri
+const rendered = new Map(); // sahifa raqami -> render vazifasi
+
+/* ---------- sahifa konteynerlari ---------- */
+
+function fitScale(viewport) {
+  // Boshlang'ich masshtab: sahifa ekranga to'liq sig'sin, lekin juda
+  // kichkina ham bo'lmasin.
+  const available = stage.clientWidth - 48;
+  return Math.min(1.6, Math.max(0.5, available / viewport.width));
+}
+
+function layout() {
+  for (let n = 1; n <= total; n++) {
+    const holder = holders[n - 1];
+    const ratio = holder.dataset.ratio;
+    holder.style.width = Math.round(baseWidth * scale) + "px";
+    holder.style.height = Math.round(baseWidth * scale * ratio) + "px";
+  }
+  zoomLabel.textContent = Math.round(scale * 100) + "%";
+}
+
+async function build() {
+  const first = await pdf.getPage(1);
+  const viewport = first.getViewport({ scale: 1 });
+  baseWidth = viewport.width;
+  scale = fitScale(viewport);
+
+  for (let n = 1; n <= total; n++) {
+    const holder = document.createElement("div");
+    holder.className = "reader-page";
+    holder.dataset.page = String(n);
+    holder.dataset.ratio = String(viewport.height / viewport.width);
+    holder.innerHTML = '<span class="reader-page-num">' + n + "</span>";
+    wrap.appendChild(holder);
+    holders.push(holder);
+  }
+  layout();
+}
+
+/* ---------- ko'rinadigan sahifalarni chizish ---------- */
+
+async function renderPage(n) {
+  if (rendered.has(n)) return;
+  rendered.set(n, true);
+
+  const holder = holders[n - 1];
+  const page = await pdf.getPage(n);
+  const viewport = page.getViewport({ scale: scale * (window.devicePixelRatio || 1) });
+  const canvas = document.createElement("canvas");
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  canvas.className = "reader-canvas";
+
+  await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+
+  // Chizib bo'lgunimizcha masshtab o'zgargan bo'lishi mumkin.
+  if (!rendered.has(n)) return;
+  holder.querySelector("canvas")?.remove();
+  holder.appendChild(canvas);
+  holder.classList.add("is-ready");
+
+  // PDF ichida sahifalar har xil o'lchamda bo'lishi mumkin - konteyner
+  // balandligini haqiqiy sahifaga moslaymiz.
+  const realRatio = viewport.height / viewport.width;
+  if (Math.abs(realRatio - Number(holder.dataset.ratio)) > 0.01) {
+    holder.dataset.ratio = String(realRatio);
+    holder.style.height = Math.round(baseWidth * scale * realRatio) + "px";
+  }
+}
+
+function clearRendered() {
+  rendered.clear();
+  for (const holder of holders) {
+    holder.querySelector("canvas")?.remove();
+    holder.classList.remove("is-ready");
+  }
+}
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) renderPage(Number(entry.target.dataset.page));
+    }
+  },
+  { root: stage, rootMargin: "200% 0px" }
+);
+
+/* ---------- joriy sahifani aniqlash ---------- */
+
+function detectCurrent() {
+  const middle = stage.scrollTop + stage.clientHeight / 2;
+  let best = 1;
+  for (let n = 1; n <= total; n++) {
+    if (holders[n - 1].offsetTop <= middle) best = n;
+    else break;
+  }
+  if (best !== current) {
+    current = best;
+    pageInput.value = String(current);
+    progressBar.style.width = (current / total) * 100 + "%";
+    saveProgress();
+  }
+}
+
+/* ---------- holatni saqlash ---------- */
+
+let saveTimer = null;
+function saveProgress() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    fetch(root.dataset.progressUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrf },
+      body: JSON.stringify({ page: current, total: total }),
+    }).catch(() => {});
+  }, 1200);
+}
+
+/* ---------- navigatsiya ---------- */
+
+function goTo(n) {
+  n = Math.max(1, Math.min(total, n));
+  stage.scrollTo({ top: holders[n - 1].offsetTop - 12, behavior: "smooth" });
+}
+
+document.getElementById("rdPrev").onclick = () => goTo(current - 1);
+document.getElementById("rdNext").onclick = () => goTo(current + 1);
+pageInput.onchange = () => goTo(parseInt(pageInput.value, 10) || 1);
+
+function setScale(next) {
+  const anchor = current;
+  scale = Math.max(0.4, Math.min(3, next));
+  clearRendered();
+  layout();
+  goTo(anchor);
+  renderPage(anchor);
+}
+document.getElementById("rdZoomIn").onclick = () => setScale(scale + 0.2);
+document.getElementById("rdZoomOut").onclick = () => setScale(scale - 0.2);
+
+document.getElementById("rdFull").onclick = () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else root.requestFullscreen?.();
+};
+
+stage.addEventListener("scroll", () => {
+  window.requestAnimationFrame(detectCurrent);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); goTo(current + 1); }
+  else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); goTo(current - 1); }
+  else if (e.key === "Home") { e.preventDefault(); goTo(1); }
+  else if (e.key === "End") { e.preventDefault(); goTo(total); }
+});
+
+let resizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => setScale(scale), 250);
+});
+
+/* ---------- ishga tushirish ---------- */
+
+(async () => {
+  try {
+    pdf = await pdfjsLib.getDocument({ url: root.dataset.file, withCredentials: true }).promise;
+    total = pdf.numPages;
+    totalEl.textContent = String(total);
+    pageInput.max = String(total);
+
+    await build();
+
+    statusEl.hidden = true;
+    wrap.hidden = false;
+
+    for (const holder of holders) observer.observe(holder);
+
+    current = Math.max(1, Math.min(total, current));
+    pageInput.value = String(current);
+    progressBar.style.width = (current / total) * 100 + "%";
+    // Saqlangan sahifadan davom etamiz (birinchi sahifa bo'lsa - shunchaki boshidan).
+    if (current > 1) {
+      stage.scrollTop = holders[current - 1].offsetTop - 12;
+    }
+    await renderPage(current);
+  } catch (err) {
+    statusEl.innerHTML = '<p class="form-errors"></p>';
+    statusEl.querySelector("p").textContent = MSG_ERROR;
+  }
+})();
+</script>
+{% endblock %}

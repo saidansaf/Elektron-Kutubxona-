@@ -1,0 +1,2941 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-18 14:20+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/accounts/forms.py:10 templates/accounts/password_reset.html:13
+#: templates/core/admin_dashboard.html:36 templates/core/admin_users.html:25
+msgid "Email"
+msgstr "Email"
+
+#: apps/accounts/forms.py:25 templates/core/admin_dashboard.html:36
+msgid "Foydalanuvchi nomi"
+msgstr "Username"
+
+#: apps/accounts/forms.py:26
+msgid "Parol"
+msgstr "Password"
+
+#: apps/accounts/forms.py:32 apps/core/middleware.py:30
+msgid "Sabab ko'rsatilmagan."
+msgstr "No reason given."
+
+#: apps/accounts/forms.py:34 apps/core/middleware.py:29
+#, python-format
+msgid "Hisobingiz bloklangan. %(reason)s"
+msgstr "Your account is blocked. %(reason)s"
+
+#: apps/accounts/forms.py:43
+msgid "Admin login"
+msgstr "Admin login"
+
+#: apps/accounts/forms.py:44
+msgid "Admin parol"
+msgstr "Admin password"
+
+#: apps/accounts/forms.py:49
+msgid "Bu sahifaga faqat administrator kira oladi."
+msgstr "Only an administrator can access this page."
+
+#: apps/accounts/forms.py:55
+msgid "Sotuvchiman - kitob sotmoqchiman"
+msgstr "I'm a seller - I want to sell books"
+
+#: apps/accounts/forms.py:56
+msgid "Sotib oluvchiman - kitob o'qimoqchiman"
+msgstr "I'm a buyer - I want to read books"
+
+#: apps/accounts/forms.py:59
+msgid "Kim bo'lib kirmoqchisiz?"
+msgstr "Who do you want to be?"
+
+#: apps/accounts/forms.py:65 apps/accounts/models.py:13
+#: templates/accounts/role_select.html:23 templates/books/checkout.html:78
+#: templates/books/detail.html:40 templates/core/admin_dashboard.html:58
+msgid "Sotuvchi"
+msgstr "Seller"
+
+#: apps/accounts/forms.py:65 apps/accounts/models.py:14
+#: templates/accounts/role_select.html:23
+msgid "Sotib oluvchi"
+msgstr "Buyer"
+
+#: apps/accounts/forms.py:67 templates/accounts/settings.html:15
+msgid "Rejim"
+msgstr "Mode"
+
+#: apps/accounts/forms.py:76
+msgid "Bir-ikki og'iz o'zingiz haqingizda"
+msgstr "A few words about yourself"
+
+#: apps/accounts/forms.py:89 apps/accounts/forms.py:131
+msgid "Summa (so'm)"
+msgstr "Amount (UZS)"
+
+#: apps/accounts/forms.py:95 apps/accounts/forms.py:137
+#: apps/accounts/models.py:177 apps/books/forms.py:60
+msgid "Karta raqami"
+msgstr "Card number"
+
+#: apps/accounts/forms.py:99 apps/books/forms.py:64
+msgid "Amal qilish muddati"
+msgstr "Expiry date"
+
+#: apps/accounts/forms.py:108 apps/accounts/forms.py:150
+#: apps/accounts/services.py:62 apps/accounts/services.py:89
+#, python-format
+msgid "Eng kam summa %(min)s so'm."
+msgstr "The minimum amount is %(min)s UZS."
+
+#: apps/accounts/forms.py:112 apps/accounts/services.py:64
+#, python-format
+msgid "Eng ko'p summa %(max)s so'm."
+msgstr "The maximum amount is %(max)s UZS."
+
+#: apps/accounts/forms.py:119 apps/accounts/forms.py:162 apps/books/forms.py:75
+msgid "Karta raqami 12-19 ta raqamdan iborat bo'lishi kerak."
+msgstr "The card number must contain 12 to 19 digits."
+
+#: apps/accounts/forms.py:138
+msgid "Pul shu kartaga o'tkaziladi."
+msgstr "The money will be transferred to this card."
+
+#: apps/accounts/forms.py:154 apps/accounts/services.py:101
+#, python-format
+msgid "Balansingizda buncha mablag' yo'q. Mavjud: %(balance)s so'm."
+msgstr "Your balance is too low. Available: %(balance)s so'm."
+
+#: apps/accounts/models.py:12
+msgid "Tanlanmagan"
+msgstr "Not selected"
+
+#: apps/accounts/models.py:18 templates/base.html:80
+msgid "Yorug'"
+msgstr "Light"
+
+#: apps/accounts/models.py:19 templates/base.html:82
+msgid "Qorong'i"
+msgstr "Dark"
+
+#: apps/accounts/models.py:23 templates/core/admin_dashboard.html:36
+#: templates/core/admin_user_detail.html:36 templates/core/admin_users.html:26
+msgid "Rol"
+msgstr "Role"
+
+#: apps/accounts/models.py:24 templates/accounts/settings.html:34
+#: templates/base.html:76
+msgid "Mavzu"
+msgstr "Theme"
+
+#: apps/accounts/models.py:26 apps/books/forms.py:134
+#: templates/accounts/settings.html:46 templates/base.html:87
+#: templates/books/checkout.html:70 templates/books/my_books.html:19
+#: templates/core/admin_user_detail.html:38
+msgid "Til"
+msgstr "Language"
+
+#: apps/accounts/models.py:31 templates/core/admin_user_detail.html:37
+msgid "Telefon raqami"
+msgstr "Phone number"
+
+#: apps/accounts/models.py:32
+msgid "Profil rasmi"
+msgstr "Profile photo"
+
+#: apps/accounts/models.py:33 templates/accounts/settings.html:97
+#: templates/books/checkout.html:86 templates/books/my_library.html:6
+msgid "Hisob balansi"
+msgstr "Account balance"
+
+#: apps/accounts/models.py:34
+msgid "O'zingiz haqingizda"
+msgstr "About you"
+
+#: apps/accounts/models.py:35 templates/core/admin_user_detail.html:21
+#: templates/core/admin_users.html:45
+msgid "Bloklangan"
+msgstr "Blocked"
+
+#: apps/accounts/models.py:36 templates/core/admin_user_detail.html:42
+msgid "Bloklash sababi"
+msgstr "Block reason"
+
+#: apps/accounts/models.py:40 templates/core/admin_users.html:24
+msgid "Foydalanuvchi"
+msgstr "User"
+
+#: apps/accounts/models.py:41 templates/base.html:39
+#: templates/core/admin_broadcast.html:6
+#: templates/core/admin_user_detail.html:6 templates/core/admin_users.html:3
+#: templates/core/admin_users.html:9
+msgid "Foydalanuvchilar"
+msgstr "Users"
+
+#: apps/accounts/models.py:78
+msgid "Qabul qiluvchi"
+msgstr "Recipient"
+
+#: apps/accounts/models.py:85
+msgid "Yuboruvchi"
+msgstr "Sender"
+
+#: apps/accounts/models.py:87 apps/core/admin_views.py:27
+msgid "Sarlavha"
+msgstr "Subject"
+
+#: apps/accounts/models.py:88 apps/core/admin_views.py:28
+msgid "Xabar matni"
+msgstr "Message text"
+
+#: apps/accounts/models.py:89
+msgid "Hammaga"
+msgstr "To everyone"
+
+#: apps/accounts/models.py:94
+msgid "Administrator xabari"
+msgstr "Admin message"
+
+#: apps/accounts/models.py:95
+msgid "Administrator xabarlari"
+msgstr "Admin messages"
+
+#: apps/accounts/models.py:109 apps/accounts/models.py:176
+#: templates/accounts/topup.html:53
+msgid "Summa"
+msgstr "Amount"
+
+#: apps/accounts/models.py:110 apps/books/models.py:118
+msgid "Karta oxirgi 4 raqami"
+msgstr "Card last 4 digits"
+
+#: apps/accounts/models.py:115
+msgid "Hisob to'ldirish"
+msgstr "Top-up"
+
+#: apps/accounts/models.py:116
+msgid "Hisob to'ldirishlar"
+msgstr "Top-ups"
+
+#: apps/accounts/models.py:132
+msgid "Telegram chat ID"
+msgstr "Telegram chat ID"
+
+#: apps/accounts/models.py:133
+msgid "Telegram username"
+msgstr "Telegram username"
+
+#: apps/accounts/models.py:134
+msgid "Ulash kodi"
+msgstr "Linking code"
+
+#: apps/accounts/models.py:136 templates/accounts/telegram.html:37
+msgid "Bildirishnomalar"
+msgstr "Notifications"
+
+#: apps/accounts/models.py:140
+msgid "Telegram ulanishi"
+msgstr "Telegram link"
+
+#: apps/accounts/models.py:141
+msgid "Telegram ulanishlari"
+msgstr "Telegram links"
+
+#: apps/accounts/models.py:169
+msgid "Ko'rib chiqilmoqda"
+msgstr "Under review"
+
+#: apps/accounts/models.py:170 templates/core/admin_withdrawals.html:24
+msgid "To'landi"
+msgstr "Paid"
+
+#: apps/accounts/models.py:171
+msgid "Rad etildi"
+msgstr "Rejected"
+
+#: apps/accounts/models.py:178
+msgid "Holati"
+msgstr "Status"
+
+#: apps/accounts/models.py:179
+msgid "Administrator izohi"
+msgstr "Administrator comment"
+
+#: apps/accounts/models.py:181
+msgid "Ko'rib chiqilgan vaqti"
+msgstr "Reviewed at"
+
+#: apps/accounts/models.py:185
+msgid "Pul yechish so'rovi"
+msgstr "Withdrawal request"
+
+#: apps/accounts/models.py:186 templates/core/admin_withdrawals.html:3
+#: templates/core/admin_withdrawals.html:7
+msgid "Pul yechish so'rovlari"
+msgstr "Withdrawal requests"
+
+#: apps/accounts/services.py:33 apps/accounts/services.py:37
+msgid "Summani raqam bilan yozing. Masalan: 50000"
+msgstr "Enter the amount as a number. For example: 50000"
+
+#: apps/accounts/services.py:39
+msgid "Summa noldan katta bo'lishi kerak."
+msgstr "The amount must be greater than zero."
+
+#: apps/accounts/services.py:47
+msgid "Karta raqami 16 xonali bo'lishi kerak."
+msgstr "The card number must have 16 digits."
+
+#: apps/accounts/services.py:93
+msgid "Sizda ko'rib chiqilayotgan so'rov bor. Avval u hal bo'lsin."
+msgstr "You already have a request under review. Wait until it is resolved."
+
+#: apps/accounts/views.py:76
+msgid "Ro'yxatdan muvaffaqiyatli o'tdingiz!"
+msgstr "You have registered successfully!"
+
+#: apps/accounts/views.py:101
+msgid "Tizimdan chiqdingiz."
+msgstr "You have been logged out."
+
+#: apps/accounts/views.py:116
+msgid "Rolingiz saqlandi!"
+msgstr "Your role has been saved!"
+
+#: apps/accounts/views.py:139
+msgid "Sozlamalar saqlandi."
+msgstr "Settings saved."
+
+#: apps/accounts/views.py:176
+#, python-format
+msgid "Hisobingiz %(amount)s so'mga to'ldirildi."
+msgstr "Your balance was topped up by %(amount)s UZS."
+
+#: apps/accounts/views.py:214
+msgid ""
+"So'rov yuborildi. Administrator tasdiqlagach, pul kartangizga o'tkaziladi."
+msgstr ""
+"Request sent. Once the administrator approves it, the money will be "
+"transferred to your card."
+
+#: apps/accounts/views.py:244
+msgid "Telegram uzildi."
+msgstr "Telegram disconnected."
+
+#: apps/books/forms.py:68 apps/books/models.py:119
+msgid "Uy manzili"
+msgstr "Home address"
+
+#: apps/books/forms.py:69
+msgid "Shahar, ko'cha, uy raqami"
+msgstr "City, street, house number"
+
+#: apps/books/forms.py:86 templates/books/_reviews.html:34
+msgid "Javob yozing..."
+msgstr "Write a reply..."
+
+#: apps/books/forms.py:97
+msgid "Fikringiz (ixtiyoriy)"
+msgstr "Your comment (optional)"
+
+#: apps/books/forms.py:103
+msgid "Avval yangilari"
+msgstr "Newest first"
+
+#: apps/books/forms.py:104
+msgid "Avval eskilari"
+msgstr "Oldest first"
+
+#: apps/books/forms.py:105
+msgid "Avval arzoni"
+msgstr "Cheapest first"
+
+#: apps/books/forms.py:106
+msgid "Avval qimmati"
+msgstr "Most expensive first"
+
+#: apps/books/forms.py:107
+msgid "Reyting bo'yicha"
+msgstr "By rating"
+
+#: apps/books/forms.py:108
+msgid "Ommabopligi bo'yicha"
+msgstr "By popularity"
+
+#: apps/books/forms.py:114
+msgid "Qidiruv"
+msgstr "Search"
+
+#: apps/books/forms.py:115 apps/books/forms.py:135
+msgid "Barcha tillar"
+msgstr "All languages"
+
+#: apps/books/forms.py:117
+msgid "Barcha janrlar"
+msgstr "All genres"
+
+#: apps/books/forms.py:117 apps/books/models.py:17
+msgid "Janr"
+msgstr "Genre"
+
+#: apps/books/forms.py:120
+msgid "Barcha mualliflar"
+msgstr "All authors"
+
+#: apps/books/forms.py:120 apps/books/models.py:36
+#: templates/books/detail.html:20 templates/books/my_books.html:19
+msgid "Muallif"
+msgstr "Author"
+
+#: apps/books/forms.py:122
+msgid "Narx (dan)"
+msgstr "Price (from)"
+
+#: apps/books/forms.py:123
+msgid "Narx (gacha)"
+msgstr "Price (to)"
+
+#: apps/books/forms.py:126
+msgid "Saralash"
+msgstr "Sort by"
+
+#: apps/books/models.py:13
+msgid "Janr nomi"
+msgstr "Genre name"
+
+#: apps/books/models.py:18 templates/core/admin_dashboard.html:17
+msgid "Janrlar"
+msgstr "Genres"
+
+#: apps/books/models.py:25
+msgid "Muallif to'liq ismi"
+msgstr "Author's full name"
+
+#: apps/books/models.py:26
+msgid "Muallif haqida"
+msgstr "About the author"
+
+#: apps/books/models.py:37 templates/base.html:19 templates/base.html:176
+#: templates/books/author_list.html:3 templates/books/author_list.html:6
+#: templates/core/admin_dashboard.html:16 templates/core/home.html:24
+msgid "Mualliflar"
+msgstr "Authors"
+
+#: apps/books/models.py:48
+msgid "Kitob nomi"
+msgstr "Book title"
+
+#: apps/books/models.py:52
+msgid "Kitob tili"
+msgstr "Book language"
+
+#: apps/books/models.py:53
+msgid "Sahifalar soni"
+msgstr "Number of pages"
+
+#: apps/books/models.py:54
+msgid "Narxi (so'm)"
+msgstr "Price (UZS)"
+
+#: apps/books/models.py:55
+msgid "Tavsif"
+msgstr "Description"
+
+#: apps/books/models.py:56
+msgid "Muqova"
+msgstr "Cover"
+
+#: apps/books/models.py:62
+msgid "Kitob fayli (faqat PDF)"
+msgstr "Book file (PDF only)"
+
+#: apps/books/models.py:65
+msgid "Nashr yili"
+msgstr "Publication year"
+
+#: apps/books/models.py:66 templates/books/my_books.html:20
+msgid "Sotuvda"
+msgstr "On sale"
+
+#: apps/books/models.py:72 templates/books/seller_dashboard.html:70
+msgid "Kitob"
+msgstr "Book"
+
+#: apps/books/models.py:73 templates/base.html:18 templates/base.html:168
+#: templates/books/seller_dashboard.html:36
+#: templates/core/admin_user_detail.html:28 templates/core/home.html:19
+msgid "Kitoblar"
+msgstr "Books"
+
+#: apps/books/models.py:125
+msgid "Xarid"
+msgstr "Purchase"
+
+#: apps/books/models.py:126 templates/core/admin_user_detail.html:29
+msgid "Xaridlar"
+msgstr "Purchases"
+
+#: apps/books/models.py:143
+msgid "Joriy sahifa"
+msgstr "Current page"
+
+#: apps/books/models.py:144
+msgid "Jami sahifa"
+msgstr "Total pages"
+
+#: apps/books/models.py:150
+msgid "O'qish holati"
+msgstr "Reading progress"
+
+#: apps/books/models.py:151
+msgid "O'qish holatlari"
+msgstr "Reading progress"
+
+#: apps/books/models.py:182
+msgid "Istak"
+msgstr "Wish"
+
+#: apps/books/models.py:183
+msgid "Istaklar"
+msgstr "Wishlist"
+
+#: apps/books/models.py:209
+msgid "Suhbat"
+msgstr "Conversation"
+
+#: apps/books/models.py:210
+msgid "Suhbatlar"
+msgstr "Conversations"
+
+#: apps/books/models.py:230 apps/books/models.py:236
+msgid "Xabar"
+msgstr "Message"
+
+#: apps/books/models.py:231
+msgid "O'qilgan"
+msgstr "Read"
+
+#: apps/books/models.py:237 templates/base.html:26
+#: templates/books/conversations.html:3 templates/books/conversations.html:7
+#: templates/core/home.html:58
+msgid "Xabarlar"
+msgstr "Messages"
+
+#: apps/books/models.py:252 templates/books/checkout.html:100
+#: templates/books/seller_dashboard.html:75
+msgid "Yoqtirish"
+msgstr "Like"
+
+#: apps/books/models.py:253
+msgid "Yoqtirishlar"
+msgstr "Likes"
+
+#: apps/books/models.py:275
+msgid "Sharh"
+msgstr "Review"
+
+#: apps/books/models.py:276 templates/books/detail.html:108
+#: templates/core/admin_dashboard.html:21
+msgid "Sharhlar"
+msgstr "Reviews"
+
+#: apps/books/models.py:300
+msgid "Izoh yoqtirishi"
+msgstr "Review like"
+
+#: apps/books/models.py:301
+msgid "Izoh yoqtirishlari"
+msgstr "Review likes"
+
+#: apps/books/models.py:312 apps/books/models.py:317
+msgid "Javob"
+msgstr "Reply"
+
+#: apps/books/models.py:318
+msgid "Javoblar"
+msgstr "Replies"
+
+#: apps/books/models.py:342
+msgid "Javob yoqtirishi"
+msgstr "Reply like"
+
+#: apps/books/models.py:343
+msgid "Javob yoqtirishlari"
+msgstr "Reply likes"
+
+#: apps/books/services.py:33
+msgid "Bu kitob sotuvda emas."
+msgstr "This book is not for sale."
+
+#: apps/books/services.py:36 apps/books/views.py:254
+msgid "Siz bu kitobni allaqachon sotib olgansiz."
+msgstr "You have already purchased this book."
+
+#: apps/books/services.py:39
+msgid "O'z kitobingizni sotib ololmaysiz."
+msgstr "You cannot buy your own book."
+
+#: apps/books/services.py:44
+msgid "Hisobingizda mablag' yetarli emas."
+msgstr "Your balance is insufficient."
+
+#: apps/books/views.py:273
+msgid "Kitob muvaffaqiyatli sotib olindi!"
+msgstr "Book purchased successfully!"
+
+#: apps/books/views.py:332
+msgid "Fikringiz uchun rahmat!"
+msgstr "Thank you for your feedback!"
+
+#: apps/books/views.py:348
+msgid "Javob bo'sh bo'lmasligi kerak."
+msgstr "The reply cannot be empty."
+
+#: apps/books/views.py:474
+msgid "Kitob muvaffaqiyatli qo'shildi!"
+msgstr "Book added successfully!"
+
+#: apps/books/views.py:478
+msgid "Yangi kitob qo'shish"
+msgstr "Add a new book"
+
+#: apps/books/views.py:488
+msgid "Kitob yangilandi."
+msgstr "Book updated."
+
+#: apps/books/views.py:492
+msgid "Kitobni tahrirlash"
+msgstr "Edit book"
+
+#: apps/books/views.py:500
+msgid "Kitob o'chirildi."
+msgstr "Book deleted."
+
+#: apps/books/views.py:523
+msgid "Muallif qo'shildi."
+msgstr "Author added."
+
+#: apps/books/views.py:542
+#, python-format
+msgid "\"%(name)s\" janri qo'shildi."
+msgstr "Genre \"%(name)s\" added."
+
+#: apps/books/views.py:561
+msgid "Istaklar ro'yxatidan olib tashlandi."
+msgstr "Removed from your wishlist."
+
+#: apps/books/views.py:563
+msgid "Istaklar ro'yxatiga qo'shildi."
+msgstr "Added to your wishlist."
+
+#: apps/books/views.py:639
+msgid "O'zingizga xabar yoza olmaysiz."
+msgstr "You cannot message yourself."
+
+#: apps/core/admin_views.py:32
+msgid "Sabab"
+msgstr "Reason"
+
+#: apps/core/admin_views.py:43 templates/accounts/password_reset_confirm.html:3
+#: templates/accounts/password_reset_confirm.html:7
+msgid "Yangi parol"
+msgstr "New password"
+
+#: apps/core/admin_views.py:45
+msgid "Kamida 8 belgi"
+msgstr "At least 8 characters"
+
+#: apps/core/admin_views.py:92
+msgid "Administratorni bloklab bo'lmaydi."
+msgstr "An administrator cannot be blocked."
+
+#: apps/core/admin_views.py:106
+msgid "Foydalanuvchi bloklandi."
+msgstr "User blocked."
+
+#: apps/core/admin_views.py:108
+msgid "Blok olib tashlandi."
+msgstr "Block removed."
+
+#: apps/core/admin_views.py:117
+msgid "Administratorni o'chirib bo'lmaydi."
+msgstr "An administrator cannot be deleted."
+
+#: apps/core/admin_views.py:120
+msgid "O'zingizni o'chira olmaysiz."
+msgstr "You cannot delete yourself."
+
+#: apps/core/admin_views.py:125
+#, python-format
+msgid "'%(name)s' foydalanuvchisi o'chirildi."
+msgstr "User '%(name)s' has been deleted."
+
+#: apps/core/admin_views.py:142
+msgid "Xabar yuborildi. Foydalanuvchi saytga kirganda ko'radi."
+msgstr "Message sent. The user will see it when they log in."
+
+#: apps/core/admin_views.py:144
+msgid "Xabar matni bo'sh bo'lmasligi kerak."
+msgstr "The message text cannot be empty."
+
+#: apps/core/admin_views.py:164
+#, python-format
+msgid "'%(name)s' uchun yangi parol o'rnatildi: %(pwd)s"
+msgstr "A new password has been set for '%(name)s': %(pwd)s"
+
+#: apps/core/admin_views.py:168
+msgid "Parol kamida 8 belgidan iborat bo'lishi kerak."
+msgstr "The password must be at least 8 characters."
+
+#: apps/core/admin_views.py:190
+msgid "E'lon barcha foydalanuvchilarga yuborildi."
+msgstr "The announcement was sent to all users."
+
+#: apps/core/admin_views.py:227
+msgid "Bu so'rov allaqachon ko'rib chiqilgan."
+msgstr "This request has already been reviewed."
+
+#: apps/core/admin_views.py:242
+#, python-format
+msgid "%(amount)s so'm to'landi deb belgilandi."
+msgstr "%(amount)s so'm marked as paid."
+
+#: apps/core/admin_views.py:251
+#, python-format
+msgid "So'rov rad etildi, %(amount)s so'm balansga qaytarildi."
+msgstr "Request rejected, %(amount)s so'm returned to the balance."
+
+#: apps/core/ai_views.py:29
+#, python-format
+msgid ""
+"So'rovlar chegarasiga yetdingiz. %(minutes)s daqiqadan keyin qayta urinib "
+"ko'ring."
+msgstr "You have reached the request limit. Try again in %(minutes)s minutes."
+
+#: apps/core/ai_views.py:60 apps/core/ai_views.py:104 apps/core/ai_views.py:138
+msgid "So'rovni o'qib bo'lmadi."
+msgstr "Could not read the request."
+
+#: apps/core/ai_views.py:64
+msgid "Xabar bo'sh."
+msgstr "The message is empty."
+
+#: apps/core/ai_views.py:108 templates/books/book_form.html:57
+msgid "Avval kitob nomini kiriting."
+msgstr "Enter the book title first."
+
+#: apps/core/ai_views.py:142
+msgid "Rasm uchun tavsif kiriting."
+msgstr "Enter a description for the image."
+
+#: apps/core/botlib/handlers.py:148
+msgid "Bu kitob sizda yo'q."
+msgstr "You don't have this book."
+
+#: apps/core/botlib/handlers.py:151
+msgid "Bu kitobning fayli yuklanmagan."
+msgstr "This book has no file uploaded."
+
+#: apps/core/botlib/handlers.py:163
+msgid "Faylni yuborib bo'lmadi. Saytdan yuklab oling."
+msgstr "Could not send the file. Download it from the website."
+
+#: apps/core/botlib/handlers.py:175 templates/books/catalog.html:49
+#: templates/core/admin_users.html:52
+msgid "Hech narsa topilmadi."
+msgstr "Nothing found."
+
+#: apps/core/botlib/handlers.py:182
+#, python-format
+msgid "<b>Kitoblar</b> (%(total)s ta)"
+msgstr "<b>Books</b> (%(total)s)"
+
+#: apps/core/botlib/handlers.py:225
+msgid "📚 Sotuvchi bo'lish"
+msgstr "📚 Become a seller"
+
+#: apps/core/botlib/handlers.py:228
+msgid "🛒 Xaridor bo'lish"
+msgstr "🛒 Become a buyer"
+
+#: apps/core/botlib/handlers.py:234
+msgid ""
+"Rolingiz hali tanlanmagan. Menyu shunga qarab tuziladi:\n"
+"\n"
+"📚 <b>Sotuvchi</b> — kitob qo'shadi va sotadi\n"
+"🛒 <b>Xaridor</b> — kitob sotib oladi va o'qiydi\n"
+"\n"
+"Keyin Sozlamalardan o'zgartirsa bo'ladi."
+msgstr "You haven't chosen a role yet. The menu depends on it:\n\n📚 <b>Seller</b> — adds and sells books\n🛒 <b>Buyer</b> — buys and reads books\n\nYou can change it later in Settings."
+
+#: apps/core/botlib/handlers.py:246
+#, python-format
+msgid ""
+"📚 <b>Elektron Kutubxona</b>\n"
+"\n"
+"Botdan foydalanish uchun saytdagi hisobingizni ulang:\n"
+"\n"
+"• <b>/kirish</b> — login va parol bilan\n"
+"• yoki saytdan olingan 6 xonali kodni yuboring\n"
+"\n"
+"Sayt: %(site)s"
+msgstr ""
+"📚 <b>Electronic Library</b>\n"
+"\n"
+"Link your website account to use the bot:\n"
+"\n"
+"• <b>/kirish</b> — with your login and password\n"
+"• or send the 6-digit code from the website\n"
+"\n"
+"Website: %(site)s"
+
+#: apps/core/botlib/handlers.py:288
+#, python-format
+msgid ""
+"Salom, <b>%(name)s</b>! 👋\n"
+"\n"
+"Quyidagi menyudan foydalaning."
+msgstr ""
+"Hello, <b>%(name)s</b>! 👋\n"
+"\n"
+"Use the menu below."
+
+#: apps/core/botlib/handlers.py:302
+msgid ""
+"\n"
+"<b>Sotuvchi uchun</b>\n"
+"➕ Kitob qo'shish — botdan kitob joylash\n"
+"📚 Kitoblarim — narx, sotuvdan olish, o'chirish\n"
+"📊 Savdolarim — daromad va pul yechish\n"
+msgstr ""
+"\n"
+"<b>For sellers</b>\n"
+"➕ Add book — publish a book from the bot\n"
+"📚 My books — price, unlist, delete\n"
+"📊 My sales — revenue and payouts\n"
+
+#: apps/core/botlib/handlers.py:309
+msgid ""
+"\n"
+"<b>Xaridor uchun</b>\n"
+"📖 Kutubxonam — sotib olingan kitoblar va PDF\n"
+"⭐ Istaklarim — saqlab qo'yilgan kitoblar\n"
+"💰 Balans — hisobni to'ldirish\n"
+msgstr ""
+"\n"
+"<b>For buyers</b>\n"
+"📖 My library — purchased books and PDFs\n"
+"⭐ Wishlist — saved books\n"
+"💰 Balance — top up your account\n"
+
+#: apps/core/botlib/handlers.py:317
+#, python-format
+msgid ""
+"<b>Bot sayt bilan bir xil ishlaydi</b>\n"
+"Botda qilgan ishingiz saytda ham ko'rinadi.\n"
+"\n"
+"📚 Katalog — kitoblarni ko'rish\n"
+"🔍 Qidiruv — nom yoki muallif bo'yicha\n"
+"💬 Xabarlar — sotuvchi bilan yozishmalar\n"
+"⚙️ Sozlamalar — til, bildirishnoma, hisob\n"
+"%(role)s\n"
+"<b>Buyruqlar</b>\n"
+"/kirish — login va parol bilan kirish\n"
+"/chiqish — hisobni uzish\n"
+"/bekor — boshlangan amalni to'xtatish\n"
+"\n"
+"Sayt: %(site)s"
+msgstr ""
+"<b>The bot works just like the website</b>\n"
+"Whatever you do in the bot shows up on the website.\n"
+"\n"
+"📚 Catalogue — browse books\n"
+"🔍 Search — by title or author\n"
+"💬 Messages — chats with sellers\n"
+"⚙️ Settings — language, notifications, account\n"
+"%(role)s\n"
+"<b>Commands</b>\n"
+"/kirish — sign in with login and password\n"
+"/chiqish — unlink the account\n"
+"/bekor — stop the current action\n"
+"\n"
+"Website: %(site)s"
+
+#: apps/core/botlib/handlers.py:340 apps/core/botlib/handlers.py:393
+msgid "Bekor qilindi."
+msgstr "Cancelled."
+
+#: apps/core/botlib/handlers.py:342
+msgid "Hozir bekor qiladigan amal yo'q."
+msgstr "There is nothing to cancel right now."
+
+#: apps/core/botlib/handlers.py:350
+msgid "Siz allaqachon kirgansiz."
+msgstr "You are already signed in."
+
+#: apps/core/botlib/handlers.py:353
+msgid "Saytdagi foydalanuvchi nomingizni yozing:"
+msgstr "Enter your website username:"
+
+#: apps/core/botlib/handlers.py:368
+msgid "Hisob uzildi. Qayta ulash uchun /kirish yozing."
+msgstr "Account unlinked. Type /kirish to link it again."
+
+#: apps/core/botlib/handlers.py:410
+msgid "Foydalanuvchi nomini yozing:"
+msgstr "Enter the username:"
+
+#: apps/core/botlib/handlers.py:414
+msgid "Endi parolingizni yozing:"
+msgstr "Now enter your password:"
+
+#: apps/core/botlib/handlers.py:429
+msgid "Login yoki parol noto'g'ri. Qayta urinish: /kirish"
+msgstr "Wrong login or password. Try again: /kirish"
+
+#: apps/core/botlib/handlers.py:435
+msgid "Hisobingiz bloklangan."
+msgstr "Your account is blocked."
+
+#: apps/core/botlib/handlers.py:453
+#, python-format
+msgid "✅ Xush kelibsiz, <b>%(name)s</b>!"
+msgstr "✅ Welcome, <b>%(name)s</b>!"
+
+#: apps/core/botlib/handlers.py:467 apps/core/botlib/handlers.py:882
+msgid "Kitob nomini yozing:"
+msgstr "Enter the book title:"
+
+#: apps/core/botlib/handlers.py:473
+msgid "Muallif ismini yozing (yoki ro'yxatdan tanlang):"
+msgstr "Enter the author's name (or pick from the list):"
+
+#: apps/core/botlib/handlers.py:478
+msgid "Muallif ismini yozing:"
+msgstr "Enter the author's name:"
+
+#: apps/core/botlib/handlers.py:485
+msgid "Janrni tanlang yoki yangisini yozing:"
+msgstr "Choose a genre or type a new one:"
+
+#: apps/core/botlib/handlers.py:491
+msgid "Kitob tili:"
+msgstr "Book language:"
+
+#: apps/core/botlib/handlers.py:498
+msgid "Sahifalar soni (raqam):"
+msgstr "Number of pages (a number):"
+
+#: apps/core/botlib/handlers.py:504
+msgid "Sahifalar sonini raqam bilan yozing. Masalan: 250"
+msgstr "Enter the number of pages as a number. For example: 250"
+
+#: apps/core/botlib/handlers.py:508
+msgid "Narxi (so'm):"
+msgstr "Price (UZS):"
+
+#: apps/core/botlib/handlers.py:518
+msgid "Qisqacha tavsif yozing:"
+msgstr "Write a short description:"
+
+#: apps/core/botlib/handlers.py:524
+msgid "Muqova rasmini yuboring:"
+msgstr "Send the cover image:"
+
+#: apps/core/botlib/handlers.py:533
+msgid "Rasmni olib bo'lmadi. Qayta yuboring yoki o'tkazib yuboring."
+msgstr "Could not fetch the image. Send it again or skip."
+
+#: apps/core/botlib/handlers.py:536
+#, python-format
+msgid "Rasm yuboring yoki «%(skip)s» tugmasini bosing."
+msgstr "Send an image or tap «%(skip)s»."
+
+#: apps/core/botlib/handlers.py:539
+msgid "Endi kitobning PDF faylini yuboring:"
+msgstr "Now send the book's PDF file:"
+
+#: apps/core/botlib/handlers.py:546 templates/books/book_form.html:31
+msgid "Faqat PDF fayl qabul qilinadi."
+msgstr "Only PDF files are accepted."
+
+#: apps/core/botlib/handlers.py:551
+#, python-format
+msgid "Fayl juda katta (%(max)s MB dan oshmasin). Saytdan yuklang."
+msgstr "The file is too large (max %(max)s MB). Upload it on the website."
+
+#: apps/core/botlib/handlers.py:560
+msgid "Faylni olib bo'lmadi. Qayta yuboring."
+msgstr "Could not fetch the file. Send it again."
+
+#: apps/core/botlib/handlers.py:563
+#, python-format
+msgid "PDF yuboring yoki «%(skip)s» tugmasini bosing."
+msgstr "Send a PDF or tap «%(skip)s»."
+
+#: apps/core/botlib/handlers.py:570
+#, python-format
+msgid "✅ <b>%(title)s</b> qo'shildi va saytda ko'rinmoqda."
+msgstr "✅ <b>%(title)s</b> was added and is now live on the website."
+
+#: apps/core/botlib/handlers.py:613 apps/core/botlib/handlers.py:632
+msgid "Kitob topilmadi."
+msgstr "Book not found."
+
+#: apps/core/botlib/handlers.py:623
+#, python-format
+msgid "✅ Yangi narx: %(price)s so'm"
+msgstr "✅ New price: %(price)s UZS"
+
+#: apps/core/botlib/handlers.py:640
+msgid "✅ Sharhingiz saqlandi. Saytda ham ko'rinadi."
+msgstr "✅ Your review was saved. It also appears on the website."
+
+#: apps/core/botlib/handlers.py:646
+msgid "Xabar matnini yozing:"
+msgstr "Write your message:"
+
+#: apps/core/botlib/handlers.py:651
+msgid "Suhbat topilmadi."
+msgstr "Conversation not found."
+
+#: apps/core/botlib/handlers.py:657
+msgid "✅ Xabar yuborildi."
+msgstr "✅ Message sent."
+
+#: apps/core/botlib/handlers.py:671
+msgid "Karta raqamini yozing (16 xona):"
+msgstr "Enter the card number (16 digits):"
+
+#: apps/core/botlib/handlers.py:682
+#, python-format
+msgid ""
+"✅ Hisob to'ldirildi.\n"
+"Balans: %(balance)s so'm"
+msgstr ""
+"✅ Account topped up.\n"
+"Balance: %(balance)s UZS"
+
+#: apps/core/botlib/handlers.py:698
+msgid "Pul o'tkaziladigan karta raqamini yozing:"
+msgstr "Enter the card number to transfer the money to:"
+
+#: apps/core/botlib/handlers.py:710
+#, python-format
+msgid ""
+"✅ So'rov yuborildi. Administrator tasdiqlagach pul kartangizga "
+"o'tkaziladi.\n"
+"Balans: %(balance)s so'm"
+msgstr ""
+"✅ Request sent. Once the administrator approves it, the money will be "
+"transferred to your card.\n"
+"Balance: %(balance)s UZS"
+
+#: apps/core/botlib/handlers.py:722
+msgid "Qidiruv bekor qilindi."
+msgstr "Search cancelled."
+
+#: apps/core/botlib/handlers.py:756
+msgid "Kod noto'g'ri yoki muddati o'tgan. Saytdan yangi kod oling."
+msgstr "The code is wrong or expired. Get a new one on the website."
+
+#: apps/core/botlib/handlers.py:769
+#, python-format
+msgid "✅ Hisob ulandi: <b>%(name)s</b>"
+msgstr "✅ Account linked: <b>%(name)s</b>"
+
+#: apps/core/botlib/handlers.py:795
+msgid "Kitob nomi yoki muallif ismini yozing:"
+msgstr "Type a book title or author name:"
+
+#: apps/core/botlib/handlers.py:806
+msgid "Hali kitob sotib olmagansiz."
+msgstr "You haven't bought any books yet."
+
+#: apps/core/botlib/handlers.py:810
+msgid "<b>Mening kutubxonam</b>"
+msgstr "<b>My library</b>"
+
+#: apps/core/botlib/handlers.py:834
+msgid "Istaklar ro'yxati bo'sh. Katalogdan kitob qo'shing."
+msgstr "Your wishlist is empty. Add a book from the catalogue."
+
+#: apps/core/botlib/handlers.py:837
+msgid "<b>Istaklarim</b>"
+msgstr "<b>My wishlist</b>"
+
+#: apps/core/botlib/handlers.py:859
+msgid "💳 To'ldirish"
+msgstr "💳 Top up"
+
+#: apps/core/botlib/handlers.py:863 apps/core/botlib/handlers.py:923
+msgid "🏧 Pul yechish"
+msgstr "🏧 Withdraw"
+
+#: apps/core/botlib/handlers.py:867
+#, python-format
+msgid "💰 <b>Balansingiz:</b> %(amount)s so'm"
+msgstr "💰 <b>Your balance:</b> %(amount)s so'm"
+
+#: apps/core/botlib/handlers.py:879
+msgid "Kitob qo'shish uchun sotuvchi rejimiga o'ting."
+msgstr "Switch to seller mode to add a book."
+
+#: apps/core/botlib/handlers.py:893 templates/books/my_books.html:41
+#: templates/books/seller_dashboard.html:101
+msgid "Hali kitob qo'shmagansiz."
+msgstr "You haven't added any books yet."
+
+#: apps/core/botlib/handlers.py:896
+msgid "<b>Mening kitoblarim</b>"
+msgstr "<b>My books</b>"
+
+#: apps/core/botlib/handlers.py:902
+#, python-format
+msgid "   %(price)s so'm · %(sold)s marta sotilgan"
+msgstr "   %(price)s UZS · sold %(sold)s times"
+
+#: apps/core/botlib/handlers.py:927
+msgid "📊 To'liq kabinet"
+msgstr "📊 Full dashboard"
+
+#: apps/core/botlib/handlers.py:931
+msgid "<b>Savdo hisoboti</b>"
+msgstr "<b>Sales report</b>"
+
+#: apps/core/botlib/handlers.py:933
+#, python-format
+msgid "Sotilgan: %(count)s ta"
+msgstr "Sold: %(count)s"
+
+#: apps/core/botlib/handlers.py:934
+#, python-format
+msgid "Daromad: %(amount)s so'm"
+msgstr "Revenue: %(amount)s so'm"
+
+#: apps/core/botlib/handlers.py:935
+#, python-format
+msgid "Balans: %(amount)s so'm"
+msgstr "Balance: %(amount)s so'm"
+
+#: apps/core/botlib/handlers.py:938
+msgid "<b>Oxirgi sotuvlar:</b>"
+msgstr "<b>Recent sales:</b>"
+
+#: apps/core/botlib/handlers.py:958
+msgid "Hali yozishma yo'q. Kitob sahifasidan sotuvchiga savol bering."
+msgstr "No messages yet. Ask the seller a question from a book page."
+
+#: apps/core/botlib/handlers.py:963
+msgid "<b>Xabarlar</b>"
+msgstr "<b>Messages</b>"
+
+#: apps/core/botlib/handlers.py:997
+msgid "🔔 Bildirishnoma: yoqilgan"
+msgstr "🔔 Notifications: on"
+
+#: apps/core/botlib/handlers.py:997
+msgid "🔕 Bildirishnoma: o'chiq"
+msgstr "🔕 Notifications: off"
+
+#: apps/core/botlib/handlers.py:1008
+#, python-format
+msgid "🔄 %(role)s bo'lish"
+msgstr "🔄 Become a %(role)s"
+
+#: apps/core/botlib/handlers.py:1018
+msgid "🌐 Saytdagi sozlamalar"
+msgstr "🌐 Settings on the website"
+
+#: apps/core/botlib/handlers.py:1024
+#, python-format
+msgid ""
+"<b>Sozlamalar</b>\n"
+"\n"
+"Hisob: <b>%(name)s</b>\n"
+"Rol: %(role)s\n"
+"Til: %(lang)s\n"
+"Balans: %(balance)s so'm"
+msgstr ""
+"<b>Settings</b>\n"
+"\n"
+"Account: <b>%(name)s</b>\n"
+"Role: %(role)s\n"
+"Language: %(lang)s\n"
+"Balance: %(balance)s UZS"
+
+#: apps/core/botlib/handlers.py:1051
+msgid "Avval hisobingizni ulang."
+msgstr "Link your account first."
+
+#: apps/core/botlib/handlers.py:1089
+#, python-format
+msgid ""
+"<b>%(title)s</b>\n"
+"Narx: %(price)s so'm\n"
+"Sotilgan: %(sold)s ta\n"
+"Daromad: %(earned)s so'm\n"
+"Holat: %(state)s"
+msgstr ""
+"<b>%(title)s</b>\n"
+"Price: %(price)s UZS\n"
+"Sold: %(sold)s\n"
+"Revenue: %(earned)s UZS\n"
+"Status: %(state)s"
+
+#: apps/core/botlib/handlers.py:1100
+msgid "sotuvda"
+msgstr "on sale"
+
+#: apps/core/botlib/handlers.py:1100
+msgid "sotuvda emas"
+msgstr "not on sale"
+
+#: apps/core/botlib/handlers.py:1124
+#, python-format
+msgid "«%(title)s» uchun yangi narxni yozing (hozirgi: %(price)s):"
+msgstr "Enter the new price for «%(title)s» (current: %(price)s):"
+
+#: apps/core/botlib/handlers.py:1142
+msgid "Sotuvga qo'yildi"
+msgstr "Put on sale"
+
+#: apps/core/botlib/handlers.py:1142
+msgid "Sotuvdan olindi"
+msgstr "Removed from sale"
+
+#: apps/core/botlib/handlers.py:1166
+msgid "Ha, o'chirilsin"
+msgstr "Yes, delete it"
+
+#: apps/core/botlib/handlers.py:1167
+msgid "Yo'q"
+msgstr "No"
+
+#: apps/core/botlib/handlers.py:1171
+#, python-format
+msgid "«%(title)s» butunlay o'chirilsinmi?"
+msgstr "Delete «%(title)s» permanently?"
+
+#: apps/core/botlib/handlers.py:1188
+msgid "O'chirildi"
+msgstr "Deleted"
+
+#: apps/core/botlib/handlers.py:1190
+#, python-format
+msgid "🗑 «%(title)s» o'chirildi."
+msgstr "🗑 «%(title)s» was deleted."
+
+#: apps/core/botlib/handlers.py:1207
+msgid "Istaklardan olib tashlandi"
+msgstr "Removed from wishlist"
+
+#: apps/core/botlib/handlers.py:1210
+msgid "Istaklarga qo'shildi"
+msgstr "Added to wishlist"
+
+#: apps/core/botlib/handlers.py:1234
+msgid "Yoqtirish olib tashlandi"
+msgstr "Like removed"
+
+#: apps/core/botlib/handlers.py:1237 templates/books/checkout.html:100
+msgid "Yoqtirdingiz"
+msgstr "You liked it"
+
+#: apps/core/botlib/handlers.py:1258
+msgid "Nechta yulduz berasiz?"
+msgstr "How many stars do you give?"
+
+#: apps/core/botlib/handlers.py:1274
+msgid "Fikringizni yozing:"
+msgstr "Write your review:"
+
+#: apps/core/botlib/handlers.py:1287
+msgid "Bu kitobga hali sharh yozilmagan."
+msgstr "This book has no reviews yet."
+
+#: apps/core/botlib/handlers.py:1289
+#, python-format
+msgid "<b>Sharhlar — %(title)s</b>"
+msgstr "<b>Reviews — %(title)s</b>"
+
+#: apps/core/botlib/handlers.py:1309
+msgid "Bu sizning kitobingiz."
+msgstr "This is your own book."
+
+#: apps/core/botlib/handlers.py:1319
+#, python-format
+msgid "«%(title)s» bo'yicha savolingizni yozing:"
+msgstr "Write your question about «%(title)s»:"
+
+#: apps/core/botlib/handlers.py:1345
+#, python-format
+msgid "<b>%(name)s</b> — %(title)s"
+msgstr "<b>%(name)s</b> — %(title)s"
+
+#: apps/core/botlib/handlers.py:1350
+msgid "Siz"
+msgstr "You"
+
+#: apps/core/botlib/handlers.py:1355
+msgid "✍️ Javob yozish"
+msgstr "✍️ Reply"
+
+#: apps/core/botlib/handlers.py:1376
+msgid "Javobingizni yozing:"
+msgstr "Write your reply:"
+
+#: apps/core/botlib/handlers.py:1389
+#, python-format
+msgid "Qancha to'ldirasiz? (%(min)s — %(max)s so'm)"
+msgstr "How much do you want to add? (%(min)s — %(max)s UZS)"
+
+#: apps/core/botlib/handlers.py:1402
+msgid "Bu faqat sotuvchilar uchun."
+msgstr "This is for sellers only."
+
+#: apps/core/botlib/handlers.py:1407
+#, python-format
+msgid "Qancha yechasiz? (eng kam %(min)s so'm, balans %(balance)s so'm)"
+msgstr ""
+"How much do you want to withdraw? (minimum %(min)s UZS, balance %(balance)s "
+"UZS)"
+
+#: apps/core/botlib/handlers.py:1422
+msgid "Til o'zgartirildi"
+msgstr "Language changed"
+
+#: apps/core/botlib/handlers.py:1424
+msgid "Til o'zgartirildi."
+msgstr "Language changed."
+
+#: apps/core/botlib/handlers.py:1438
+msgid "Bildirishnoma yoqildi"
+msgstr "Notifications enabled"
+
+#: apps/core/botlib/handlers.py:1438
+msgid "Bildirishnoma o'chirildi"
+msgstr "Notifications disabled"
+
+#: apps/core/botlib/handlers.py:1458
+msgid "Rol o'zgartirildi"
+msgstr "Role changed"
+
+#: apps/core/botlib/handlers.py:1461
+#, python-format
+msgid "Yangi rol: <b>%(role)s</b>"
+msgstr "New role: <b>%(role)s</b>"
+
+#: apps/core/botlib/handlers.py:1479
+msgid "Sotib olish uchun xaridor rejimiga o'ting."
+msgstr "Switch to buyer mode to purchase."
+
+#: apps/core/botlib/handlers.py:1483
+msgid "Bu kitob sizda bor."
+msgstr "You already have this book."
+
+#: apps/core/botlib/handlers.py:1488 templates/accounts/settings.html:107
+#: templates/accounts/telegram.html:7 templates/core/home.html:88
+msgid "Telegram bot"
+msgstr "Telegram bot"
+
+#: apps/core/botlib/handlers.py:1493
+msgid "Sotib olindi!"
+msgstr "Purchased!"
+
+#: apps/core/botlib/handlers.py:1496
+#, python-format
+msgid ""
+"✅ <b>%(book)s</b> sotib olindi.\n"
+"Balans: %(balance)s so'm"
+msgstr ""
+"✅ <b>%(book)s</b> purchased.\n"
+"Balance: %(balance)s UZS"
+
+#: apps/core/botlib/ui.py:70
+msgid "📥 Faylni olish"
+msgstr "📥 Get the file"
+
+#: apps/core/botlib/ui.py:75
+#, python-format
+msgid "💳 Sotib olish · %(price)s"
+msgstr "💳 Buy · %(price)s"
+
+#: apps/core/botlib/ui.py:85
+msgid "★ Istaklarda"
+msgstr "★ In wishlist"
+
+#: apps/core/botlib/ui.py:85
+msgid "☆ Istaklarga"
+msgstr "☆ Add to wishlist"
+
+#: apps/core/botlib/ui.py:95
+msgid "⭐ Baho berish"
+msgstr "⭐ Rate"
+
+#: apps/core/botlib/ui.py:98
+msgid "💬 Sotuvchiga savol"
+msgstr "💬 Ask the seller"
+
+#: apps/core/botlib/ui.py:105
+msgid "✏️ Tahrirlash"
+msgstr "✏️ Edit"
+
+#: apps/core/botlib/ui.py:111
+#, python-format
+msgid "💬 Sharhlar (%(count)s)"
+msgstr "💬 Reviews (%(count)s)"
+
+#: apps/core/botlib/ui.py:117 apps/core/botlib/ui.py:138
+msgid "🌐 Saytda ochish"
+msgstr "🌐 Open on the website"
+
+#: apps/core/botlib/ui.py:127
+msgid "💰 Narxni o'zgartirish"
+msgstr "💰 Change price"
+
+#: apps/core/botlib/ui.py:131
+msgid "🚫 Sotuvdan olish"
+msgstr "🚫 Remove from sale"
+
+#: apps/core/botlib/ui.py:131
+msgid "✅ Sotuvga qo'yish"
+msgstr "✅ Put on sale"
+
+#: apps/core/botlib/ui.py:134
+msgid "🗑 O'chirish"
+msgstr "🗑 Delete"
+
+#: apps/core/botlib/ui.py:185 templates/accounts/settings.html:98
+#: templates/accounts/topup.html:12 templates/accounts/topup.html:58
+#: templates/accounts/withdrawal.html:16 templates/books/_book_card.html:24
+#: templates/books/checkout.html:83 templates/books/checkout.html:87
+#: templates/books/detail.html:37 templates/books/my_library.html:6
+#: templates/books/seller_dashboard.html:23
+#: templates/books/seller_dashboard.html:46
+#: templates/books/seller_dashboard.html:127 templates/books/wishlist.html:21
+#: templates/core/admin_withdrawals.html:19
+msgid "so'm"
+msgstr "UZS"
+
+#: apps/core/botlib/ui.py:186 templates/books/my_library.html:26
+msgid "sahifa"
+msgstr "page"
+
+#: apps/core/botlib/ui.py:191 templates/books/seller_dashboard.html:92
+msgid "Sotuvda emas"
+msgstr "Not for sale"
+
+#: apps/core/telegram.py:88
+#, python-format
+msgid ""
+"💬 <b>%(sender)s</b> sizga yozdi\n"
+"<i>%(book)s</i>\n"
+"\n"
+"%(text)s"
+msgstr ""
+"💬 <b>%(sender)s</b> wrote to you\n"
+"<i>%(book)s</i>\n"
+"\n"
+"%(text)s"
+
+#: apps/core/telegram.py:101
+#, python-format
+msgid ""
+"🎉 <b>Kitobingiz sotildi!</b>\n"
+"<i>%(book)s</i>\n"
+"Xaridor: %(buyer)s\n"
+"Summa: %(amount)s so'm"
+msgstr ""
+"🎉 <b>Your book was sold!</b>\n"
+"<i>%(book)s</i>\n"
+"Buyer: %(buyer)s\n"
+"Amount: %(amount)s UZS"
+
+#: apps/core/telegram.py:118
+#, python-format
+msgid ""
+"✅ <b>To'lov amalga oshirildi</b>\n"
+"%(amount)s so'm → %(card)s"
+msgstr ""
+"✅ <b>Payment completed</b>\n"
+"%(amount)s UZS → %(card)s"
+
+#: apps/core/telegram.py:123
+#, python-format
+msgid ""
+"❌ <b>Pul yechish so'rovi rad etildi</b>\n"
+"%(amount)s so'm balansga qaytarildi."
+msgstr ""
+"❌ <b>Withdrawal request rejected</b>\n"
+"%(amount)s UZS was returned to your balance."
+
+#: apps/core/telegram.py:135 templates/base.html:131
+msgid "Administratordan xabar"
+msgstr "Message from the administrator"
+
+#: apps/core/views.py:93
+msgid "Ochiq havo"
+msgstr "Clear"
+
+#: apps/core/views.py:94
+msgid "Deyarli ochiq"
+msgstr "Mostly clear"
+
+#: apps/core/views.py:95
+msgid "Bulutli oraliq"
+msgstr "Partly cloudy"
+
+#: apps/core/views.py:96
+msgid "Bulutli"
+msgstr "Cloudy"
+
+#: apps/core/views.py:97
+msgid "Tuman"
+msgstr "Fog"
+
+#: apps/core/views.py:98
+msgid "Muzli tuman"
+msgstr "Freezing fog"
+
+#: apps/core/views.py:99
+msgid "Mayda yomg'ir"
+msgstr "Drizzle"
+
+#: apps/core/views.py:100 apps/core/views.py:105
+msgid "Yomg'ir"
+msgstr "Rain"
+
+#: apps/core/views.py:101 apps/core/views.py:106
+msgid "Kuchli yomg'ir"
+msgstr "Heavy rain"
+
+#: apps/core/views.py:102 apps/core/views.py:107
+msgid "Muzli yomg'ir"
+msgstr "Freezing rain"
+
+#: apps/core/views.py:103 apps/core/views.py:108
+msgid "Kuchli muzli yomg'ir"
+msgstr "Heavy freezing rain"
+
+#: apps/core/views.py:104
+msgid "Yengil yomg'ir"
+msgstr "Light rain"
+
+#: apps/core/views.py:109
+msgid "Yengil qor"
+msgstr "Light snow"
+
+#: apps/core/views.py:110
+msgid "Qor"
+msgstr "Snow"
+
+#: apps/core/views.py:111
+msgid "Kuchli qor"
+msgstr "Heavy snow"
+
+#: apps/core/views.py:112
+msgid "Qor donachalari"
+msgstr "Snow grains"
+
+#: apps/core/views.py:113
+msgid "Jala"
+msgstr "Showers"
+
+#: apps/core/views.py:114
+msgid "Kuchli jala"
+msgstr "Heavy showers"
+
+#: apps/core/views.py:115
+msgid "Juda kuchli jala"
+msgstr "Violent showers"
+
+#: apps/core/views.py:116
+msgid "Qor jalasi"
+msgstr "Snow showers"
+
+#: apps/core/views.py:117
+msgid "Kuchli qor jalasi"
+msgstr "Heavy snow showers"
+
+#: apps/core/views.py:118
+msgid "Momaqaldiroq"
+msgstr "Thunderstorm"
+
+#: apps/core/views.py:119
+msgid "Do'l bilan momaqaldiroq"
+msgstr "Thunderstorm with hail"
+
+#: apps/core/views.py:120
+msgid "Kuchli do'l"
+msgstr "Heavy hail"
+
+#: apps/core/views.py:125
+msgid "Yakshanba"
+msgstr "Sunday"
+
+#: apps/core/views.py:125
+msgid "Dushanba"
+msgstr "Monday"
+
+#: apps/core/views.py:125
+msgid "Seshanba"
+msgstr "Tuesday"
+
+#: apps/core/views.py:125
+msgid "Chorshanba"
+msgstr "Wednesday"
+
+#: apps/core/views.py:126
+msgid "Payshanba"
+msgstr "Thursday"
+
+#: apps/core/views.py:126
+msgid "Juma"
+msgstr "Friday"
+
+#: apps/core/views.py:126
+msgid "Shanba"
+msgstr "Saturday"
+
+#: apps/core/views.py:131
+msgid "yanvar"
+msgstr "January"
+
+#: apps/core/views.py:131
+msgid "fevral"
+msgstr "February"
+
+#: apps/core/views.py:131
+msgid "mart"
+msgstr "March"
+
+#: apps/core/views.py:131
+msgid "aprel"
+msgstr "April"
+
+#: apps/core/views.py:131
+msgid "may"
+msgstr "May"
+
+#: apps/core/views.py:131
+msgid "iyun"
+msgstr "June"
+
+#: apps/core/views.py:132
+msgid "iyul"
+msgstr "July"
+
+#: apps/core/views.py:132
+msgid "avgust"
+msgstr "August"
+
+#: apps/core/views.py:132
+msgid "sentabr"
+msgstr "September"
+
+#: apps/core/views.py:132
+msgid "oktabr"
+msgstr "October"
+
+#: apps/core/views.py:132
+msgid "noyabr"
+msgstr "November"
+
+#: apps/core/views.py:132
+msgid "dekabr"
+msgstr "December"
+
+#: apps/core/views.py:134
+msgid "Bugun"
+msgstr "Today"
+
+#: apps/core/views.py:135
+msgid "Ertaga"
+msgstr "Tomorrow"
+
+#: apps/core/views.py:136
+msgid "his qiladi"
+msgstr "feels like"
+
+#: apps/core/views.py:137
+msgid "Namlik"
+msgstr "Humidity"
+
+#: apps/core/views.py:138
+msgid "Shamol"
+msgstr "Wind"
+
+#: apps/core/views.py:139
+msgid "km/soat"
+msgstr "km/h"
+
+#: apps/core/views.py:140
+msgid "Bosim"
+msgstr "Pressure"
+
+#: apps/core/views.py:141
+msgid "UF-indeks"
+msgstr "UV index"
+
+#: apps/core/views.py:142
+msgid "Yog'ingarchilik"
+msgstr "Precipitation"
+
+#: apps/core/views.py:143
+msgid "Quyosh"
+msgstr "Sun"
+
+#: apps/core/views.py:144
+msgid "Ob-havo ma'lumotini olib bo'lmadi."
+msgstr "Could not load the weather data."
+
+#: apps/core/views.py:145
+msgid "Brauzeringiz joylashuvni aniqlay olmaydi."
+msgstr "Your browser cannot determine your location."
+
+#: apps/core/views.py:146
+msgid "Joylashuvni aniqlab bo'lmadi. Ro'yxatdan shahar tanlang."
+msgstr "Could not determine your location. Pick a city from the list."
+
+#: templates/accounts/admin_login.html:3 templates/accounts/admin_login.html:6
+msgid "Administrator kirishi"
+msgstr "Administrator login"
+
+#: templates/accounts/admin_login.html:7
+msgid "Bu sahifa faqat tizim administratorlari uchun."
+msgstr "This page is only for system administrators."
+
+#: templates/accounts/admin_login.html:18 templates/accounts/login.html:3
+#: templates/accounts/login.html:17
+#: templates/accounts/password_reset_complete.html:8
+#: templates/accounts/register.html:21 templates/base.html:118
+#: templates/core/home.html:105
+msgid "Kirish"
+msgstr "Login"
+
+#: templates/accounts/login.html:6
+msgid "Tizimga kirish"
+msgstr "Sign in"
+
+#: templates/accounts/login.html:19
+msgid "Parolni unutdingizmi?"
+msgstr "Forgot your password?"
+
+#: templates/accounts/login.html:20
+msgid "Akkountingiz yo'qmi?"
+msgstr "Don't have an account?"
+
+#: templates/accounts/login.html:20 templates/accounts/register.html:3
+#: templates/accounts/register.html:6 templates/accounts/register.html:18
+#: templates/base.html:119 templates/base.html:181 templates/core/home.html:10
+#: templates/core/home.html:42
+msgid "Ro'yxatdan o'tish"
+msgstr "Register"
+
+#: templates/accounts/password_reset.html:3
+#: templates/accounts/password_reset.html:6
+msgid "Parolni tiklash"
+msgstr "Reset password"
+
+#: templates/accounts/password_reset.html:8
+msgid ""
+"Ro'yxatdan o'tishda ko'rsatgan email manzilingizni kiriting - tiklash "
+"havolasini yuboramiz."
+msgstr "Enter the email you registered with - we'll send you a reset link."
+
+#: templates/accounts/password_reset.html:17 templates/books/_reviews.html:35
+#: templates/books/conversation.html:35 templates/books/detail.html:99
+#: templates/books/detail.html:128 templates/core/admin_broadcast.html:24
+#: templates/core/admin_user_detail.html:61 templates/core/ai_assistant.html:41
+msgid "Yuborish"
+msgstr "Submit"
+
+#: templates/accounts/password_reset.html:19
+#: templates/accounts/password_reset_done.html:22
+msgid "Kirish sahifasiga qaytish"
+msgstr "Back to the login page"
+
+#: templates/accounts/password_reset_complete.html:3
+#: templates/accounts/password_reset_complete.html:6
+msgid "Parol o'zgartirildi"
+msgstr "Password changed"
+
+#: templates/accounts/password_reset_complete.html:7
+msgid "Endi yangi parol bilan kirishingiz mumkin."
+msgstr "You can now sign in with your new password."
+
+#: templates/accounts/password_reset_confirm.html:18
+msgid "Parolni o'zgartirish"
+msgstr "Change password"
+
+#: templates/accounts/password_reset_confirm.html:21
+msgid "Havola eskirgan"
+msgstr "The link has expired"
+
+#: templates/accounts/password_reset_confirm.html:22
+msgid ""
+"Bu havola allaqachon ishlatilgan yoki muddati o'tgan. Qaytadan urinib "
+"ko'ring."
+msgstr "This link has already been used or has expired. Please try again."
+
+#: templates/accounts/password_reset_confirm.html:23
+msgid "Qaytadan so'rash"
+msgstr "Request again"
+
+#: templates/accounts/password_reset_done.html:3
+#: templates/accounts/password_reset_done.html:6
+msgid "Havola yuborildi"
+msgstr "Link sent"
+
+#: templates/accounts/password_reset_done.html:9
+msgid ""
+"Agar bunday email ro'yxatdan o'tgan bo'lsa, tiklash havolasi yuborildi. "
+"Pochtangizni tekshiring (spam papkasini ham)."
+msgstr ""
+"If that email is registered, a reset link has been sent. Check your inbox "
+"(and the spam folder)."
+
+#: templates/accounts/password_reset_done.html:11
+msgid "Email xizmati sozlanmagan, shuning uchun xat yuborilmadi."
+msgstr "The email service is not configured, so no message was sent."
+
+#: templates/accounts/password_reset_done.html:16
+msgid "Ishlab chiqish rejimi"
+msgstr "Development mode"
+
+#: templates/accounts/password_reset_done.html:17
+msgid "SMTP sozlanmagani uchun havola shu yerda ko'rsatilyapti:"
+msgstr "Since SMTP is not configured, the link is shown here:"
+
+#: templates/accounts/password_reset_email.txt:1
+#, python-format
+msgid "Assalomu alaykum, %(user)s!"
+msgstr "Hello, %(user)s!"
+
+#: templates/accounts/password_reset_email.txt:3
+msgid ""
+"Elektron Kutubxona saytida parolni tiklash so'raldi. Yangi parol o'rnatish "
+"uchun quyidagi havolaga o'ting:"
+msgstr ""
+"A password reset was requested on Electronic Library. Follow the link below "
+"to set a new password:"
+
+#: templates/accounts/password_reset_email.txt:7
+msgid ""
+"Agar bu siz bo'lmasangiz, bu xatni e'tiborsiz qoldiring - parolingiz "
+"o'zgarmaydi."
+msgstr "If this wasn't you, ignore this email — your password will not change."
+
+#: templates/accounts/register.html:20
+msgid "Akkountingiz bormi?"
+msgstr "Already have an account?"
+
+#: templates/accounts/role_select.html:3
+msgid "Rol tanlash"
+msgstr "Choose role"
+
+#: templates/accounts/role_select.html:7
+msgid "Siz kim bo'lib kirmoqchisiz?"
+msgstr "Who do you want to be?"
+
+#: templates/accounts/role_select.html:9
+msgid "Buni keyinroq sozlamalardan istalgan vaqtda o'zgartirishingiz mumkin."
+msgstr "You can change this at any time in settings."
+
+#: templates/accounts/role_select.html:27
+msgid "Kitob qo'shasiz va sotasiz"
+msgstr "You add and sell books"
+
+#: templates/accounts/role_select.html:29
+msgid "Kitob sotib olasiz va o'qiysiz"
+msgstr "You buy and read books"
+
+#: templates/accounts/role_select.html:40
+msgid "Tasdiqlash"
+msgstr "Confirm"
+
+#: templates/accounts/settings.html:3 templates/accounts/settings.html:9
+#: templates/accounts/topup.html:6 templates/base.html:103
+#: templates/base.html:179 templates/core/home.html:100
+msgid "Sozlamalar"
+msgstr "Settings"
+
+#: templates/accounts/settings.html:7 templates/books/checkout.html:6
+#: templates/books/conversations.html:6 templates/books/read.html:16
+#: templates/books/seller_dashboard.html:6 templates/core/ai_assistant.html:6
+#: templates/core/weather.html:6
+msgid "Orqaga"
+msgstr "Back"
+
+#: templates/accounts/settings.html:16
+msgid "Sotuvchi rejimida kitob sotasiz, xaridor rejimida kitob sotib olasiz."
+msgstr "In seller mode you sell books, in buyer mode you buy them."
+
+#: templates/accounts/settings.html:29
+msgid "Ko'rinish"
+msgstr "Appearance"
+
+#: templates/accounts/settings.html:30
+msgid "Sayt mavzusi va tilini tanlang."
+msgstr "Choose the site theme and language."
+
+#: templates/accounts/settings.html:60
+msgid "Profil"
+msgstr "Profile"
+
+#: templates/accounts/settings.html:61
+msgid "Bu ma'lumotlar sizning sahifangizda ko'rinadi."
+msgstr "This information appears on your page."
+
+#: templates/accounts/settings.html:69
+msgid "Joriy rasm"
+msgstr "Current photo"
+
+#: templates/accounts/settings.html:93
+msgid "Hisob"
+msgstr "Account"
+
+#: templates/accounts/settings.html:100 templates/accounts/topup.html:45
+msgid "To'ldirish"
+msgstr "Top up"
+
+#: templates/accounts/settings.html:109
+msgid ""
+"Katalogni ko'rish, kitob sotib olish va bildirishnomalar uchun botni ulang."
+msgstr "Link the bot to browse the catalogue, buy books and get notifications."
+
+#: templates/accounts/settings.html:112
+msgid "Ulangan"
+msgstr "Linked"
+
+#: templates/accounts/settings.html:112
+msgid "Telegram'ni ulash"
+msgstr "Link Telegram"
+
+#: templates/accounts/settings.html:117
+msgid "Yordam"
+msgstr "Help"
+
+#: templates/accounts/settings.html:118
+msgid "Savol yoki muammo bo'lsa, administratorga yozing."
+msgstr "If you have a question or problem, write to the administrator."
+
+#: templates/accounts/settings.html:120 templates/core/home.html:111
+msgid "Administrator bilan bog'lanish"
+msgstr "Contact the administrator"
+
+#: templates/accounts/settings.html:125 templates/books/author_form.html:16
+#: templates/books/book_form.html:36
+msgid "Saqlash"
+msgstr "Save"
+
+#: templates/accounts/settings.html:126
+msgid "Bekor qilish"
+msgstr "Cancel"
+
+#: templates/accounts/telegram.html:3 templates/base.html:163
+msgid "Telegram"
+msgstr "Telegram"
+
+#: templates/accounts/telegram.html:6
+msgid "Sozlamalarga"
+msgstr "To settings"
+
+#: templates/accounts/telegram.html:11
+msgid "Bot hali sozlanmagan. .env faylida TELEGRAM_BOT_TOKEN ni to'ldiring."
+msgstr ""
+"The bot is not configured yet. Set TELEGRAM_BOT_TOKEN in the .env file."
+
+#: templates/accounts/telegram.html:19
+msgid "Telegram ulangan"
+msgstr "Telegram linked"
+
+#: templates/accounts/telegram.html:22
+msgid "ulangan"
+msgstr "linked"
+
+#: templates/accounts/telegram.html:28
+msgid "Uzish"
+msgstr "Disconnect"
+
+#: templates/accounts/telegram.html:39
+msgid ""
+"Kitobingiz sotilganda, xabar kelganda va to'lov tasdiqlanganda Telegram'ga "
+"xabar keladi."
+msgstr ""
+"You will get a Telegram message when your book is sold, when someone writes "
+"to you and when a payout is approved."
+
+#: templates/accounts/telegram.html:46
+msgid "Yoqilgan"
+msgstr "On"
+
+#: templates/accounts/telegram.html:46
+msgid "O'chirilgan"
+msgstr "Off"
+
+#: templates/accounts/telegram.html:53
+msgid "Botni ulash"
+msgstr "Link the bot"
+
+#: templates/accounts/telegram.html:57
+msgid "Telegram'da botni oching:"
+msgstr "Open the bot in Telegram:"
+
+#: templates/accounts/telegram.html:60
+msgid "Telegram'da botni oching va /start yuboring"
+msgstr "Open the bot in Telegram and send /start"
+
+#: templates/accounts/telegram.html:63
+msgid "Quyidagi kodni botga yuboring"
+msgstr "Send the code below to the bot"
+
+#: templates/accounts/telegram.html:69
+msgid "Kod 15 daqiqa amal qiladi."
+msgstr "The code is valid for 15 minutes."
+
+#: templates/accounts/telegram.html:76
+msgid "Yangi kod olish"
+msgstr "Get a new code"
+
+#: templates/accounts/telegram.html:76
+msgid "Kod olish"
+msgstr "Get a code"
+
+#: templates/accounts/telegram.html:83
+msgid "Bot nima qila oladi"
+msgstr "What the bot can do"
+
+#: templates/accounts/telegram.html:85
+msgid "Katalogni ko'rish va qidirish"
+msgstr "Browse and search the catalogue"
+
+#: templates/accounts/telegram.html:86
+msgid "Balansdan kitob sotib olish"
+msgstr "Buying books from your balance"
+
+#: templates/accounts/telegram.html:87
+msgid "Sotib olingan kitobni PDF ko'rinishida olish"
+msgstr "Get purchased books as PDF"
+
+#: templates/accounts/telegram.html:88
+msgid "Istaklar ro'yxatini boshqarish"
+msgstr "Manage your wishlist"
+
+#: templates/accounts/telegram.html:89
+msgid "Sotuv va xabarlar haqida bildirishnoma"
+msgstr "Notifications about sales and messages"
+
+#: templates/accounts/telegram.html:92
+msgid "Kitob qo'shish, balansni to'ldirish va sozlamalar saytda bajariladi."
+msgstr "Adding books, topping up and settings are done on the website."
+
+#: templates/accounts/topup.html:3 templates/accounts/topup.html:7
+#: templates/core/home.html:77
+msgid "Hisobni to'ldirish"
+msgstr "Top up balance"
+
+#: templates/accounts/topup.html:11
+msgid "Joriy balans"
+msgstr "Current balance"
+
+#: templates/accounts/topup.html:42 templates/books/checkout.html:43
+msgid ""
+"Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari "
+"saqlanmaydi."
+msgstr ""
+"This is a study project — no real payment is made and card details are not "
+"stored."
+
+#: templates/accounts/topup.html:50
+msgid "To'ldirishlar tarixi"
+msgstr "Top-up history"
+
+#: templates/accounts/topup.html:53 templates/core/admin_dashboard.html:36
+#: templates/core/admin_users.html:28
+msgid "Sana"
+msgstr "Date"
+
+#: templates/accounts/topup.html:53 templates/core/admin_withdrawals.html:16
+msgid "Karta"
+msgstr "Card"
+
+#: templates/accounts/withdrawal.html:3 templates/accounts/withdrawal.html:8
+#: templates/books/seller_dashboard.html:129
+msgid "Pul yechish"
+msgstr "Withdraw"
+
+#: templates/accounts/withdrawal.html:7
+msgid "Kabinetga"
+msgstr "To dashboard"
+
+#: templates/accounts/withdrawal.html:13
+msgid "Mavjud balans"
+msgstr "Available balance"
+
+#: templates/accounts/withdrawal.html:14
+msgid "Kitob sotuvidan tushgan mablag'"
+msgstr "Earnings from book sales"
+
+#: templates/accounts/withdrawal.html:22
+msgid "So'rov ko'rib chiqilmoqda"
+msgstr "Request under review"
+
+#: templates/accounts/withdrawal.html:24
+#, python-format
+msgid ""
+"\n"
+"          %(amount)s so'm %(card)s kartasiga o'tkazilishi kutilmoqda.\n"
+"        "
+msgstr ""
+"\n"
+"          %(amount)s UZS is waiting to be transferred to card %(card)s.\n"
+"        "
+
+#: templates/accounts/withdrawal.html:29
+msgid "Yangi so'rov yuborish uchun avval shu so'rov ko'rib chiqilishi kerak."
+msgstr "Wait for this request to be reviewed before submitting a new one."
+
+#: templates/accounts/withdrawal.html:34
+msgid "Yangi so'rov"
+msgstr "New request"
+
+#: templates/accounts/withdrawal.html:36
+#, python-format
+msgid "Eng kam summa — %(min)s so'm."
+msgstr "The minimum amount is %(min)s so'm."
+
+#: templates/accounts/withdrawal.html:37
+msgid "Summa so'rov yuborilishi bilan balansdan ushlab qolinadi."
+msgstr "The amount is held from your balance as soon as the request is sent."
+
+#: templates/accounts/withdrawal.html:50
+msgid "So'rov yuborish"
+msgstr "Submit request"
+
+#: templates/accounts/withdrawal.html:56
+msgid "So'rovlar tarixi"
+msgstr "Request history"
+
+#: templates/accounts/withdrawal.html:71
+msgid "Hali so'rov yuborilmagan."
+msgstr "No requests yet."
+
+#: templates/base.html:7 templates/base.html:15 templates/base.html:157
+#: templates/base.html:187
+msgid "Elektron Kutubxona"
+msgstr "Electronic Library"
+
+#: templates/base.html:21 templates/books/my_library.html:3
+#: templates/books/my_library.html:5 templates/core/home.html:30
+msgid "Mening kutubxonam"
+msgstr "My library"
+
+#: templates/base.html:24 templates/books/wishlist.html:3
+#: templates/books/wishlist.html:6 templates/core/home.html:53
+msgid "Istaklarim"
+msgstr "My wishlist"
+
+#: templates/base.html:30 templates/core/home.html:36
+msgid "Kabinet"
+msgstr "Dashboard"
+
+#: templates/base.html:31 templates/books/book_form.html:6
+#: templates/books/my_books.html:3 templates/books/my_books.html:6
+#: templates/core/home.html:70
+msgid "Mening kitoblarim"
+msgstr "My books"
+
+#: templates/base.html:32 templates/books/my_books.html:7
+#: templates/books/seller_dashboard.html:15 templates/core/home.html:66
+msgid "Kitob qo'shish"
+msgstr "Add book"
+
+#: templates/base.html:35 templates/base.html:102
+#: templates/core/ai_assistant.html:3 templates/core/ai_assistant.html:9
+#: templates/core/home.html:84
+msgid "AI yordamchi"
+msgstr "AI assistant"
+
+#: templates/base.html:38 templates/core/admin_users.html:6
+msgid "Statistika"
+msgstr "Statistics"
+
+#: templates/base.html:40
+msgid "To'lovlar"
+msgstr "Payouts"
+
+#: templates/base.html:46
+msgid "Kitob qidirish..."
+msgstr "Search books..."
+
+#: templates/base.html:46
+msgid "Kitob qidirish"
+msgstr "Search books"
+
+#: templates/base.html:47 templates/core/admin_users.html:17
+msgid "Qidirish"
+msgstr "Search"
+
+#: templates/base.html:54
+msgid "Profil menyusi"
+msgstr "Profile menu"
+
+#: templates/base.html:106
+msgid "Chiqish"
+msgstr "Logout"
+
+#: templates/base.html:137
+msgid "Yopish"
+msgstr "Close"
+
+#: templates/base.html:158
+msgid "O'zbek, rus va ingliz tillaridagi elektron kitoblar bozori."
+msgstr "A marketplace for e-books in Uzbek, Russian and English."
+
+#: templates/base.html:162
+msgid "Bog'lanish"
+msgstr "Contact"
+
+#: templates/base.html:169
+msgid "Katalog"
+msgstr "Catalogue"
+
+#: templates/base.html:170 templates/core/home.html:121
+msgid "Yangi kitoblar"
+msgstr "New books"
+
+#: templates/base.html:171 templates/core/home.html:132
+msgid "Eng yuqori baholangan"
+msgstr "Top rated"
+
+#: templates/base.html:175
+msgid "Havolalar"
+msgstr "Links"
+
+#: templates/base.html:177 templates/core/home.html:94
+#: templates/core/weather.html:3
+msgid "Ob-havo"
+msgstr "Weather"
+
+#: templates/base.html:187
+msgid "Barcha huquqlar himoyalangan."
+msgstr "All rights reserved."
+
+#: templates/books/_book_card.html:27 templates/books/my_library.html:41
+#: templates/books/wishlist.html:27
+msgid "Batafsil"
+msgstr "Details"
+
+#: templates/books/_reviews.html:27
+msgid "Javob berish"
+msgstr "Reply"
+
+#: templates/books/_reviews.html:64
+msgid "Bu kitobga hali sharh yozilmagan. Birinchi bo'ling!"
+msgstr "This book has no reviews yet. Be the first!"
+
+#: templates/books/author_detail.html:7
+msgid "Tug'ilgan sana"
+msgstr "Date of birth"
+
+#: templates/books/author_detail.html:11
+msgid "Kitoblari"
+msgstr "Books"
+
+#: templates/books/author_detail.html:16
+msgid "Bu muallifning kitoblari yo'q."
+msgstr "This author has no books yet."
+
+#: templates/books/author_form.html:3 templates/books/author_list.html:8
+msgid "Muallif qo'shish"
+msgstr "Add author"
+
+#: templates/books/author_form.html:6 templates/books/book_form.html:11
+msgid "Yangi muallif qo'shish"
+msgstr "Add new author"
+
+#: templates/books/author_list.html:24
+msgid "kitob"
+msgstr "book"
+
+#: templates/books/author_list.html:27
+msgid "Mualliflar mavjud emas."
+msgstr "No authors yet."
+
+#: templates/books/book_form.html:13
+msgid "Yangi janr qo'shish"
+msgstr "Add a new genre"
+
+#: templates/books/book_form.html:25
+msgid "AI tavsif yozib bersin"
+msgstr "Let AI write the description"
+
+#: templates/books/catalog.html:3 templates/books/catalog.html:5
+#: templates/books/detail.html:6
+msgid "Kitoblar katalogi"
+msgstr "Book catalog"
+
+#: templates/books/catalog.html:36
+msgid "Filtrlash"
+msgstr "Filter"
+
+#: templates/books/checkout.html:3 templates/books/detail.html:51
+msgid "Sotib olish"
+msgstr "Buy"
+
+#: templates/books/checkout.html:7
+msgid "Buyurtmani rasmiylashtirish"
+msgstr "Checkout"
+
+#: templates/books/checkout.html:15
+msgid "To'lov"
+msgstr "Payment"
+
+#: templates/books/checkout.html:16
+msgid "To'lov bank kartasi orqali amalga oshiriladi."
+msgstr "Payment is made by bank card."
+
+#: templates/books/checkout.html:21
+msgid "Karta orqali"
+msgstr "By card"
+
+#: templates/books/checkout.html:22
+msgid "Summa hisobingizdan darhol yechiladi."
+msgstr "The amount is deducted from your balance immediately."
+
+#: templates/books/checkout.html:51
+msgid "Buyurtma"
+msgstr "Order"
+
+#: templates/books/checkout.html:74
+msgid "Sahifalar"
+msgstr "Pages"
+
+#: templates/books/checkout.html:82
+msgid "Jami"
+msgstr "Total"
+
+#: templates/books/checkout.html:92
+msgid "Tasdiqlash va sotib olish"
+msgstr "Confirm and buy"
+
+#: templates/books/checkout.html:109
+msgid "Xaridorlar fikri"
+msgstr "What buyers say"
+
+#: templates/books/conversation.html:6
+msgid "Xabarlarga"
+msgstr "To messages"
+
+#: templates/books/conversation.html:27
+msgid "Hali xabar yo'q."
+msgstr "No messages yet."
+
+#: templates/books/conversation.html:33
+msgid "Xabar yozing..."
+msgstr "Write a message..."
+
+#: templates/books/conversations.html:27
+msgid "Hali suhbat yo'q. Kitob sahifasida sotuvchiga savol berishingiz mumkin."
+msgstr "No conversations yet. You can ask a seller a question on a book page."
+
+#: templates/books/detail.html:27
+msgid "bet"
+msgstr "pages"
+
+#: templates/books/detail.html:33
+msgid "sharh"
+msgstr "review"
+
+#: templates/books/detail.html:45
+msgid "Siz bu kitobni sotib olgansiz"
+msgstr "You have purchased this book"
+
+#: templates/books/detail.html:47 templates/books/my_library.html:37
+#: templates/books/read.html:3
+msgid "O'qish"
+msgstr "Read"
+
+#: templates/books/detail.html:48 templates/books/read.html:37
+msgid "Yuklab olish"
+msgstr "Download"
+
+#: templates/books/detail.html:61
+msgid "Sotib olish uchun ro'yxatdan o'ting"
+msgstr "Register to buy"
+
+#: templates/books/detail.html:63
+msgid "Hisobim bor"
+msgstr "I already have an account"
+
+#: templates/books/detail.html:81
+msgid "Istaklarda"
+msgstr "In wishlist"
+
+#: templates/books/detail.html:81
+msgid "Istaklarga"
+msgstr "Add to wishlist"
+
+#: templates/books/detail.html:92
+msgid "Sotuvchi bilan suhbat"
+msgstr "Chat with the seller"
+
+#: templates/books/detail.html:98
+msgid "Sotuvchiga savol yozing..."
+msgstr "Ask the seller a question..."
+
+#: templates/books/detail.html:115
+msgid "Sharhingizni tahrirlash"
+msgstr "Edit your review"
+
+#: templates/books/detail.html:115
+msgid "Baholang va fikr bildiring"
+msgstr "Rate and leave a review"
+
+#: templates/books/detail.html:120
+msgid "Yulduzcha"
+msgstr "Rating (stars)"
+
+#: templates/books/genre_form.html:3 templates/books/genre_form.html:7
+msgid "Janr qo'shish"
+msgstr "Add a genre"
+
+#: templates/books/genre_form.html:6
+msgid "Kitob qo'shishga"
+msgstr "Back to adding a book"
+
+#: templates/books/genre_form.html:11
+msgid "Kitobingizga mos janr ro'yxatda bo'lmasa, shu yerdan qo'shing."
+msgstr "If the right genre is missing from the list, add it here."
+
+#: templates/books/genre_form.html:22
+msgid "Qo'shish"
+msgstr "Add"
+
+#: templates/books/genre_form.html:27
+msgid "Mavjud janrlar"
+msgstr "Existing genres"
+
+#: templates/books/genre_form.html:32
+msgid "Hali janr qo'shilmagan."
+msgstr "No genres added yet."
+
+#: templates/books/my_books.html:19
+msgid "Nomi"
+msgstr "Title"
+
+#: templates/books/my_books.html:20 templates/books/seller_dashboard.html:71
+msgid "Narx"
+msgstr "Price"
+
+#: templates/books/my_books.html:20 templates/books/seller_dashboard.html:74
+msgid "Reyting"
+msgstr "Rating"
+
+#: templates/books/my_books.html:33 templates/books/seller_dashboard.html:93
+msgid "Tahrirlash"
+msgstr "Edit"
+
+#: templates/books/my_books.html:36
+msgid "O'chirish"
+msgstr "Delete"
+
+#: templates/books/my_library.html:17 templates/books/wishlist.html:23
+msgid "Sotib olingan"
+msgstr "Purchased"
+
+#: templates/books/my_library.html:24
+msgid "O'qib bo'lingan"
+msgstr "Finished"
+
+#: templates/books/my_library.html:35
+msgid "Davom ettirish"
+msgstr "Continue"
+
+#: templates/books/my_library.html:45
+msgid "Hali hech qanday kitob sotib olmagansiz."
+msgstr "You haven't bought any books yet."
+
+#: templates/books/read.html:11
+msgid "Kitobni ochib bo'lmadi."
+msgstr "Could not open the book."
+
+#: templates/books/read.html:24
+msgid "Oldingi sahifa"
+msgstr "Previous page"
+
+#: templates/books/read.html:26
+msgid "Sahifa"
+msgstr "Page"
+
+#: templates/books/read.html:29
+msgid "Keyingi sahifa"
+msgstr "Next page"
+
+#: templates/books/read.html:33
+msgid "Kichraytirish"
+msgstr "Zoom out"
+
+#: templates/books/read.html:35
+msgid "Kattalashtirish"
+msgstr "Zoom in"
+
+#: templates/books/read.html:36
+msgid "Butun ekran"
+msgstr "Fullscreen"
+
+#: templates/books/read.html:46
+msgid "Kitob yuklanmoqda…"
+msgstr "Loading the book…"
+
+#: templates/books/read.html:52
+msgid "← → tugmalari bilan varaqlang. To'xtagan joyingiz avtomatik saqlanadi."
+msgstr "Use ← → to turn pages. Your place is saved automatically."
+
+#: templates/books/seller_dashboard.html:3
+#: templates/books/seller_dashboard.html:10
+msgid "Sotuvchi kabineti"
+msgstr "Seller dashboard"
+
+#: templates/books/seller_dashboard.html:11
+msgid "Kitoblaringiz qanday sotilayotgani."
+msgstr "How your books are selling."
+
+#: templates/books/seller_dashboard.html:14
+msgid "Savdo hisoboti (Excel)"
+msgstr "Sales report (Excel)"
+
+#: templates/books/seller_dashboard.html:21
+msgid "Umumiy daromad"
+msgstr "Total revenue"
+
+#: templates/books/seller_dashboard.html:26
+msgid "Sotilgan nusxalar"
+msgstr "Copies sold"
+
+#: templates/books/seller_dashboard.html:28
+msgid "ta xarid"
+msgstr "purchases"
+
+#: templates/books/seller_dashboard.html:31
+#: templates/core/admin_dashboard.html:15
+msgid "Xaridorlar"
+msgstr "Buyers"
+
+#: templates/books/seller_dashboard.html:33
+msgid "ta noyob xaridor"
+msgstr "unique buyers"
+
+#: templates/books/seller_dashboard.html:38
+msgid "tasi sotuvda"
+msgstr "on sale"
+
+#: templates/books/seller_dashboard.html:45
+msgid "Oxirgi 30 kun"
+msgstr "Last 30 days"
+
+#: templates/books/seller_dashboard.html:64
+msgid "Kitoblar kesimida"
+msgstr "By book"
+
+#: templates/books/seller_dashboard.html:72
+msgid "Sotildi"
+msgstr "Sold"
+
+#: templates/books/seller_dashboard.html:73
+msgid "Daromad"
+msgstr "Revenue"
+
+#: templates/books/seller_dashboard.html:107
+msgid "Oxirgi sotuvlar"
+msgstr "Recent sales"
+
+#: templates/books/seller_dashboard.html:119
+msgid "Hali sotuv bo'lmagan."
+msgstr "No sales yet."
+
+#: templates/books/seller_dashboard.html:126
+#: templates/core/admin_user_detail.html:30
+msgid "Balans"
+msgstr "Balance"
+
+#: templates/books/seller_dashboard.html:148
+msgid ""
+"Sotuvdan tushgan pulni istalgan vaqtda kartangizga yechib olishingiz mumkin."
+msgstr "You can withdraw your earnings to your card at any time."
+
+#: templates/books/wishlist.html:5
+msgid "Katalogga"
+msgstr "To the catalogue"
+
+#: templates/books/wishlist.html:7
+msgid "Keyinroq sotib olmoqchi bo'lgan kitoblaringiz."
+msgstr "Books you want to buy later."
+
+#: templates/books/wishlist.html:33
+msgid "Ro'yxatdan olib tashlash"
+msgstr "Remove from list"
+
+#: templates/books/wishlist.html:40
+msgid "Ro'yxat bo'sh. Katalogdagi kitob sahifasida ☆ tugmasini bosing."
+msgstr "The list is empty. Press ☆ on a book page in the catalogue."
+
+#: templates/core/admin_broadcast.html:3 templates/core/admin_broadcast.html:7
+#: templates/core/admin_dashboard.html:8 templates/core/admin_users.html:10
+msgid "Hammaga e'lon"
+msgstr "Announcement to all"
+
+#: templates/core/admin_broadcast.html:11
+msgid ""
+"E'lon barcha foydalanuvchilarga yuboriladi va ular saytga kirganda ko'rinadi."
+msgstr "The announcement goes to all users and appears when they log in."
+
+#: templates/core/admin_broadcast.html:29
+msgid "Oldingi e'lonlar"
+msgstr "Previous announcements"
+
+#: templates/core/admin_dashboard.html:3
+msgid "Admin statistika"
+msgstr "Admin statistics"
+
+#: templates/core/admin_dashboard.html:5
+msgid "Boshqaruv paneli - statistika"
+msgstr "Admin panel - statistics"
+
+#: templates/core/admin_dashboard.html:7
+msgid "Foydalanuvchilarni boshqarish"
+msgstr "Manage users"
+
+#: templates/core/admin_dashboard.html:9
+msgid "To'liq Django admin panelga o'tish"
+msgstr "Go to the full Django admin panel"
+
+#: templates/core/admin_dashboard.html:13
+msgid "Jami foydalanuvchilar"
+msgstr "Total users"
+
+#: templates/core/admin_dashboard.html:14
+msgid "Sotuvchilar"
+msgstr "Sellers"
+
+#: templates/core/admin_dashboard.html:18
+msgid "Jami kitoblar"
+msgstr "Total books"
+
+#: templates/core/admin_dashboard.html:19
+msgid "Sotuvdagi kitoblar"
+msgstr "Books on sale"
+
+#: templates/core/admin_dashboard.html:20
+msgid "Xaridlar soni"
+msgstr "Number of purchases"
+
+#: templates/core/admin_dashboard.html:22
+msgid "Umumiy savdo (so'm)"
+msgstr "Total sales (UZS)"
+
+#: templates/core/admin_dashboard.html:26
+msgid "Kitoblar Excel"
+msgstr "Books Excel"
+
+#: templates/core/admin_dashboard.html:27
+msgid "Kitoblar PDF"
+msgstr "Books PDF"
+
+#: templates/core/admin_dashboard.html:28
+msgid "Mualliflar Excel"
+msgstr "Authors Excel"
+
+#: templates/core/admin_dashboard.html:29
+msgid "Mualliflar PDF"
+msgstr "Authors PDF"
+
+#: templates/core/admin_dashboard.html:32
+msgid "So'nggi ro'yxatdan o'tganlar"
+msgstr "Recently registered"
+
+#: templates/core/admin_dashboard.html:52
+msgid ""
+"Parollar bir tomonlama shifrlangan holda saqlanadi va ularni ochib "
+"bo'lmaydi. Foydalanuvchi kartasida yangi parol belgilashingiz mumkin."
+msgstr ""
+"Passwords are stored one-way hashed and cannot be recovered. You can set a "
+"new password on the user's page."
+
+#: templates/core/admin_dashboard.html:55
+msgid "Eng faol sotuvchilar"
+msgstr "Most active sellers"
+
+#: templates/core/admin_dashboard.html:58
+msgid "Kitoblar soni"
+msgstr "Number of books"
+
+#: templates/core/admin_user_detail.html:20 templates/core/admin_users.html:44
+msgid "Admin"
+msgstr "Admin"
+
+#: templates/core/admin_user_detail.html:22 templates/core/admin_users.html:46
+msgid "Faol"
+msgstr "Active"
+
+#: templates/core/admin_user_detail.html:34
+msgid "Ma'lumotlar"
+msgstr "Details"
+
+#: templates/core/admin_user_detail.html:39
+msgid "Ro'yxatdan o'tgan"
+msgstr "Registered"
+
+#: templates/core/admin_user_detail.html:40
+msgid "Oxirgi kirish"
+msgstr "Last login"
+
+#: templates/core/admin_user_detail.html:49
+msgid "Xabar yuborish"
+msgstr "Send a message"
+
+#: templates/core/admin_user_detail.html:50
+msgid "Foydalanuvchi saytga kirganda bu xabarni ko'radi."
+msgstr "The user will see this message when they log in."
+
+#: templates/core/admin_user_detail.html:66
+msgid "Yuborilgan xabarlar"
+msgstr "Sent messages"
+
+#: templates/core/admin_user_detail.html:78
+msgid "Parolni yangilash"
+msgstr "Update password"
+
+#: templates/core/admin_user_detail.html:80
+msgid ""
+"Mavjud parolni ko'rsatib bo'lmaydi - u bir tomonlama shifrlangan holda "
+"saqlanadi va ochib bo'lmaydi. Yangi parol belgilashingiz mumkin."
+msgstr ""
+"The current password cannot be shown — it is stored one-way hashed and "
+"cannot be recovered. You can set a new one."
+
+#: templates/core/admin_user_detail.html:88
+msgid "Parolni o'rnatish"
+msgstr "Set password"
+
+#: templates/core/admin_user_detail.html:93
+msgid "Xavfli amallar"
+msgstr "Danger zone"
+
+#: templates/core/admin_user_detail.html:105
+msgid "Blokni olib tashlash"
+msgstr "Unblock"
+
+#: templates/core/admin_user_detail.html:105
+msgid "Bloklash"
+msgstr "Block"
+
+#: templates/core/admin_user_detail.html:113
+msgid "Foydalanuvchi butunlay ochiriladi. Davom etamizmi?"
+msgstr "The user will be deleted permanently. Continue?"
+
+#: templates/core/admin_user_detail.html:115
+msgid "Foydalanuvchini o'chirish"
+msgstr "Delete user"
+
+#: templates/core/admin_users.html:15
+msgid "Username yoki email"
+msgstr "Username or email"
+
+#: templates/core/admin_users.html:27
+msgid "Holat"
+msgstr "Status"
+
+#: templates/core/admin_users.html:49
+msgid "Boshqarish"
+msgstr "Manage"
+
+#: templates/core/admin_withdrawals.html:6
+msgid "Statistikaga"
+msgstr "To statistics"
+
+#: templates/core/admin_withdrawals.html:10
+msgid "Kutayotgan so'rovlar"
+msgstr "Pending requests"
+
+#: templates/core/admin_withdrawals.html:22
+msgid "Izoh (ixtiyoriy)"
+msgstr "Comment (optional)"
+
+#: templates/core/admin_withdrawals.html:27
+msgid "Rad etish"
+msgstr "Reject"
+
+#: templates/core/admin_withdrawals.html:32
+msgid "Kutayotgan so'rov yo'q."
+msgstr "No pending requests."
+
+#: templates/core/admin_withdrawals.html:37
+msgid "Ko'rib chiqilganlar"
+msgstr "Reviewed"
+
+#: templates/core/admin_withdrawals.html:52
+msgid "Hozircha bo'sh."
+msgstr "Nothing here yet."
+
+#: templates/core/ai_assistant.html:12
+msgid "Suhbatni tozalash"
+msgstr "Clear chat"
+
+#: templates/core/ai_assistant.html:18
+msgid "AI kaliti hali sozlanmagan. .env faylida AI_API_KEY ni to'ldiring."
+msgstr "The AI key is not configured yet. Fill in AI_API_KEY in the .env file."
+
+#: templates/core/ai_assistant.html:19
+msgid "Bepul kalit olish"
+msgstr "Get a free key"
+
+#: templates/core/ai_assistant.html:29
+msgid ""
+"Kitoblar haqida so'rang - tavsif yozib beraman, janr bo'yicha maslahat "
+"beraman yoki sayt qanday ishlashini tushuntiraman."
+msgstr ""
+"Ask me about books — I can write a description, suggest a genre or explain "
+"how the site works."
+
+#: templates/core/ai_assistant.html:31
+msgid "Detektiv janridagi kitob tavsiya qil"
+msgstr "Recommend a detective novel"
+
+#: templates/core/ai_assistant.html:32
+msgid "Abdulla Qodiriy haqida gapirib ber"
+msgstr "Tell me about Abdulla Qodiriy"
+
+#: templates/core/ai_assistant.html:33
+msgid "Kitobga qanday tavsif yozsam bo'ladi?"
+msgstr "How should I write a book description?"
+
+#: templates/core/ai_assistant.html:40
+msgid "Savolingizni yozing..."
+msgstr "Type your question..."
+
+#: templates/core/ai_assistant.html:44
+#, python-brace-format
+msgid "Shu soatda yana {n} ta so'rov qoldi"
+msgstr "{n} requests left this hour"
+
+#: templates/core/ai_assistant.html:45
+#, python-format
+msgid "Shu soatda yana %(left)s ta so'rov qoldi"
+msgstr "%(left)s requests left this hour"
+
+#: templates/core/ai_assistant.html:49
+msgid "Rasm generatsiya qilish"
+msgstr "Generate an image"
+
+#: templates/core/ai_assistant.html:50
+msgid "Kitob muqovasi uchun rasm yaratib beraman."
+msgstr "I'll create an image for the book cover."
+
+#: templates/core/ai_assistant.html:53
+msgid "Masalan: eski kutubxona, kuzgi rang"
+msgstr "For example: old library, autumn tones"
+
+#: templates/core/ai_assistant.html:54
+msgid "Yaratish"
+msgstr "Create"
+
+#: templates/core/ai_assistant.html:159
+msgid "Rasmni ochish"
+msgstr "Open image"
+
+#: templates/core/home.html:5
+msgid "Elektron Kutubxona bozori"
+msgstr "E-book marketplace"
+
+#: templates/core/home.html:6
+msgid ""
+"Elektron kitoblarni soting va sotib oling. O'zbek, rus va ingliz tillaridagi "
+"kitoblar bir joyda."
+msgstr ""
+"Sell and buy e-books. Books in Uzbek, Russian and English languages in one "
+"place."
+
+#: templates/core/home.html:8
+msgid "Kitoblarni ko'rish"
+msgstr "Browse books"
+
+#: templates/core/home.html:20
+#, python-format
+msgid "%(counter)s ta kitob"
+msgid_plural "%(counter)s ta kitob"
+msgstr[0] "%(counter)s book"
+msgstr[1] "%(counter)s books"
+
+#: templates/core/home.html:25
+#, python-format
+msgid "%(counter)s ta muallif"
+msgid_plural "%(counter)s ta muallif"
+msgstr[0] "%(counter)s author"
+msgstr[1] "%(counter)s authors"
+
+#: templates/core/home.html:31
+msgid "Sotib olingan kitoblar"
+msgstr "Purchased books"
+
+#: templates/core/home.html:37
+msgid "Savdo statistikasi"
+msgstr "Sales statistics"
+
+#: templates/core/home.html:43
+#, python-format
+msgid "%(counter)s ta foydalanuvchi"
+msgid_plural "%(counter)s ta foydalanuvchi"
+msgstr[0] "%(counter)s user"
+msgstr[1] "%(counter)s users"
+
+#: templates/core/home.html:126
+msgid "Hozircha kitoblar yo'q."
+msgstr "No books yet."
+
+#: templates/core/home.html:137
+msgid "Hozircha baholangan kitoblar yo'q."
+msgstr "No rated books yet."
+
+#: templates/core/weather.html:11
+msgid "Davlat"
+msgstr "Country"
+
+#: templates/core/weather.html:15
+msgid "Shahar"
+msgstr "City"
+
+#: templates/core/weather.html:19
+msgid "Mening joylashuvim"
+msgstr "My location"
+
+#: templates/core/weather.html:25
+msgid "Yuklanmoqda…"
+msgstr "Loading…"
+
+#: templates/core/weather.html:43
+msgid "Tafsilotlar"
+msgstr "Details"
+
+#: templates/core/weather.html:46
+msgid "Soatlik prognoz — 24 soat"
+msgstr "Hourly forecast — 24 hours"
+
+#: templates/core/weather.html:51
+msgid "Haftalik prognoz"
+msgstr "Weekly forecast"

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Mualliflar" %}{% endblock %}
+{% block content %}
+<div class="flex-between">
+  <h1>{% trans "Mualliflar" %}</h1>
+  {% if user.is_seller %}
+    <a href="{% url 'books:author_create' %}" class="btn btn-primary">+ {% trans "Muallif qo'shish" %}</a>
+  {% endif %}
+</div>
+
+{% if user.is_staff or user.is_superuser %}
+<div class="export-bar">
+  <a href="{% url 'books:export_authors_excel' %}" class="btn btn-outline btn-sm">⬇ Excel</a>
+  <a href="{% url 'books:export_authors_pdf' %}" class="btn btn-outline btn-sm">⬇ PDF</a>
+</div>
+{% endif %}
+
+<div class="grid grid-3">
+  {% for author in authors %}
+    <div class="card">
+      <h3><a href="{% url 'books:author_detail' author.pk %}">{{ author.full_name }}</a></h3>
+      <p class="text-muted">{{ author.bio|truncatewords:15 }}</p>
+      <span class="badge muted">{{ author.books_count }} {% trans "kitob" %}</span>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Mualliflar mavjud emas." %}</p>
+  {% endfor %}
+</div>
+{% endblock %}

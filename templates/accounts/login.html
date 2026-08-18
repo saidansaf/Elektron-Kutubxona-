@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Kirish" %}{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>{% trans "Tizimga kirish" %}</h1>
+  <form method="post" class="styled-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors|striptags }}</div>{% endif %}
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Kirish" %}</button>
+  </form>
+  <p style="margin-top:14px;"><a href="{% url 'accounts:password_reset' %}">{% trans "Parolni unutdingizmi?" %}</a></p>
+  <p>{% trans "Akkountingiz yo'qmi?" %} <a href="{% url 'accounts:register' %}">{% trans "Ro'yxatdan o'tish" %}</a></p>
+</div>
+{% endblock %}

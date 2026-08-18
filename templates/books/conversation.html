@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ partner.username }}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'books:conversations' %}" class="back-link">← {% trans "Xabarlarga" %}</a>
+
+  <div class="card">
+    <div class="flex-between">
+      <div>
+        <div class="card-title" style="margin:0">{{ partner.username }}</div>
+        <span class="text-muted">
+          <a href="{% url 'books:detail' conversation.book.pk %}">{{ conversation.book.title }}</a>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="chat chat-tall" id="chat">
+      {% for message in chat_messages %}
+        <div class="chat-msg {% if message.sender_id == user.pk %}user{% else %}assistant{% endif %}">
+          {{ message.text|linebreaksbr }}
+          <span class="chat-time">{{ message.created_at|date:"d.m H:i" }}</span>
+        </div>
+      {% empty %}
+        <div class="chat-empty"><p>{% trans "Hali xabar yo'q." %}</p></div>
+      {% endfor %}
+    </div>
+
+    <form method="post" class="chat-form">
+      {% csrf_token %}
+      <input type="text" name="text" placeholder="{% trans 'Xabar yozing...' %}"
+             autocomplete="off" maxlength="2000" required />
+      <button type="submit" class="btn btn-primary">{% trans "Yuborish" %}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var chat = document.getElementById("chat");
+  if (chat) chat.scrollTop = chat.scrollHeight;
+</script>
+{% endblock %}

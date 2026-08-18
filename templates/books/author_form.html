@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Muallif qo'shish" %}{% endblock %}
+{% block content %}
+<div class="card narrow-lg">
+  <h1>{% trans "Yangi muallif qo'shish" %}</h1>
+  <form method="post" enctype="multipart/form-data" class="styled-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Saqlash" %}</button>
+  </form>
+</div>
+{% endblock %}

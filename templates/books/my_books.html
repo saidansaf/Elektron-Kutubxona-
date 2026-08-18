@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Mening kitoblarim" %}{% endblock %}
+{% block content %}
+<div class="flex-between">
+  <h1>{% trans "Mening kitoblarim" %}</h1>
+  <a href="{% url 'books:book_create' %}" class="btn btn-primary">+ {% trans "Kitob qo'shish" %}</a>
+</div>
+
+<div class="export-bar">
+  <a href="{% url 'books:export_books_excel' %}" class="btn btn-outline btn-sm">⬇ Excel</a>
+  <a href="{% url 'books:export_books_pdf' %}" class="btn btn-outline btn-sm">⬇ PDF</a>
+</div>
+
+<div class="table-wrap">
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>{% trans "Nomi" %}</th><th>{% trans "Muallif" %}</th><th>{% trans "Til" %}</th>
+      <th>{% trans "Narx" %}</th><th>{% trans "Reyting" %}</th><th>{% trans "Sotuvda" %}</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+    <tr>
+      <td><a href="{% url 'books:detail' book.pk %}">{{ book.title }}</a></td>
+      <td>{{ book.author.full_name }}</td>
+      <td>{{ book.get_language_display }}</td>
+      <td>{{ book.price }}</td>
+      <td>{{ book.average_rating }} ({{ book.reviews_count }})</td>
+      <td>{% if book.is_active %}✅{% else %}❌{% endif %}</td>
+      <td class="flex">
+        <a href="{% url 'books:book_update' book.pk %}" class="btn btn-outline btn-sm">{% trans "Tahrirlash" %}</a>
+        <form method="post" action="{% url 'books:book_delete' book.pk %}" onsubmit="return confirm(&quot;O'chirishga aminmisiz?&quot;);">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm">{% trans "O'chirish" %}</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" class="text-muted">{% trans "Hali kitob qo'shmagansiz." %}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

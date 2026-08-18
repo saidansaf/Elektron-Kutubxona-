@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Hammaga e'lon" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'core:admin_users' %}" class="back-link">← {% trans "Foydalanuvchilar" %}</a>
+  <h1>📢 {% trans "Hammaga e'lon" %}</h1>
+
+  <div class="card">
+    <p class="card-hint">
+      {% trans "E'lon barcha foydalanuvchilarga yuboriladi va ular saytga kirganda ko'rinadi." %}
+    </p>
+    <form method="post" class="styled-form">
+      {% csrf_token %}
+      <div class="form-row">
+        <label for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+        {{ form.subject }}
+      </div>
+      <div class="form-row">
+        <label for="{{ form.body.id_for_label }}">{{ form.body.label }}</label>
+        {{ form.body }}
+        {% if form.body.errors %}<div class="form-errors">{{ form.body.errors|striptags }}</div>{% endif %}
+      </div>
+      <div><button type="submit" class="btn btn-primary">{% trans "Yuborish" %}</button></div>
+    </form>
+  </div>
+
+  {% if sent %}
+    <div class="section-title"><h2>{% trans "Oldingi e'lonlar" %}</h2></div>
+    <div class="card">
+      {% for m in sent %}
+        <div class="review-item">
+          {% if m.subject %}<strong>{{ m.subject }}</strong><br />{% endif %}
+          {{ m.body }}
+          <div class="text-muted" style="font-size:.82rem">{{ m.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

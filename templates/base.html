@@ -1,0 +1,195 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="{{ current_theme }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}{% trans "Elektron Kutubxona" %}{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{% url 'core:home' %}" class="logo">📚 <span>{% trans "Elektron Kutubxona" %}</span></a>
+
+      <nav class="nav-links">
+        <a href="{% url 'books:catalog' %}">{% trans "Kitoblar" %}</a>
+        <a href="{% url 'books:author_list' %}">{% trans "Mualliflar" %}</a>
+        {% if user.is_authenticated and user.is_buyer %}
+          <a href="{% url 'books:my_library' %}">{% trans "Mening kutubxonam" %}</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <a href="{% url 'books:wishlist' %}">{% trans "Istaklarim" %}</a>
+          <a href="{% url 'books:conversations' %}">
+            {% trans "Xabarlar" %}{% if unread_messages %}<span class="chat-badge">{{ unread_messages }}</span>{% endif %}
+          </a>
+        {% endif %}
+        {% if user.is_authenticated and user.is_seller %}
+          <a href="{% url 'books:seller_dashboard' %}">{% trans "Kabinet" %}</a>
+          <a href="{% url 'books:my_books' %}">{% trans "Mening kitoblarim" %}</a>
+          <a href="{% url 'books:book_create' %}">{% trans "Kitob qo'shish" %}</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <a href="{% url 'core:ai_assistant' %}">✨ {% trans "AI yordamchi" %}</a>
+        {% endif %}
+        {% if user.is_staff or user.is_superuser %}
+          <a href="{% url 'core:admin_dashboard' %}">{% trans "Statistika" %}</a>
+          <a href="{% url 'core:admin_users' %}">{% trans "Foydalanuvchilar" %}</a>
+          <a href="{% url 'core:admin_withdrawals' %}">{% trans "To'lovlar" %}</a>
+        {% endif %}
+      </nav>
+
+      <form action="{% url 'books:catalog' %}" method="get" class="header-search" role="search">
+        <input type="search" name="q" value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Kitob qidirish...' %}" aria-label="{% trans 'Kitob qidirish' %}" />
+        <button type="submit" aria-label="{% trans 'Qidirish' %}">🔍</button>
+      </form>
+
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <div class="user-menu">
+            <button type="button" class="avatar-btn" id="avatarBtn"
+                    aria-haspopup="true" aria-expanded="false" aria-label="{% trans 'Profil menyusi' %}">
+              {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}" />
+              {% else %}{{ user.initials }}{% endif %}
+            </button>
+
+            <div class="user-menu-panel" id="userMenu">
+              <div class="user-menu-head">
+                <div class="user-menu-avatar">
+                  {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" />
+                  {% else %}{{ user.initials }}{% endif %}
+                </div>
+                <div>
+                  <div class="user-menu-name">{{ user.username }}</div>
+                  {% if user.role_chosen %}
+                    <span class="badge {% if user.is_buyer %}muted{% endif %}">{{ user.get_role_display }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="menu-section">
+                <div class="menu-label">{% trans "Mavzu" %}</div>
+                <form action="{% url 'core:toggle_theme' %}" method="post" class="segmented">
+                  {% csrf_token %}
+                  <button type="submit" name="theme" value="light"
+                          class="{% if current_theme == 'light' %}active{% endif %}">☀ {% trans "Yorug'" %}</button>
+                  <button type="submit" name="theme" value="dark"
+                          class="{% if current_theme == 'dark' %}active{% endif %}">🌙 {% trans "Qorong'i" %}</button>
+                </form>
+              </div>
+
+              <div class="menu-section">
+                <div class="menu-label">{% trans "Til" %}</div>
+                <form action="{% url 'core:set_language' %}" method="post" class="segmented">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                  <button type="submit" name="language" value="uz"
+                          class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}">UZ</button>
+                  <button type="submit" name="language" value="ru"
+                          class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}">RU</button>
+                  <button type="submit" name="language" value="en"
+                          class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+                </form>
+              </div>
+
+              <div class="menu-divider"></div>
+
+              <a href="{% url 'core:ai_assistant' %}" class="menu-item">✨ {% trans "AI yordamchi" %}</a>
+              <a href="{% url 'accounts:settings' %}" class="menu-item">⚙ {% trans "Sozlamalar" %}</a>
+              <form action="{% url 'accounts:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="menu-item danger">⏻ {% trans "Chiqish" %}</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <form action="{% url 'core:set_language' %}" method="post" class="segmented" style="width:auto">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <button type="submit" name="language" value="uz" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}">UZ</button>
+            <button type="submit" name="language" value="ru" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}">RU</button>
+            <button type="submit" name="language" value="en" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+          </form>
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">{% trans "Kirish" %}</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">{% trans "Ro'yxatdan o'tish" %}</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    {% for m in unread_admin_messages %}
+      <div class="admin-note">
+        <div>
+          <div class="admin-note-title">
+            {% if m.is_broadcast %}📢{% else %}✉{% endif %}
+            {{ m.subject|default:_("Administratordan xabar") }}
+          </div>
+          <p>{{ m.body|linebreaksbr }}</p>
+        </div>
+        <form method="post" action="{% url 'core:mark_message_read' m.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-ghost btn-sm" title="{% trans 'Yopish' %}">✕</button>
+        </form>
+      </div>
+    {% endfor %}
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <div class="footer-logo">📚 {% trans "Elektron Kutubxona" %}</div>
+          <p>{% trans "O'zbek, rus va ingliz tillaridagi elektron kitoblar bozori." %}</p>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">{% trans "Bog'lanish" %}</div>
+          <a href="{{ admin_telegram }}" target="_blank" rel="noopener">✈ {% trans "Telegram" %}</a>
+          <a href="mailto:info@kutubxona.uz">✉ info@kutubxona.uz</a>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">{% trans "Kitoblar" %}</div>
+          <a href="{% url 'books:catalog' %}">{% trans "Katalog" %}</a>
+          <a href="{% url 'books:catalog' %}?sort=new">{% trans "Yangi kitoblar" %}</a>
+          <a href="{% url 'books:catalog' %}?sort=rating">{% trans "Eng yuqori baholangan" %}</a>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">{% trans "Havolalar" %}</div>
+          <a href="{% url 'books:author_list' %}">{% trans "Mualliflar" %}</a>
+          <a href="{% url 'core:weather' %}">{% trans "Ob-havo" %}</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'accounts:settings' %}">{% trans "Sozlamalar" %}</a>
+          {% else %}
+            <a href="{% url 'accounts:register' %}">{% trans "Ro'yxatdan o'tish" %}</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; {% now "Y" %} {% trans "Elektron Kutubxona" %}. {% trans "Barcha huquqlar himoyalangan." %}
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

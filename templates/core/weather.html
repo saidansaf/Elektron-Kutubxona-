@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Ob-havo" %}{% endblock %}
+{% block content %}
+<div class="weather-page">
+  <a href="{% url 'core:home' %}" class="back-link">← {% trans "Orqaga" %}</a>
+
+  <div class="wx-picker">
+    <div class="wx-picker-row">
+      <label class="wx-field">
+        <span>{% trans "Davlat" %}</span>
+        <select id="wxCountry"></select>
+      </label>
+      <label class="wx-field">
+        <span>{% trans "Shahar" %}</span>
+        <select id="wxCity"></select>
+      </label>
+      <button type="button" id="wxGeo" class="btn btn-outline btn-sm">
+        📍 {% trans "Mening joylashuvim" %}
+      </button>
+    </div>
+  </div>
+
+  <div id="wxLoading" class="wx-loading">
+    <p>{% trans "Yuklanmoqda…" %}</p>
+  </div>
+
+  <div id="wxContent" hidden>
+    <div class="wx-hero">
+      <div class="wx-hero-main">
+        <span id="wxIcon" class="wx-icon-lg"></span>
+        <div>
+          <div id="wxTemp" class="wx-temp">--°</div>
+          <div id="wxDesc" class="wx-desc">--</div>
+        </div>
+      </div>
+      <div class="wx-hero-side">
+        <div id="wxPlace" class="wx-place">--</div>
+        <div id="wxDate" class="wx-date">--</div>
+      </div>
+    </div>
+
+    <div class="wx-section-title">{% trans "Tafsilotlar" %}</div>
+    <div class="wx-details" id="wxDetails"></div>
+
+    <div class="wx-section-title">{% trans "Soatlik prognoz — 24 soat" %}</div>
+    <div class="wx-hourly" id="wxHourly"></div>
+
+    <svg id="wxChart" class="wx-chart" viewBox="0 0 1000 220" preserveAspectRatio="none"></svg>
+
+    <div class="wx-section-title">{% trans "Haftalik prognoz" %}</div>
+    <div class="wx-weekly" id="wxWeekly"></div>
+  </div>
+
+  <div id="wxError" class="wx-loading" hidden>
+    <p class="form-errors"></p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var T = {{ labels_json|safe }};
+  var DAY_NAMES = T.days;
+  var TODAY_LABEL = T.today;
+  var TOMORROW_LABEL = T.tomorrow;
+  var CODE_INFO = T.codes;
+
+  function info(code) { return CODE_INFO[String(code)] || ["cloud", "\u2014"]; }
+
+  function icon(kind, size) {
+    size = size || 28;
+    var s = 'width="' + size + '" height="' + size + '" viewBox="0 0 48 48" class="wx-icon wx-icon-' + kind + '"';
+    var sun = '<circle cx="24" cy="24" r="10" class="wx-sun"/>' +
+      '<g class="wx-rays" stroke-linecap="round" stroke-width="3">' +
+      '<line x1="24" y1="2" x2="24" y2="9"/><line x1="24" y1="39" x2="24" y2="46"/>' +
+      '<line x1="2" y1="24" x2="9" y2="24"/><line x1="39" y1="24" x2="46" y2="24"/>' +
+      '<line x1="8" y1="8" x2="13" y2="13"/><line x1="35" y1="35" x2="40" y2="40"/>' +
+      '<line x1="40" y1="8" x2="35" y2="13"/><line x1="13" y1="35" x2="8" y2="40"/></g>';
+    var cloud = '<path class="wx-cloud" d="M13 34a8 8 0 0 1-1-15.9A10 10 0 0 1 31 15a7 7 0 0 1 3 13.4A6.5 6.5 0 0 1 33 34z"/>';
+    if (kind === "sun") return "<svg " + s + ">" + sun + "</svg>";
+    if (kind === "cloud") return "<svg " + s + ">" + cloud + "</svg>";
+    if (kind === "sun-cloud") return "<svg " + s + '><g transform="translate(-6,-6) scale(0.72)">' + sun + '</g>' + cloud + "</svg>";
+    if (kind === "fog") return "<svg " + s + ">" + cloud +
+      '<g class="wx-fog" stroke-linecap="round" stroke-width="2.5"><line x1="8" y1="38" x2="40" y2="38"/><line x1="12" y1="43" x2="36" y2="43"/></g></svg>';
+    if (kind === "rain") return "<svg " + s + ">" + cloud +
+      '<g class="wx-rain" stroke-linecap="round" stroke-width="2.5"><line x1="16" y1="37" x2="13" y2="45"/><line x1="24" y1="37" x2="21" y2="45"/><line x1="32" y1="37" x2="29" y2="45"/></g></svg>';
+    if (kind === "snow") return "<svg " + s + ">" + cloud +
+      '<g class="wx-snow"><circle cx="15" cy="40" r="1.8"/><circle cx="24" cy="43" r="1.8"/><circle cx="33" cy="40" r="1.8"/></g></svg>';
+    if (kind === "storm") return "<svg " + s + ">" + cloud +
+      '<path class="wx-bolt" d="M23 33l-5 9h5l-3 7 9-11h-5l4-5z"/></svg>';
+    return "<svg " + s + ">" + cloud + "</svg>";
+  }
+
+  var loadingEl = document.getElementById("wxLoading");
+  var contentEl = document.getElementById("wxContent");
+  var errorEl = document.getElementById("wxError");
+
+  function showError(msg) {
+    loadingEl.hidden = true;
+    contentEl.hidden = true;
+    errorEl.hidden = false;
+    errorEl.querySelector("p").textContent = msg;
+  }
+
+  function placeName(lat, lon, cb) {
+    fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + lon + "&localityLanguage={{ LANGUAGE_CODE|default:'ru' }}")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var parts = [d.city || d.locality, d.countryName].filter(Boolean);
+        cb(parts.join(", "));
+      })
+      .catch(function () { cb(""); });
+  }
+
+  function buildChart(hours, temps) {
+    var svg = document.getElementById("wxChart");
+    var w = 1000, h = 220, pad = 10;
+    var min = Math.min.apply(null, temps), max = Math.max.apply(null, temps);
+    if (min === max) { max = min + 1; }
+    var stepX = (w - pad * 2) / (temps.length - 1);
+    var pts = temps.map(function (t, i) {
+      var x = pad + i * stepX;
+      var y = h - pad - ((t - min) / (max - min)) * (h - pad * 2);
+      return [x, y];
+    });
+    var linePath = "M " + pts.map(function (p) { return p[0].toFixed(1) + " " + p[1].toFixed(1); }).join(" L ");
+    var areaPath = linePath + " L " + pts[pts.length - 1][0].toFixed(1) + " " + h + " L " + pts[0][0].toFixed(1) + " " + h + " Z";
+    var ns = "http://www.w3.org/2000/svg";
+    svg.innerHTML =
+      '<defs><linearGradient id="wxGrad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="var(--hue-2)" stop-opacity="0.5"/>' +
+      '<stop offset="100%" stop-color="var(--hue-2)" stop-opacity="0"/></linearGradient></defs>' +
+      '<path d="' + areaPath + '" fill="url(#wxGrad)" stroke="none"></path>' +
+      '<path d="' + linePath + '" fill="none" stroke="var(--hue-2)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></path>';
+  }
+
+  function render(lat, lon, place) {
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + lat + "&longitude=" + lon +
+      "&current_weather=true" +
+      "&hourly=temperature_2m,relativehumidity_2m,apparent_temperature,precipitation_probability,weathercode,surface_pressure,uv_index" +
+      "&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset" +
+      "&timezone=auto";
+
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.current_weather) throw new Error("no data");
+        var cw = d.current_weather;
+        var ci = info(cw.weathercode);
+
+        var nowHourIdx = d.hourly.time.indexOf(cw.time.slice(0, 14) + "0:00");
+        if (nowHourIdx < 0) {
+          nowHourIdx = d.hourly.time.findIndex(function (t) { return t >= cw.time; });
+          if (nowHourIdx < 0) nowHourIdx = 0;
+        }
+
+        document.getElementById("wxIcon").innerHTML = icon(ci[0], 72);
+        document.getElementById("wxTemp").textContent = Math.round(cw.temperature) + "°C";
+        var feels = d.hourly.apparent_temperature[nowHourIdx];
+        document.getElementById("wxDesc").textContent =
+          ci[1] + (feels !== undefined ? " · " + T.feels + " " + Math.round(feels) + "°C" : "");
+        document.getElementById("wxPlace").textContent = place || "—";
+        var nowDate = new Date(cw.time);
+        document.getElementById("wxDate").textContent =
+          nowDate.getDate() + " " + T.months[nowDate.getMonth()] + ", " + nowDate.getFullYear();
+
+        var today = d.daily;
+        var details = [
+          ["💧", T.humidity, d.hourly.relativehumidity_2m[nowHourIdx] + "%"],
+          ["💨", T.wind, Math.round(cw.windspeed) + " " + T.windUnit],
+          ["📊", T.pressure, Math.round(d.hourly.surface_pressure[nowHourIdx]) + " gPa"],
+          ["🔆", T.uv, Math.round(d.hourly.uv_index[nowHourIdx] || 0)],
+          ["🌧", T.precip, (today.precipitation_probability_max[0] || 0) + "%"],
+          ["🌅", T.sun, new Date(today.sunrise[0]).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) +
+            " / " + new Date(today.sunset[0]).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })]
+        ];
+        document.getElementById("wxDetails").innerHTML = details.map(function (row) {
+          return '<div class="wx-detail-cell"><div class="wx-detail-label">' + row[0] + " " + row[1] +
+            '</div><div class="wx-detail-value">' + row[2] + "</div></div>";
+        }).join("");
+
+        var hourlyHtml = "";
+        var chartTemps = [];
+        for (var i = nowHourIdx; i < Math.min(nowHourIdx + 24, d.hourly.time.length); i++) {
+          var hi = info(d.hourly.weathercode[i]);
+          var t = new Date(d.hourly.time[i]);
+          chartTemps.push(d.hourly.temperature_2m[i]);
+          hourlyHtml += '<div class="wx-hour-card">' +
+            '<div class="wx-hour-time">' + t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + '</div>' +
+            icon(hi[0], 26) +
+            '<div class="wx-hour-temp">' + Math.round(d.hourly.temperature_2m[i]) + '°</div></div>';
+        }
+        document.getElementById("wxHourly").innerHTML = hourlyHtml;
+        buildChart(null, chartTemps);
+
+        var weeklyHtml = "";
+        for (var j = 0; j < today.time.length; j++) {
+          var wi = info(today.weathercode[j]);
+          var dayDate = new Date(today.time[j] + "T00:00:00");
+          var label = j === 0 ? TODAY_LABEL : (j === 1 ? TOMORROW_LABEL : DAY_NAMES[dayDate.getDay()]);
+          weeklyHtml += '<div class="wx-day-row">' +
+            '<div class="wx-day-name">' + label + '</div>' +
+            '<div class="wx-day-mid">' + icon(wi[0], 24) +
+            '<span class="wx-day-desc">' + wi[1] + ' · ' + T.precip + ' ' + (today.precipitation_probability_max[j] || 0) + '%</span></div>' +
+            '<div class="wx-day-range"><span class="wx-day-min">' + Math.round(today.temperature_2m_min[j]) + '°</span> / ' +
+            '<span class="wx-day-max">' + Math.round(today.temperature_2m_max[j]) + '°</span></div>' +
+            '</div>';
+        }
+        document.getElementById("wxWeekly").innerHTML = weeklyHtml;
+
+        loadingEl.hidden = true;
+        contentEl.hidden = false;
+      })
+      .catch(function () {
+        showError(T.loadFailed);
+      });
+  }
+
+  function start(lat, lon, fallbackPlace) {
+    loadingEl.hidden = false;
+    errorEl.hidden = true;
+    if (fallbackPlace) {
+      render(lat, lon, fallbackPlace);
+    } else {
+      placeName(lat, lon, function (place) { render(lat, lon, place); });
+    }
+  }
+
+  // ---- Davlat va shahar tanlash ----
+
+  var COUNTRIES = {{ countries_json|safe }};
+  var STORE_KEY = "wx-place";
+  var countrySel = document.getElementById("wxCountry");
+  var citySel = document.getElementById("wxCity");
+
+  function fillCountries() {
+    var names = Object.keys(COUNTRIES);
+    countrySel.innerHTML = names.map(function (c) {
+      return '<option value="' + c + '">' + c + "</option>";
+    }).join("");
+  }
+
+  function fillCities(country) {
+    var list = COUNTRIES[country] || [];
+    citySel.innerHTML = list.map(function (c) {
+      return '<option value="' + c.name + '">' + c.name + "</option>";
+    }).join("");
+  }
+
+  function showSelected() {
+    var country = countrySel.value;
+    var city = citySel.value;
+    var found = (COUNTRIES[country] || []).filter(function (c) { return c.name === city; })[0];
+    if (!found) return;
+    try { localStorage.setItem(STORE_KEY, country + "|" + city); } catch (e) {}
+    start(found.lat, found.lon, city + ", " + country);
+  }
+
+  countrySel.addEventListener("change", function () {
+    fillCities(countrySel.value);
+    showSelected();
+  });
+  citySel.addEventListener("change", showSelected);
+
+  // Geolokatsiya endi ixtiyoriy: bosilgandagina so'raladi va javob
+  // kelmasa sahifa kutib qotib qolmaydi - tanlangan shahar ko'rinib turadi.
+  document.getElementById("wxGeo").addEventListener("click", function () {
+    if (!navigator.geolocation) {
+      showError(T.geoUnsupported);
+      return;
+    }
+    loadingEl.hidden = false;
+    contentEl.hidden = true;
+    navigator.geolocation.getCurrentPosition(
+      function (pos) {
+        start(pos.coords.latitude.toFixed(3), pos.coords.longitude.toFixed(3));
+      },
+      function () {
+        showError(T.geoFailed);
+      },
+      { timeout: 8000 }
+    );
+  });
+
+  // ---- Boshlanishi ----
+
+  var startCountry = "{{ default_country|escapejs }}";
+  var startCity = "{{ default_city|escapejs }}";
+  try {
+    var saved = (localStorage.getItem(STORE_KEY) || "").split("|");
+    if (saved.length === 2 && COUNTRIES[saved[0]]) {
+      startCountry = saved[0];
+      startCity = saved[1];
+    }
+  } catch (e) {}
+
+  fillCountries();
+  countrySel.value = startCountry;
+  fillCities(startCountry);
+  citySel.value = startCity;
+  if (!citySel.value) citySel.selectedIndex = 0;
+  showSelected();
+})();
+</script>
+{% endblock %}

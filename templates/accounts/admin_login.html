@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Administrator kirishi" %}{% endblock %}
+{% block content %}
+<div class="card narrow" style="margin-top:40px">
+  <h1>🔐 {% trans "Administrator kirishi" %}</h1>
+  <p class="text-muted">{% trans "Bu sahifa faqat tizim administratorlari uchun." %}</p>
+  <form method="post" class="styled-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-row">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors|striptags }}</div>{% endif %}
+    <button type="submit" class="btn btn-primary btn-block">{% trans "Kirish" %}</button>
+  </form>
+</div>
+{% endblock %}

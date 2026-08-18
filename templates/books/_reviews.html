@@ -1,0 +1,66 @@
+{% load i18n book_extras %}
+{# Izohlar ro'yxati: tepada username, pastida izoh, undan pastida javoblar. #}
+<div class="card">
+  {% for review in reviews %}
+    <div class="review-item">
+      <div class="review-head">
+        <span class="review-avatar">{{ review.buyer.initials }}</span>
+        <div>
+          <strong>{{ review.buyer.username }}</strong>
+          <span class="stars">{{ review.rating|stars }}</span>
+        </div>
+        <span class="text-muted" style="margin-inline-start:auto">{{ review.created_at|date:"Y-m-d" }}</span>
+      </div>
+
+      {% if review.comment %}<p class="review-text">{{ review.comment }}</p>{% endif %}
+
+      {% if user.is_authenticated %}
+        <div class="review-actions">
+          <form action="{% url 'books:toggle_review_like' review.pk %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="like-btn like-btn-sm {% if review|liked_obj:user %}liked{% endif %}">
+              <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
+              <span class="like-count">{{ review.likes_count }}</span>
+            </button>
+          </form>
+          <button type="button" class="btn btn-ghost btn-sm reply-toggle" data-target="reply-{{ review.pk }}">
+            💬 {% trans "Javob berish" %}
+          </button>
+        </div>
+
+        <form action="{% url 'books:reply_create' review.pk %}" method="post"
+              class="reply-form" id="reply-{{ review.pk }}" hidden>
+          {% csrf_token %}
+          <input type="text" name="text" placeholder="{% trans 'Javob yozing...' %}" required />
+          <button type="submit" class="btn btn-primary btn-sm">{% trans "Yuborish" %}</button>
+        </form>
+      {% endif %}
+
+      {% if review.replies.all %}
+        <div class="reply-list">
+          {% for reply in review.replies.all %}
+            <div class="reply-item">
+              <div class="review-head">
+                <span class="review-avatar sm">{{ reply.author.initials }}</span>
+                <strong>{{ reply.author.username }}</strong>
+                <span class="text-muted" style="margin-inline-start:auto">{{ reply.created_at|date:"Y-m-d" }}</span>
+              </div>
+              <p class="review-text">{{ reply.text }}</p>
+              {% if user.is_authenticated %}
+                <form action="{% url 'books:toggle_reply_like' reply.pk %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="like-btn like-btn-sm {% if reply|liked_obj:user %}liked{% endif %}">
+                    <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
+                    <span class="like-count">{{ reply.likes_count }}</span>
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p class="text-muted" style="margin:0">{% trans "Bu kitobga hali sharh yozilmagan. Birinchi bo'ling!" %}</p>
+  {% endfor %}
+</div>

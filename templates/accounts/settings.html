@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Sozlamalar" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+
+  <a href="{% url 'core:home' %}" class="back-link">← {% trans "Orqaga" %}</a>
+
+  <h1>{% trans "Sozlamalar" %}</h1>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="card">
+      <div class="card-title">{% trans "Rejim" %}</div>
+      <p class="card-hint">{% trans "Sotuvchi rejimida kitob sotasiz, xaridor rejimida kitob sotib olasiz." %}</p>
+      <div class="segmented">
+        {% for radio in form.role %}
+          <label>
+            {{ radio.tag }}
+            <span class="seg-option">{{ radio.choice_label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      {% if form.role.errors %}<div class="form-errors">{{ form.role.errors|striptags }}</div>{% endif %}
+    </div>
+
+    <div class="card">
+      <div class="card-title">{% trans "Ko'rinish" %}</div>
+      <p class="card-hint">{% trans "Sayt mavzusi va tilini tanlang." %}</p>
+
+      <div class="stack">
+        <div class="form-row">
+          <label>{% trans "Mavzu" %}</label>
+          <div class="segmented">
+            {% for radio in form.theme %}
+              <label>
+                {{ radio.tag }}
+                <span class="seg-option">{{ radio.choice_label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>{% trans "Til" %}</label>
+          <div class="segmented">
+            {% for radio in form.language %}
+              <label>
+                {{ radio.tag }}
+                <span class="seg-option">{{ radio.choice_label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">{% trans "Profil" %}</div>
+      <p class="card-hint">{% trans "Bu ma'lumotlar sizning sahifangizda ko'rinadi." %}</p>
+
+      <div class="stack">
+        <div class="form-row">
+          <label for="{{ form.avatar.id_for_label }}">{{ form.avatar.label }}</label>
+          {% if user.avatar %}
+            <div class="flex" style="margin-bottom:10px">
+              <span class="user-menu-avatar"><img src="{{ user.avatar.url }}" alt="" /></span>
+              <span class="text-muted">{% trans "Joriy rasm" %}</span>
+            </div>
+          {% endif %}
+          {{ form.avatar }}
+          {% if form.avatar.errors %}<div class="form-errors">{{ form.avatar.errors|striptags }}</div>{% endif %}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}<div class="form-errors">{{ form.phone.errors|striptags }}</div>{% endif %}
+        </div>
+
+        <div class="form-row">
+          <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}<div class="form-errors">{{ form.bio.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="flex-between">
+        <div>
+          <div class="card-title" style="margin:0">{% trans "Hisob" %}</div>
+          <span class="text-muted">{{ user.username }}{% if user.email %} · {{ user.email }}{% endif %}</span>
+        </div>
+        <div style="text-align:end">
+          <div class="text-muted" style="font-size:.8rem">{% trans "Hisob balansi" %}</div>
+          <strong>{{ user.balance }} {% trans "so'm" %}</strong>
+          <div style="margin-top:8px">
+            <a href="{% url 'accounts:topup' %}" class="btn btn-outline btn-sm">+ {% trans "To'ldirish" %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✈ {% trans "Telegram bot" %}</div>
+      <p class="card-hint">
+        {% trans "Katalogni ko'rish, kitob sotib olish va bildirishnomalar uchun botni ulang." %}
+      </p>
+      <a href="{% url 'accounts:telegram' %}" class="btn btn-outline">
+        {% if user.telegram.is_linked %}✅ {% trans "Ulangan" %}{% else %}{% trans "Telegram'ni ulash" %}{% endif %}
+      </a>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💬 {% trans "Yordam" %}</div>
+      <p class="card-hint">{% trans "Savol yoki muammo bo'lsa, administratorga yozing." %}</p>
+      <a href="{{ admin_telegram }}" target="_blank" rel="noopener" class="btn btn-outline">
+        ✈ {% trans "Administrator bilan bog'lanish" %}
+      </a>
+    </div>
+
+    <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap">
+      <button type="submit" class="btn btn-primary">{% trans "Saqlash" %}</button>
+      <a href="{% url 'core:home' %}" class="btn btn-outline">{% trans "Bekor qilish" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

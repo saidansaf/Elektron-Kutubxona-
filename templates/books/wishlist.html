@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n book_extras %}
+{% block title %}{% trans "Istaklarim" %}{% endblock %}
+{% block content %}
+<a href="{% url 'books:catalog' %}" class="back-link">← {% trans "Katalogga" %}</a>
+<h1>⭐ {% trans "Istaklarim" %}</h1>
+<p class="text-muted">{% trans "Keyinroq sotib olmoqchi bo'lgan kitoblaringiz." %}</p>
+
+<div class="grid grid-3">
+  {% for wish in wishes %}
+    <div class="book-card">
+      {% if wish.book.cover %}
+        <img src="{{ wish.book.cover.url }}" alt="{{ wish.book.title }}" class="book-cover" />
+      {% else %}
+        <div class="book-cover">📖</div>
+      {% endif %}
+      <div class="book-card-body">
+        <div class="book-title">{{ wish.book.title }}</div>
+        <div class="book-author">{{ wish.book.author.full_name }}</div>
+        <div class="book-meta">
+          <span class="price-tag">{{ wish.book.price|money }} {% trans "so'm" %}</span>
+          {% if wish.book.pk in purchased_ids %}
+            <span class="badge success">✓ {% trans "Sotib olingan" %}</span>
+          {% endif %}
+        </div>
+        <a href="{% url 'books:detail' wish.book.pk %}" class="btn btn-outline btn-sm btn-block">
+          {% trans "Batafsil" %}
+        </a>
+        <form method="post" action="{% url 'books:toggle_wish' wish.book.pk %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% url 'books:wishlist' %}" />
+          <button type="submit" class="btn btn-ghost btn-sm btn-block">
+            ✕ {% trans "Ro'yxatdan olib tashlash" %}
+          </button>
+        </form>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">
+      {% trans "Ro'yxat bo'sh. Katalogdagi kitob sahifasida ☆ tugmasini bosing." %}
+    </p>
+  {% endfor %}
+</div>
+{% endblock %}

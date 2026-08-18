@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Rol tanlash" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg" style="margin-top:32px">
+  <div style="text-align:center; margin-bottom:26px">
+    <h1 style="margin-bottom:8px">{% trans "Siz kim bo'lib kirmoqchisiz?" %}</h1>
+    <p class="text-muted" style="margin:0">
+      {% trans "Buni keyinroq sozlamalardan istalgan vaqtda o'zgartirishingiz mumkin." %}
+    </p>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="choice-list choice-list-2">
+      {% for radio in form.role %}
+        <label class="choice choice-big">
+          {{ radio.tag }}
+          <span class="choice-body">
+            <span class="choice-icon">{% if forloop.first %}🏪{% else %}📖{% endif %}</span>
+            <span>
+              <span class="choice-title">
+                {% if forloop.first %}{% trans "Sotuvchi" %}{% else %}{% trans "Sotib oluvchi" %}{% endif %}
+              </span>
+              <span class="choice-desc">
+                {% if forloop.first %}
+                  {% trans "Kitob qo'shasiz va sotasiz" %}
+                {% else %}
+                  {% trans "Kitob sotib olasiz va o'qiysiz" %}
+                {% endif %}
+              </span>
+            </span>
+          </span>
+        </label>
+      {% endfor %}
+    </div>
+    {% if form.role.errors %}<div class="form-errors">{{ form.role.errors|striptags }}</div>{% endif %}
+
+    <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:22px">
+      {% trans "Tasdiqlash" %}
+    </button>
+  </form>
+</div>
+{% endblock %}

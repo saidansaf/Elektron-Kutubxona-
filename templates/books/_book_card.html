@@ -1,0 +1,29 @@
+{% load i18n book_extras %}
+{% comment %}
+Butun kartochka havola: istalgan joyiga bosilsa kitob sahifasi ochiladi.
+Ichkarida haqiqiy <a> bo'lmaydi (havola ichida havola bo'lmaydi) - pastdagi
+tugma ko'rinishidagi element oddiy <span>.
+{% endcomment %}
+<a href="{% url 'books:detail' book.pk %}" class="book-card">
+  {% if book.cover %}
+    <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover" />
+  {% else %}
+    <div class="book-cover placeholder">📖</div>
+  {% endif %}
+  <div class="book-card-body">
+    <div class="book-title">{{ book.title }}</div>
+    <div class="book-author">{{ book.author.full_name }}</div>
+    {% if book.description %}
+      <p class="book-snippet">{{ book.description|truncatechars:70 }}</p>
+    {% endif %}
+    <div class="stars">{{ book.average_rating|stars }}
+      <span class="text-muted">{{ book.average_rating|default:"0" }}</span>
+      <span class="text-muted">· ❤ {{ book.likes_count }}</span>
+    </div>
+    <div class="book-meta">
+      <span class="price-tag">{{ book.price }} {% trans "so'm" %}</span>
+      <span class="badge muted">{{ book.get_language_display }}</span>
+    </div>
+    <span class="btn btn-primary btn-sm btn-block">{% trans "Batafsil" %}</span>
+  </div>
+</a>

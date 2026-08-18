@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "AI yordamchi" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'core:home' %}" class="back-link">← {% trans "Orqaga" %}</a>
+
+  <div class="page-head">
+    <h1 style="margin:0">✨ {% trans "AI yordamchi" %}</h1>
+    <form method="post" action="{% url 'core:ai_clear' %}" id="clearForm">
+      {% csrf_token %}
+      <button type="button" class="btn btn-ghost btn-sm" id="clearBtn">{% trans "Suhbatni tozalash" %}</button>
+    </form>
+  </div>
+
+  {% if not ai_ready %}
+    <div class="messages"><li class="warning" style="list-style:none">
+      {% trans "AI kaliti hali sozlanmagan. .env faylida AI_API_KEY ni to'ldiring." %}
+      <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">{% trans "Bepul kalit olish" %}</a>
+    </li></div>
+  {% endif %}
+
+  <div class="card ai-panel">
+    <div class="chat" id="chat">
+      {% for m in history %}
+        <div class="chat-msg {{ m.role }}">{{ m.content|linebreaksbr }}</div>
+      {% empty %}
+        <div class="chat-empty">
+          <p>{% trans "Kitoblar haqida so'rang - tavsif yozib beraman, janr bo'yicha maslahat beraman yoki sayt qanday ishlashini tushuntiraman." %}</p>
+          <div class="chat-suggestions">
+            <button type="button" class="chip-btn">{% trans "Detektiv janridagi kitob tavsiya qil" %}</button>
+            <button type="button" class="chip-btn">{% trans "Abdulla Qodiriy haqida gapirib ber" %}</button>
+            <button type="button" class="chip-btn">{% trans "Kitobga qanday tavsif yozsam bo'ladi?" %}</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <form class="chat-form" id="chatForm">
+      <input type="text" id="chatInput" placeholder="{% trans 'Savolingizni yozing...' %}" autocomplete="off" required />
+      <button type="submit" class="btn btn-primary">{% trans "Yuborish" %}</button>
+    </form>
+
+    <p class="ai-quota" id="aiQuota" data-template="{% trans "Shu soatda yana {n} ta so'rov qoldi" %}">
+      {% blocktrans with left=ai_messages_left %}Shu soatda yana {{ left }} ta so'rov qoldi{% endblocktrans %}
+    </p>
+
+    <div class="ai-panel-divider">
+      <span class="card-title">🎨 {% trans "Rasm generatsiya qilish" %}</span>
+      <p class="card-hint">{% trans "Kitob muqovasi uchun rasm yaratib beraman." %}</p>
+    </div>
+    <div class="chat-form">
+      <input type="text" id="imgPrompt" placeholder="{% trans 'Masalan: eski kutubxona, kuzgi rang' %}" />
+      <button type="button" class="btn btn-outline" id="imgBtn">{% trans "Yaratish" %}</button>
+    </div>
+    <div id="imgResult" class="img-result"></div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var chat = document.getElementById("chat");
+  var form = document.getElementById("chatForm");
+  var input = document.getElementById("chatInput");
+
+  function token() {
+    var el = document.querySelector("[name=csrfmiddlewaretoken]");
+    return el ? el.value : "";
+  }
+
+  var quota = document.getElementById("aiQuota");
+
+  function showQuota(left) {
+    if (left === undefined || left === null || !quota) return;
+    quota.textContent = quota.dataset.template.replace("{n}", left);
+  }
+
+  function add(role, text) {
+    var empty = chat.querySelector(".chat-empty");
+    if (empty) empty.remove();
+    var div = document.createElement("div");
+    div.className = "chat-msg " + role;
+    div.textContent = text;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+    return div;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = input.value.trim();
+    if (!text) return;
+    add("user", text);
+    input.value = "";
+    var pending = add("assistant pending", "…");
+
+    fetch("{% url 'core:ai_send' %}", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": token() },
+      body: JSON.stringify({ message: text })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+      .then(function (res) {
+        pending.classList.remove("pending");
+        if (res.ok) {
+          pending.textContent = res.data.answer;
+        } else {
+          pending.classList.add("error");
+          pending.textContent = res.data.error || "Xatolik";
+        }
+        showQuota(res.data.left);
+        chat.scrollTop = chat.scrollHeight;
+      })
+      .catch(function () {
+        pending.classList.remove("pending");
+        pending.classList.add("error");
+        pending.textContent = "Tarmoq xatosi";
+      });
+  });
+
+  document.querySelectorAll(".chip-btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      input.value = b.textContent.trim();
+      form.dispatchEvent(new Event("submit"));
+    });
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    fetch("{% url 'core:ai_clear' %}", { method: "POST", headers: { "X-CSRFToken": token() } })
+      .then(function () { window.location.reload(); });
+  });
+
+  // Rasm generatsiya
+  document.getElementById("imgBtn").addEventListener("click", function () {
+    var p = document.getElementById("imgPrompt").value.trim();
+    var box = document.getElementById("imgResult");
+    if (!p) return;
+    box.innerHTML = "<p class='text-muted'>…</p>";
+    fetch("{% url 'core:ai_image' %}", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": token() },
+      body: JSON.stringify({ prompt: p })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.url) {
+          box.innerHTML = "";
+          var img = new Image();
+          img.src = d.url;
+          img.alt = p;
+          box.appendChild(img);
+          var a = document.createElement("a");
+          a.href = d.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.className = "btn btn-outline btn-sm";
+          a.textContent = "{% trans 'Rasmni ochish' %}";
+          box.appendChild(a);
+        } else {
+          box.innerHTML = "<p class='form-errors'>" + (d.error || "Xatolik") + "</p>";
+        }
+      });
+  });
+})();
+</script>
+{% endblock %}

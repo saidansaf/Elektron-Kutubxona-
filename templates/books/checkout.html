@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load i18n book_extras %}
+{% block title %}{% trans "Sotib olish" %} — {{ book.title }}{% endblock %}
+{% block content %}
+
+<a href="{% url 'books:detail' book.pk %}" class="back-link">← {% trans "Orqaga" %}</a>
+<h1>{% trans "Buyurtmani rasmiylashtirish" %}</h1>
+
+<div class="checkout-grid">
+
+  <form method="post" id="checkoutForm">
+    {% csrf_token %}
+
+    <div class="card">
+      <div class="card-title">{% trans "To'lov" %}</div>
+      <p class="card-hint">{% trans "To'lov bank kartasi orqali amalga oshiriladi." %}</p>
+
+      <div class="pay-badge">
+        <span class="choice-icon">💳</span>
+        <span>
+          <span class="choice-title">{% trans "Karta orqali" %}</span>
+          <span class="choice-desc">{% trans "Summa hisobingizdan darhol yechiladi." %}</span>
+        </span>
+      </div>
+
+      <div class="card-fields">
+        <div class="form-row">
+          <label for="{{ form.card_number.id_for_label }}">{{ form.card_number.label }}</label>
+          {{ form.card_number }}
+          {% if form.card_number.errors %}<div class="form-errors">{{ form.card_number.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+          <label for="{{ form.card_expiry.id_for_label }}">{{ form.card_expiry.label }}</label>
+          {{ form.card_expiry }}
+          {% if form.card_expiry.errors %}<div class="form-errors">{{ form.card_expiry.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="form-row">
+          <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
+          {{ form.address }}
+          {% if form.address.errors %}<div class="form-errors">{{ form.address.errors|striptags }}</div>{% endif %}
+        </div>
+        <p class="note">
+          🔒 {% trans "Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari saqlanmaydi." %}
+        </p>
+      </div>
+    </div>
+  </form>
+
+  <aside class="order-summary">
+    <div class="card">
+      <div class="card-title">{% trans "Buyurtma" %}</div>
+
+      <div class="summary-book">
+        {% if book.cover %}
+          <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="summary-cover" />
+        {% else %}
+          <div class="summary-cover placeholder">📖</div>
+        {% endif %}
+        <div>
+          <div class="book-title">{{ book.title }}</div>
+          <div class="book-author">{{ book.author.full_name }}</div>
+          <div class="stars">{{ book.average_rating|stars }}
+            <span class="text-muted">{{ book.average_rating|default:"0" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="text-muted">{% trans "Til" %}</span>
+          <span>{{ book.get_language_display }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-muted">{% trans "Sahifalar" %}</span>
+          <span>{{ book.pages }}</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-muted">{% trans "Sotuvchi" %}</span>
+          <span>{{ book.seller.username }}</span>
+        </div>
+        <div class="summary-row total">
+          <span>{% trans "Jami" %}</span>
+          <span class="price-tag">{{ book.price }} {% trans "so'm" %}</span>
+        </div>
+        <div class="summary-row">
+          <span class="text-muted">{% trans "Hisob balansi" %}</span>
+          <span>{{ user.balance }} {% trans "so'm" %}</span>
+        </div>
+      </div>
+
+      <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg">
+        {% trans "Tasdiqlash va sotib olish" %}
+      </button>
+
+      <form action="{% url 'books:toggle_like' book.pk %}" method="post" style="margin-top:10px">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+        <button type="submit" class="like-btn {% if liked %}liked{% endif %} btn-block">
+          <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
+          <span>{% if liked %}{% trans "Yoqtirdingiz" %}{% else %}{% trans "Yoqtirish" %}{% endif %}</span>
+          <span class="like-count">{{ book.likes_count }}</span>
+        </button>
+      </form>
+    </div>
+  </aside>
+</div>
+
+<section class="section-title">
+  <h2>{% trans "Xaridorlar fikri" %}</h2>
+  <span class="text-muted">
+    ❤ {{ book.likes_count }} · 💬 {{ book.reviews_count }}
+  </span>
+</section>
+
+{% include "books/_reviews.html" %}
+
+{% endblock %}

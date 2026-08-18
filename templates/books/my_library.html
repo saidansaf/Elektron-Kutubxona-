@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Mening kutubxonam" %}{% endblock %}
+{% block content %}
+<h1>{% trans "Mening kutubxonam" %}</h1>
+<p class="text-muted">{% trans "Hisob balansi" %}: <strong>{{ user.balance }} {% trans "so'm" %}</strong></p>
+
+<div class="grid grid-3">
+  {% for purchase in purchases %}
+    <div class="book-card">
+      {% if purchase.book.cover %}
+        <img src="{{ purchase.book.cover.url }}" class="book-cover" alt="{{ purchase.book.title }}" />
+      {% endif %}
+      <div class="book-card-body">
+        <div class="book-title">{{ purchase.book.title }}</div>
+        <div class="book-author">{{ purchase.book.author.full_name }}</div>
+        <span class="text-muted">{% trans "Sotib olingan" %}: {{ purchase.purchased_at|date:"Y-m-d" }}</span>
+
+        {% if purchase.progress %}
+          <div class="read-progress" title="{{ purchase.progress.page }} / {{ purchase.progress.total_pages }}">
+            <div class="read-progress-bar"><span style="width:{{ purchase.progress.percent }}%"></span></div>
+            <span class="read-progress-label">
+              {% if purchase.progress.is_finished %}
+                ✓ {% trans "O'qib bo'lingan" %}
+              {% else %}
+                {{ purchase.progress.percent }}% · {% trans "sahifa" %} {{ purchase.progress.page }}
+              {% endif %}
+            </span>
+          </div>
+        {% endif %}
+
+        {% if purchase.book.file %}
+          <a href="{% url 'books:read' purchase.book.pk %}" class="btn btn-primary btn-sm btn-block">
+            {% if purchase.progress and not purchase.progress.is_finished %}
+              ▶ {% trans "Davom ettirish" %}
+            {% else %}
+              📖 {% trans "O'qish" %}
+            {% endif %}
+          </a>
+        {% endif %}
+        <a href="{% url 'books:detail' purchase.book.pk %}" class="btn btn-outline btn-sm btn-block">{% trans "Batafsil" %}</a>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">{% trans "Hali hech qanday kitob sotib olmagansiz." %}</p>
+  {% endfor %}
+</div>
+{% endblock %}
