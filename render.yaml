@@ -16,6 +16,8 @@ databases:
     databaseName: kutubxona
     user: kutubxona
     plan: free           # bepul baza 30 kundan keyin o'chadi — pastdagi eslatmaga qarang
+    region: frankfurt     # MUHIM: veb-xizmat bilan bir xil mintaqada bo'lishi shart,
+                          # aks holda ichki (internal) manzil topilmaydi
 
 services:
   - type: web
