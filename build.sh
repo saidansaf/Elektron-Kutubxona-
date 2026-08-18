@@ -24,3 +24,6 @@ echo "==> Administrator hisobi tekshirilmoqda"
 python manage.py seed_admin
 
 echo "==> Tayyor"
+
+
+
