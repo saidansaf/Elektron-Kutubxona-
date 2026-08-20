@@ -138,3 +138,123 @@ class WebhookFlowTests(TestCase):
         first = self.webhook.get_bot()
         second = self.webhook.get_bot()
         self.assertIs(first, second)
+
+
+class AutoSetWebhookTests(TestCase):
+    """Webhook server ko'tarilganda o'zi yoqilishi kerak.
+
+    Render'ning bepul tarifida "Shell" yo'q — u yerda buyruqni qo'lda
+    yozib bo'lmaydi. Shuning uchun bu avtomatik ishlashi shart, aks holda
+    bot umuman javob bermaydi.
+    """
+
+    def setUp(self):
+        self.calls = []
+
+    def fake_call(self, method, payload=None, **kwargs):
+        self.calls.append((method, payload))
+        if method == "getWebhookInfo":
+            return {"ok": True, "result": {"url": getattr(self, "current_url", "")}}
+        return {"ok": True, "result": True}
+
+    def run_hook(self):
+        """Startup hookni chaqiradi va ip tugashini kutadi."""
+        import threading
+
+        from apps.core import apps as core_apps
+        from apps.core import telegram
+
+        before = set(threading.enumerate())
+        original = telegram.call
+        telegram.call = self.fake_call
+        try:
+            core_apps._auto_set_webhook()
+            for thread in set(threading.enumerate()) - before:
+                thread.join(timeout=5)
+        finally:
+            telegram.call = original
+
+    def methods(self):
+        return [method for method, _payload in self.calls]
+
+    @override_settings(
+        AUTO_SET_WEBHOOK=True, TELEGRAM_BOT_TOKEN=TOKEN, SITE_URL="https://sinov.onrender.com"
+    )
+    def test_webhook_avtomatik_yoqiladi(self):
+        self.run_hook()
+
+        self.assertIn("setWebhook", self.methods())
+        payload = dict(self.calls)["setWebhook"]
+        self.assertTrue(payload["url"].startswith("https://sinov.onrender.com/tg/"))
+        self.assertTrue(payload["secret_token"])
+
+    @override_settings(
+        AUTO_SET_WEBHOOK=True, TELEGRAM_BOT_TOKEN=TOKEN, SITE_URL="https://sinov.onrender.com"
+    )
+    def test_allaqachon_ornatilgan_bolsa_qayta_yuborilmaydi(self):
+        from apps.core.botlib.webhook import webhook_secret
+
+        self.current_url = f"https://sinov.onrender.com/tg/{webhook_secret()}/"
+        self.run_hook()
+
+        self.assertNotIn("setWebhook", self.methods())
+
+    @override_settings(AUTO_SET_WEBHOOK=False, TELEGRAM_BOT_TOKEN=TOKEN)
+    def test_ochirilgan_bolsa_tegilmaydi(self):
+        """Lokal ishlashda va testlarda hech qanday so'rov ketmasligi kerak."""
+        self.run_hook()
+        self.assertEqual(self.calls, [])
+
+    @override_settings(AUTO_SET_WEBHOOK=True, TELEGRAM_BOT_TOKEN="")
+    def test_tokensiz_holatda_tegilmaydi(self):
+        self.run_hook()
+        self.assertEqual(self.calls, [])
+
+    @override_settings(
+        AUTO_SET_WEBHOOK=True, TELEGRAM_BOT_TOKEN=TOKEN, SITE_URL="http://127.0.0.1:8000"
+    )
+    def test_https_bolmasa_yoqilmaydi(self):
+        """Telegram webhook uchun faqat HTTPS manzilni qabul qiladi."""
+        self.run_hook()
+        self.assertEqual(self.calls, [])
+
+
+@override_settings(TELEGRAM_BOT_TOKEN=TOKEN)
+class SetWebhookUrlTests(TestCase):
+    """`set_webhook --url` ga to'liq havola berilsa ham to'g'ri manzil chiqsin.
+
+    Foydalanuvchi brauzerdagi manzilni nusxalaganda unda ortiqcha yo'l
+    bo'lishi tabiiy ("...onrender.com/kitoblar/"). Webhook esa sayt
+    ildizidan boshlanishi shart, aks holda Telegram mavjud bo'lmagan
+    sahifaga yozadi va bot jimgina javob bermay qoladi.
+    """
+
+    def call_command_with(self, url):
+        from io import StringIO
+        from unittest.mock import patch
+
+        from django.core.management import call_command
+
+        sent = {}
+
+        def fake_call(method, payload=None, **kwargs):
+            sent[method] = payload or {}
+            return {"ok": True}
+
+        out = StringIO()
+        with patch("apps.core.telegram.call", side_effect=fake_call):
+            call_command("set_webhook", url=url, stdout=out)
+        return sent.get("setWebhook", {}).get("url", ""), out.getvalue()
+
+    def test_ortiqcha_yol_tashlanadi(self):
+        url, output = self.call_command_with("https://sayt.onrender.com/kitoblar/")
+        self.assertRegex(url, r"^https://sayt\.onrender\.com/tg/[0-9a-f]{32}/$")
+        self.assertIn("tashlandi", output)
+
+    def test_toza_manzil_ozgarmaydi(self):
+        url, _output = self.call_command_with("https://sayt.onrender.com")
+        self.assertRegex(url, r"^https://sayt\.onrender\.com/tg/[0-9a-f]{32}/$")
+
+    def test_oxiridagi_slesh_muammo_qilmaydi(self):
+        url, _output = self.call_command_with("https://sayt.onrender.com/")
+        self.assertRegex(url, r"^https://sayt\.onrender\.com/tg/[0-9a-f]{32}/$")

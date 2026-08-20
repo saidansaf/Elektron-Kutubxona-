@@ -7,6 +7,8 @@ app_name = "core"
 urlpatterns = [
     path("", views.home_view, name="home"),
     path("ob-havo/", views.weather_view, name="weather"),
+    # Xizmatni uyg'oq ushlab turish uchun (docs/RENDER.md ga qarang)
+    path("ping/", views.ping_view, name="ping"),
     path("tema-almashtirish/", views.toggle_theme_view, name="toggle_theme"),
     path("til-almashtirish/", views.set_language_view, name="set_language"),
     path("xabar/<int:pk>/oqildi/", views.mark_message_read_view, name="mark_message_read"),

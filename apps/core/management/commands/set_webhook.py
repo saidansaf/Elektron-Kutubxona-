@@ -63,14 +63,27 @@ class Command(BaseCommand):
                 self.stdout.write(bad("Webhook'ni o'chirib bo'lmadi."))
             return
 
-        site = (options["url"] or settings.SITE_URL).rstrip("/")
-        if not site.startswith("https://"):
-            shown = site or "(bo'sh)"
+        raw = (options["url"] or settings.SITE_URL).strip()
+        if not raw.startswith("https://"):
+            shown = raw or "(bo'sh)"
             raise CommandError(
                 "Webhook faqat HTTPS manzilda ishlaydi.\n"
                 f"  Hozirgi manzil: {shown}\n"
                 "  Lokal kompyuterda ishlayotgan bo'lsangiz webhook kerak emas —\n"
                 "  oddiygina `python manage.py bot` ni ishlating."
+            )
+
+        # Manzildan faqat domen olinadi. Foydalanuvchi brauzerdagi to'liq
+        # havolani nusxalab qo'yishi tabiiy ("...onrender.com/kitoblar/"),
+        # lekin webhook manzili sayt ILDIZIDAN boshlanishi shart — aks holda
+        # Telegram mavjud bo'lmagan sahifaga yozadi va bot jim qoladi.
+        from urllib.parse import urlparse
+
+        parsed = urlparse(raw)
+        site = f"{parsed.scheme}://{parsed.netloc}"
+        if parsed.path.strip("/"):
+            self.stdout.write(
+                warn(f"Manzildagi ortiqcha qism tashlandi: /{parsed.path.strip('/')}")
             )
 
         secret = webhook_secret()

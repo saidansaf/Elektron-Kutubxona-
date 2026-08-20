@@ -12,10 +12,13 @@ talab qilmaydi.
 """
 
 import json
+import logging
 import urllib.parse
 import urllib.request
 
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 TIMEOUT = 45
 
@@ -24,11 +27,44 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
 )
 
-DEFAULT_MODELS = {
-    "gemini": "gemini-2.0-flash",
-    "groq": "llama-3.3-70b-versatile",
-    "openrouter": "meta-llama/llama-3.3-70b-instruct:free",
+# Har bir provayder uchun bir nechta model — birinchisi ishlamasa keyingisi
+# sinaladi.
+#
+# Nega ro'yxat: bepul provayderlar modellarni tez-tez olib tashlaydi
+# ("llama-3.3-70b-versatile does not exist"). Bitta nomga bog'lanib qolsak,
+# model o'chirilgan kuni AI yordamchi butunlay ishlamay qoladi va sabab
+# foydalanuvchiga tushunarsiz bo'ladi.
+MODEL_CANDIDATES = {
+    "gemini": [
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-flash-latest",
+        "gemini-1.5-flash",
+    ],
+    "groq": [
+        "llama-3.1-8b-instant",
+        "openai/gpt-oss-20b",
+        "meta-llama/llama-4-scout-17b-16e-instruct",
+        "qwen/qwen3-32b",
+        "llama-3.3-70b-versatile",
+    ],
+    "openrouter": [
+        "meta-llama/llama-3.3-70b-instruct:free",
+        "google/gemma-2-9b-it:free",
+        "deepseek/deepseek-chat-v3-0324:free",
+    ],
 }
+
+# Provayderning mavjud modellar ro'yxatini so'rash manzili (xato chiqqanda
+# foydalanuvchiga aniq nom ko'rsatish uchun).
+MODEL_LIST_URLS = {
+    "groq": "https://api.groq.com/openai/v1/models",
+    "openrouter": "https://openrouter.ai/api/v1/models",
+}
+
+# Ishlagan model shu yerda eslab qolinadi: har so'rovda o'chirilgan
+# modellarni qaytadan sinab o'tirmaymiz.
+_working_model = {}
 
 SYSTEM_PROMPT = (
     "Sen 'Elektron Kutubxona' saytining yordamchisisan. Sayt elektron kitoblar "
@@ -46,7 +82,14 @@ SYSTEM_PROMPT = (
 
 
 class AIError(Exception):
-    """AI xizmatiga oid xatolar."""
+    """AI xizmatiga oid xatolar.
+
+    `status` — HTTP kodi (bo'lsa). Model o'chirilganini aniqlash uchun kerak.
+    """
+
+    def __init__(self, message, status=None):
+        super().__init__(message)
+        self.status = status
 
 
 # Kalitning boshlanishiga qarab provayderni aniqlash. Foydalanuvchi kalitni
@@ -108,7 +151,7 @@ def _post_json(url, payload, headers=None):
                 detail = err.get("message") or err.get("detail") or detail
         except (ValueError, AttributeError):
             pass
-        raise AIError(f"AI xizmati xatosi ({exc.code}): {detail}") from exc
+        raise AIError(f"AI xizmati xatosi ({exc.code}): {detail}", status=exc.code) from exc
     except urllib.error.URLError as exc:
         raise AIError(f"AI xizmatiga ulanib bo'lmadi: {exc.reason}") from exc
     except (ValueError, TimeoutError) as exc:
@@ -152,17 +195,46 @@ def _chat_openai_style(messages, model, url, extra_headers=None):
         raise AIError("AI bo'sh javob qaytardi.") from exc
 
 
-def chat(messages):
-    """Suhbat. `messages` - [{"role": "user"|"assistant", "content": "..."}]."""
-    if not is_configured():
-        raise AIError(
-            "AI kaliti sozlanmagan. .env faylida AI_API_KEY ni to'ldiring "
-            "(bepul kalit: https://aistudio.google.com/apikey)."
-        )
+def _is_missing_model(error):
+    """Xato "bunday model yo'q" degani anglatadimi.
 
-    provider = active_provider()
-    model = settings.AI_MODEL or DEFAULT_MODELS.get(provider, DEFAULT_MODELS["gemini"])
+    Provayderlar buni turlicha qaytaradi: kimdir 404, kimdir 400. Matndagi
+    kalit so'zlarga ham qaraymiz — aks holda oddiy kalit xatosini ham model
+    xatosi deb o'ylab, barcha modellarni behuda sinab chiqardik.
+    """
+    text = str(error).lower()
+    if error.status not in (400, 404):
+        return False
+    return any(
+        word in text
+        for word in ("does not exist", "not found", "decommissioned", "no longer", "unknown model")
+    )
 
+
+def available_models(provider=None, limit=12):
+    """Provayderdagi mavjud modellar ro'yxati (xato xabarida ko'rsatish uchun).
+
+    Olib bo'lmasa bo'sh ro'yxat qaytaradi — bu qo'shimcha ma'lumot, bo'lmasa
+    ham asosiy xato xabari yetarli.
+    """
+    provider = provider or active_provider()
+    url = MODEL_LIST_URLS.get(provider)
+    if not url or not is_configured():
+        return []
+    try:
+        req = urllib.request.Request(url)
+        req.add_header("Authorization", f"Bearer {settings.AI_API_KEY}")
+        req.add_header("User-Agent", USER_AGENT)
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        names = [item.get("id", "") for item in data.get("data", []) if item.get("id")]
+        return sorted(names)[:limit]
+    except Exception:
+        return []
+
+
+def _send(messages, model, provider):
+    """Bitta model bilan bitta urinish."""
     if provider == "gemini":
         return _chat_gemini(messages, model)
     if provider == "groq":
@@ -172,9 +244,61 @@ def chat(messages):
             messages,
             model,
             "https://openrouter.ai/api/v1/chat/completions",
-            {"HTTP-Referer": "http://127.0.0.1:8000", "X-Title": "Elektron Kutubxona"},
+            {"HTTP-Referer": settings.SITE_URL, "X-Title": "Elektron Kutubxona"},
         )
     raise AIError(f"Noma'lum AI provayderi: {provider}")
+
+
+def models_to_try(provider):
+    """Sinab ko'riladigan modellar tartibi."""
+    if settings.AI_MODEL:
+        # Foydalanuvchi aniq model tanlagan bo'lsa, uni o'zgartirmaymiz.
+        return [settings.AI_MODEL]
+    candidates = MODEL_CANDIDATES.get(provider) or MODEL_CANDIDATES["gemini"]
+    known_good = _working_model.get(provider)
+    if known_good and known_good in candidates:
+        # Oldingi so'rovda ishlagani birinchi bo'lsin.
+        return [known_good] + [m for m in candidates if m != known_good]
+    return list(candidates)
+
+
+def chat(messages):
+    """Suhbat. `messages` - [{"role": "user"|"assistant", "content": "..."}].
+
+    Model o'chirilgan bo'lsa keyingisi sinaladi: bepul provayderlar model
+    nomlarini tez-tez o'zgartiradi va bitta nomga bog'lanib qolish AI
+    yordamchini kutilmaganda ishdan chiqaradi.
+    """
+    if not is_configured():
+        raise AIError(
+            "AI kaliti sozlanmagan. .env faylida AI_API_KEY ni to'ldiring "
+            "(bepul kalit: https://aistudio.google.com/apikey)."
+        )
+
+    provider = active_provider()
+    candidates = models_to_try(provider)
+    last_error = None
+
+    for model in candidates:
+        try:
+            answer = _send(messages, model, provider)
+        except AIError as exc:
+            last_error = exc
+            if _is_missing_model(exc):
+                logger.warning("Model ishlamadi (%s), keyingisi sinaladi: %s", model, exc)
+                continue
+            raise
+        _working_model[provider] = model
+        return answer
+
+    # Hamma model o'chirilgan — foydalanuvchiga aniq nom ko'rsatamiz.
+    names = available_models(provider)
+    hint = ""
+    if names:
+        hint = "\n\nMavjud modellar: " + ", ".join(names[:6]) + (
+            "\n.env faylida AI_MODEL=<nom> deb yozing."
+        )
+    raise AIError(f"{last_error}{hint}", status=getattr(last_error, "status", None))
 
 
 def describe_book(title, author="", genre="", language="uz"):

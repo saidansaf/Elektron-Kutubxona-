@@ -119,6 +119,33 @@ hisoblanadi. Bu holat testlar bilan qamrab olingan (`RedisDownTests`).
 > ishlab chiqishda bu sezilmaydi, lekin serverda bir nechta ishchi jarayon
 > bo'lsa Redis ulagan ma'qul — aks holda kesh ular orasida bo'linib ketadi.
 
+## AI modeli
+
+Bepul provayderlar model nomlarini tez-tez o'zgartiradi — masalan Groq
+`llama-3.3-70b-versatile` ni olib tashlaganda AI yordamchi
+`The model does not exist (404)` xatosini bergan edi.
+
+Shuning uchun har bir provayder uchun **bir nechta model** ro'yxati bor
+(`apps/core/ai.py`). Birinchisi ishlamasa keyingisi sinaladi, ishlagani
+esa eslab qolinadi. Ya'ni model o'chirilsa ham AI yordamchi ishlashda
+davom etadi.
+
+Aniq modelni o'zingiz tanlamoqchi bo'lsangiz:
+
+```
+AI_MODEL=llama-3.1-8b-instant
+```
+
+Bu holda faqat o'sha model ishlatiladi (zaxira sinalmaydi).
+
+Qaysi modellar mavjudligini ko'rish:
+
+```
+python manage.py check_ai
+```
+
+Xato chiqsa, bu buyruq provayderning o'zidan ro'yxatni so'rab ko'rsatadi.
+
 ## AI so'rovlari chegarasi
 
 Bepul API kalitlarining kunlik limiti bor. Chegara bo'lmasa bitta
@@ -546,6 +573,30 @@ Bosh sahifa manzili oxiriga `#admin` qo'shilsa (masalan `http://127.0.0.1:8000/#
 avtomatik ravishda maxfiy admin kirish sahifasiga yo'naltiradi. Standart login/parol
 `.env` faylidagi `ADMIN_USERNAME` / `ADMIN_PASSWORD` orqali beriladi (`seed_admin`
 buyrug'i ishga tushirilgandan keyin ishlaydi).
+
+### Admin parolini almashtirish
+
+`seed_admin` parolni **faqat hisob birinchi marta yaratilganda**
+o'rnatadi. `.env` dagi `ADMIN_PASSWORD` ni keyin o'zgartirsangiz, hisob
+allaqachon bor bo'lgani uchun parol eskiligicha qolaveradi. Majburan
+yangilash uchun:
+
+```powershell
+python manage.py seed_admin --reset-password
+```
+
+Serverda (Render kabi, buyruq qo'lda yozib bo'lmaydigan joyda) xuddi
+shuni `ADMIN_RESET_PASSWORD=1` o'zgaruvchisi bajaradi — deploydan keyin
+uni o'chirib qo'ying, aks holda parol har safar tiklanaveradi.
+
+Parolni butunlay unutgan bo'lsangiz (uni "ko'rish" imkoni yo'q —
+bazada qaytarilmaydigan qilib shifrlangan):
+
+```powershell
+python manage.py changepassword Saidansaf
+```
+
+Batafsil (serverdagi bazaga masofadan ulanish ham): `docs/RENDER.md`.
 
 > **Xavfsizlik bo'yicha eslatma:** `.env` fayli `.gitignore`ga kiritilgan va
 > repozitoriyga hech qachon push qilinmaydi. Productionda albatta yangi,

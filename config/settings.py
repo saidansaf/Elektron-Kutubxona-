@@ -99,6 +99,11 @@ MIDDLEWARE = [
     # Nginx yo'q, shuning uchun busiz sayt uslubsiz - qip-yalang'och HTML
     # bo'lib ochiladi.
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    # HTML/JSON javoblarni siqadi. Sahifalarimiz matnga to'la - siqilgach
+    # hajmi 4-5 barobar kichrayadi va sekin internetda seziladigan darajada
+    # tez ochiladi. WhiteNoise'dan KEYIN turibdi: statik fayllar (rasm,
+    # shrift) unga yetib kelmaydi, ya'ni bekorga qayta siqilmaydi.
+    "django.middleware.gzip.GZipMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -307,6 +312,17 @@ ADMIN_SEED_PASSWORD = os.environ.get(
 )
 ADMIN_SEED_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@kutubxona.uz")
 
+# Serverda administrator parolini tiklash uchun.
+#
+# `seed_admin` parolni faqat hisob birinchi marta yaratilganda o'rnatadi.
+# Bu bayroq yoqilsa, mavjud hisobning paroli ham ADMIN_PASSWORD ga
+# tenglashtiriladi. Render kabi xizmatlarda terminal bo'lmagani uchun
+# parolni tiklashning boshqa yo'li yo'q.
+#
+# Tiklangandan keyin o'chirib qo'yish kerak — aks holda har deploydan
+# keyin parol qaytadan tiklanaveradi.
+ADMIN_RESET_PASSWORD = env_bool("ADMIN_RESET_PASSWORD", False)
+
 # Xaridorga ro'yxatdan o'tganda beriladigan boshlang'ich hamyon balansi (so'm)
 DEFAULT_BUYER_BALANCE = 500000
 
@@ -385,6 +401,11 @@ AI_RATE_LIMIT_WINDOW = int(env_str("AI_RATE_LIMIT_WINDOW", "3600") or 3600)
 # sayt hech qanday o'zgarishsiz ishlayveradi - bildirishnomalar shunchaki
 # yuborilmaydi.
 TELEGRAM_BOT_TOKEN = env_str("TELEGRAM_BOT_TOKEN")
+
+# Server ko'tarilganda webhook o'zi yoqilsinmi (apps/core/apps.py).
+# Render'da 1 qilinadi: u yerda bepul tarifda "Shell" yo'q va webhook'ni
+# qo'lda yoqib bo'lmaydi. Lokal ishlashda 0 - polling ishlatiladi.
+AUTO_SET_WEBHOOK = env_bool("AUTO_SET_WEBHOOK", False)
 TELEGRAM_BOT_USERNAME = env_str("TELEGRAM_BOT_USERNAME")
 
 # Botdagi havolalar shu manzilga olib boradi

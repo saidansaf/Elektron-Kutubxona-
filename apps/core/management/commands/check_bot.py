@@ -63,18 +63,34 @@ class Command(BaseCommand):
                 warn(f"   .env ga qo'shing: TELEGRAM_BOT_USERNAME={me.get('username')}")
             )
 
-        # 2b. Webhook long polling'ga xalaqit bermayaptimi
+        # 2b. Webhook holati
         self.stdout.write("\n2b) Webhook holati")
         hook = telegram.call("getWebhookInfo")
-        hook_url = (hook or {}).get("result", {}).get("url", "")
-        if hook_url:
-            self.stdout.write(bad(f"   webhook o'rnatilgan: {hook_url}"))
-            self.stdout.write(
-                "   Webhook va long polling birga ishlamaydi - bot xabarlarni ko'rmaydi."
-            )
-            self.stdout.write("   `python manage.py bot` uni ishga tushirishda o'zi o'chiradi.")
+        result = (hook or {}).get("result", {})
+        hook_url = result.get("url", "")
+
+        from apps.core.botlib.webhook import webhook_secret
+
+        expected = f"{settings.SITE_URL.rstrip('/')}/tg/{webhook_secret()}/"
+
+        if not hook_url:
+            self.stdout.write("   webhook yo'q (long polling rejimi)")
+            self.stdout.write("   Lokal ishlash uchun to'g'ri:  python manage.py bot")
+            self.stdout.write("   Serverda esa webhook kerak:   python manage.py set_webhook")
+        elif hook_url == expected:
+            self.stdout.write(ok(f"   yoqilgan: {hook_url}"))
         else:
-            self.stdout.write(ok("   webhook yo'q (long polling uchun to'g'ri)"))
+            self.stdout.write(warn(f"   yoqilgan, lekin boshqa manzilga: {hook_url}"))
+            self.stdout.write(f"   kutilgani: {expected}")
+            self.stdout.write("   SITE_URL to'g'rimi? Qayta yoqish: python manage.py set_webhook")
+
+        if result.get("last_error_message"):
+            self.stdout.write(bad(f"   Telegram xatosi: {result['last_error_message']}"))
+            self.stdout.write("   (bu xato saytga yuborilgan oxirgi so'rovda chiqqan)")
+        if result.get("pending_update_count"):
+            self.stdout.write(
+                warn(f"   Kutayotgan yangiliklar: {result['pending_update_count']}")
+            )
 
         # 3. Ulangan foydalanuvchilar
         self.stdout.write("\n3) Ulangan foydalanuvchilar")

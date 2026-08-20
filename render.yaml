@@ -5,19 +5,17 @@
 #
 # Telegram bot ALOHIDA xizmat emas: u webhook orqali shu veb-xizmatning
 # ichida ishlaydi. Sababi — Render'ning bepul tarifida "Background Worker"
-# berilmaydi. Deploydan keyin bir marta:
+# berilmaydi.
 #
-#     python manage.py set_webhook
-#
-# (Render → Shell yoki lokal kompyuterdan SITE_URL ni ko'rsatib.)
+# Webhook server ko'tarilganda AVTOMATIK yoqiladi (AUTO_SET_WEBHOOK=1).
+# Qo'lda hech narsa qilish shart emas — faqat TELEGRAM_BOT_TOKEN ni
+# Render panelidagi Environment bo'limiga qo'ying.
 
 databases:
   - name: kutubxona-db
     databaseName: kutubxona
     user: kutubxona
     plan: free           # bepul baza 30 kundan keyin o'chadi — pastdagi eslatmaga qarang
-    region: frankfurt     # MUHIM: veb-xizmat bilan bir xil mintaqada bo'lishi shart,
-                          # aks holda ichki (internal) manzil topilmaydi
 
 services:
   - type: web
@@ -26,7 +24,18 @@ services:
     plan: free
     region: frankfurt    # O'zbekistonga eng yaqin bepul mintaqa
     buildCommand: "./build.sh"
-    startCommand: "gunicorn config.wsgi:application --workers 2 --timeout 120"
+    # Bepul tarifda protsessor kuchsiz (0.1 CPU), xotira esa 512 MB.
+    # `gthread` shuning uchun tanlangan: so'rovlarimizning ko'p vaqti
+    # kutish bilan o'tadi (baza, Telegram, AI). Oddiy `sync` ishchilarida
+    # bitta kutayotgan so'rov qolganini ham to'sib turadi — sayt shundan
+    # "osilib qolgandek" sekin tuyuladi.
+    #
+    # --max-requests: uzoq ishlagach xotira asta o'sadi, 512 MB da bu
+    # sezilarli. Ishchi vaqti-vaqti bilan o'zini yangilab turadi.
+    startCommand: >-
+      gunicorn config.wsgi:application
+      --workers 2 --threads 4 --worker-class gthread
+      --timeout 120 --max-requests 400 --max-requests-jitter 50
     healthCheckPath: /
 
     envVars:
@@ -39,6 +48,12 @@ services:
 
       - key: DEBUG
         value: "False"
+
+      # Server ko'tarilganda Telegram webhook'i o'zi yoqiladi.
+      # Render'ning bepul tarifida "Shell" yo'q, ya'ni buyruqni qo'lda
+      # yozib bo'lmaydi — shuning uchun bu avtomatik bo'lishi shart.
+      - key: AUTO_SET_WEBHOOK
+        value: "1"
 
       # Bazaga ulanish satrini Render yuqoridagi bazadan olib qo'yadi.
       - key: DATABASE_URL

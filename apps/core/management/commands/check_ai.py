@@ -76,8 +76,13 @@ class Command(BaseCommand):
             self.stdout.write(warn("   Kalit prefiksi tanish emas, .env dagi qiymat ishlatiladi."))
 
         if provider in known:
-            model = settings.AI_MODEL or ai.DEFAULT_MODELS[provider]
-            self.stdout.write(ok(f"   {provider} (model: {model})"))
+            models = ai.models_to_try(provider)
+            if settings.AI_MODEL:
+                self.stdout.write(ok(f"   {provider} (model: {settings.AI_MODEL})"))
+            else:
+                self.stdout.write(ok(f"   {provider} (model: {models[0]})"))
+                if len(models) > 1:
+                    self.stdout.write(f"   Zaxira: {', '.join(models[1:])}")
         else:
             self.stdout.write(bad(f"   noma'lum: '{provider}'"))
             self.stdout.write(warn(f"   AI_PROVIDER quyidagilardan biri bo'lsin: {', '.join(known)}"))
@@ -94,8 +99,17 @@ class Command(BaseCommand):
             self.stdout.write(bad(f"   XATO: {exc}"))
             self.stdout.write(warn("\n   Ko'p uchraydigan sabablar:"))
             self.stdout.write(warn("   - 400/403: kalit noto'g'ri yoki bekor qilingan"))
-            self.stdout.write(warn("   - 404: model nomi mos emas (AI_MODEL ni bo'sh qoldiring)"))
+            self.stdout.write(warn("   - 404: model o'chirilgan (provayderlar tez-tez almashtiradi)"))
             self.stdout.write(warn("   - 429: bepul limit tugagan, biroz kutib qayta urinib ko'ring"))
+
+            # Provayderning o'zidan mavjud modellarni so'raymiz - taxmin
+            # qilib o'tirmasdan aniq nomni ko'rsatish uchun.
+            names = ai.available_models(provider)
+            if names:
+                self.stdout.write("\n   Hozir mavjud modellar:")
+                for name in names:
+                    self.stdout.write(f"     {name}")
+                self.stdout.write(warn("\n   .env ga yozing:  AI_MODEL=<yuqoridagilardan biri>"))
             return
 
         self.stdout.write(ok(f"   javob keldi: {answer[:80]}"))

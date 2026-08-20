@@ -5,7 +5,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.db.models import Avg, Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
@@ -242,3 +242,17 @@ def admin_dashboard_view(request):
             "top_books": top_books,
         },
     )
+
+
+def ping_view(request):
+    """Xizmat tirikligini bildiradigan eng arzon sahifa.
+
+    Render'ning bepul tarifida sayt 15 daqiqa jimlikdan keyin uxlaydi va
+    keyingi tashrifchi uni uyg'otguncha ~50 soniya kutadi. Buni ushbu
+    manzilni tashqi "uptime" xizmatiga (masalan cron-job.org) har 10
+    daqiqada chaqirtirib qo'yish bilan yo'q qilish mumkin.
+
+    Bazaga ham, shablonga ham murojaat qilmaydi - uyg'otish uchun
+    keraksiz yuk bermasin.
+    """
+    return HttpResponse("ok", content_type="text/plain")
