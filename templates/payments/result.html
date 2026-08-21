@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "To'lov natijasi" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <div class="card pay-result">
+    {% if payment.status == "paid" %}
+      <div class="pay-result-icon success">✓</div>
+      <h1>{% trans "To'lov amalga oshdi" %}</h1>
+      <p class="text-muted">
+        {% blocktrans with amount=payment.amount %}Hisobingiz {{ amount }} so'mga to'ldirildi.{% endblocktrans %}
+      </p>
+      <div class="pay-amount">
+        <span class="text-muted">{% trans "Joriy balans" %}</span>
+        <strong>{{ user.balance }} {% trans "so'm" %}</strong>
+      </div>
+    {% elif payment.status == "cancelled" %}
+      <div class="pay-result-icon danger">✕</div>
+      <h1>{% trans "To'lov bekor qilindi" %}</h1>
+      <p class="text-muted">{% trans "Pul yechilmadi. Qaytadan urinib ko'rishingiz mumkin." %}</p>
+    {% else %}
+      <div class="pay-result-icon waiting">⏳</div>
+      <h1>{% trans "To'lov kutilmoqda" %}</h1>
+      <p class="text-muted">
+        {% trans "To'lov tizimi hali tasdiqlamadi. Bu bir necha daqiqa olishi mumkin — sahifani keyinroq yangilang." %}
+      </p>
+    {% endif %}
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <tbody>
+          <tr><td class="text-muted">{% trans "Buyurtma raqami" %}</td><td>#{{ payment.pk }}</td></tr>
+          <tr><td class="text-muted">{% trans "Summa" %}</td><td>{{ payment.amount }} {% trans "so'm" %}</td></tr>
+          <tr><td class="text-muted">{% trans "To'lov tizimi" %}</td><td>{{ payment.get_provider_display }}</td></tr>
+          <tr><td class="text-muted">{% trans "Sana" %}</td><td>{{ payment.created_at|date:"Y-m-d H:i" }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pay-actions">
+      <a href="{% url 'accounts:topup' %}" class="btn btn-primary">{% trans "Hisobni to'ldirish" %}</a>
+      <a href="{% url 'books:catalog' %}" class="btn btn-ghost">{% trans "Katalog" %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.books",
     "apps.core",
+    "apps.payments",
 ]
 
 MIDDLEWARE = [
@@ -350,6 +351,48 @@ TOPUP_MAX = 10_000_000
 
 # Sotuvchi balansdan pul yechish uchun so'raydigan eng kam summa
 WITHDRAWAL_MIN = 10_000
+
+
+# --- To'lov tizimlari (Payme / Click) ---
+#
+# Ikki rejim bor:
+#
+#   PAYMENT_MODE=test  — standart. Provayder saytiga chiqilmaydi, o'zimizdagi
+#                        to'lov sahifasi ochiladi. Kalit kerak emas, lekin
+#                        protokol kodi haqiqiy yo'ldan o'tadi.
+#   PAYMENT_MODE=live  — haqiqiy Payme/Click. Kalitlar to'ldirilgan bo'lishi
+#                        shart, aks holda tegishli tugma ko'rinmaydi.
+#
+# Kalitlar shartnomadan keyin beriladi (batafsil: docs/TOLOV.md).
+PAYMENT_MODE = env_str("PAYMENT_MODE", "test").lower()
+
+PAYME_MERCHANT_ID = env_str("PAYME_MERCHANT_ID")
+PAYME_KEY = env_str("PAYME_KEY")
+PAYME_CHECKOUT_URL = env_str("PAYME_CHECKOUT_URL", "https://checkout.paycom.uz")
+# Payme kabinetida buyurtma raqami qaysi nom bilan yuborilishi ko'rsatiladi.
+PAYME_ACCOUNT_FIELD = env_str("PAYME_ACCOUNT_FIELD", "order_id")
+
+CLICK_SERVICE_ID = env_str("CLICK_SERVICE_ID")
+CLICK_MERCHANT_ID = env_str("CLICK_MERCHANT_ID")
+CLICK_SECRET_KEY = env_str("CLICK_SECRET_KEY")
+CLICK_CHECKOUT_URL = env_str("CLICK_CHECKOUT_URL", "https://my.click.uz/services/pay")
+
+if PAYMENT_MODE != "live":
+    # Test rejimida ham imzo va parol tekshiruvi haqiqiy ishlashi kerak,
+    # aks holda o'sha kod hech qachon sinovdan o'tmaydi va kalit kelgan
+    # kuni xatolar birinchi marta jonli to'lovda chiqadi. Shuning uchun
+    # kalitlarni SECRET_KEY dan hosil qilamiz - hech qayerga yozish
+    # shart emas, lekin qiymati bor.
+    import hashlib as _hashlib
+
+    def _test_key(name):
+        return _hashlib.sha256(f"{name}:{SECRET_KEY}".encode()).hexdigest()[:32]
+
+    PAYME_KEY = PAYME_KEY or _test_key("payme")
+    CLICK_SECRET_KEY = CLICK_SECRET_KEY or _test_key("click")
+    PAYME_MERCHANT_ID = PAYME_MERCHANT_ID or "test-merchant"
+    CLICK_SERVICE_ID = CLICK_SERVICE_ID or "test-service"
+    CLICK_MERCHANT_ID = CLICK_MERCHANT_ID or "test-merchant"
 
 
 # --- Kesh (Redis ixtiyoriy) ---

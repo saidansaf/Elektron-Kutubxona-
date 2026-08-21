@@ -19,6 +19,7 @@ urlpatterns = [
     path("boshqaruv-panel/kirish/", AdminLoginView.as_view(), name="admin_login"),
     path("hisobim/", include("apps.accounts.urls")),
     path("kitoblar/", include("apps.books.urls")),
+    path("tolov/", include("apps.payments.urls")),
     path("api/", include("apps.books.api_urls")),
     path("api-auth/", include("rest_framework.urls")),
     path("i18n/", include("django.conf.urls.i18n")),

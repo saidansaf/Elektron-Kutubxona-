@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "To'lov (sinov)" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <h1>{% trans "To'lov" %}</h1>
+
+  <div class="card pay-sandbox">
+    <div class="pay-sandbox-tag">🧪 {% trans "Sinov sahifasi" %}</div>
+
+    <p class="text-muted">
+      {% blocktrans with provider=payment.get_provider_display %}
+        Bu sahifa {{ provider }} to'lov sahifasining o'rnini bosadi. Haqiqiy pul yechilmaydi,
+        lekin to'lov tizimi bilan almashinuv aynan haqiqiydek kechadi.
+      {% endblocktrans %}
+    </p>
+
+    <div class="pay-amount">
+      <span class="text-muted">{% trans "To'lov summasi" %}</span>
+      <strong>{{ payment.amount }} {% trans "so'm" %}</strong>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <tbody>
+          <tr><td class="text-muted">{% trans "Buyurtma raqami" %}</td><td>#{{ payment.pk }}</td></tr>
+          <tr><td class="text-muted">{% trans "To'lov tizimi" %}</td><td>{{ payment.get_provider_display }}</td></tr>
+          <tr><td class="text-muted">{% trans "Holati" %}</td><td>{{ payment.get_status_display }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    {% if payment.is_open %}
+      <form method="post" class="styled-form pay-actions">
+        {% csrf_token %}
+        <button type="submit" name="action" value="pay" class="btn btn-primary btn-lg">
+          {% trans "To'lashni tasdiqlash" %}
+        </button>
+        <button type="submit" name="action" value="cancel" class="btn btn-ghost">
+          {% trans "Bekor qilish" %}
+        </button>
+      </form>
+    {% else %}
+      <p class="note">{% trans "Bu buyurtma allaqachon yakunlangan." %}</p>
+      <a href="{% url 'payments:result' payment.pk %}" class="btn btn-primary">{% trans "Natijani ko'rish" %}</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

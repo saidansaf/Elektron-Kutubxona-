@@ -12,51 +12,73 @@
       <strong style="font-size:1.3rem">{{ user.balance }} {% trans "so'm" %}</strong>
     </div>
 
-    <form method="post" class="styled-form">
+    <form method="post" action="{% url 'payments:start' %}" class="styled-form">
       {% csrf_token %}
       <div class="form-row">
-        <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
-        {{ form.amount }}
+        <label for="id_amount">{% trans "Summa (so'm)" %}</label>
+        <input type="number" name="amount" id="id_amount" min="{{ topup_min }}" max="{{ topup_max }}"
+               step="1000" value="50000" required>
         <div class="quick-amounts">
           <button type="button" class="chip-btn" data-amount="50000">50 000</button>
           <button type="button" class="chip-btn" data-amount="100000">100 000</button>
           <button type="button" class="chip-btn" data-amount="250000">250 000</button>
           <button type="button" class="chip-btn" data-amount="500000">500 000</button>
         </div>
-        {% if form.amount.errors %}<div class="form-errors">{{ form.amount.errors|striptags }}</div>{% endif %}
       </div>
 
       <div class="form-row">
-        <label for="{{ form.card_number.id_for_label }}">{{ form.card_number.label }}</label>
-        {{ form.card_number }}
-        {% if form.card_number.errors %}<div class="form-errors">{{ form.card_number.errors|striptags }}</div>{% endif %}
+        <label>{% trans "To'lov tizimini tanlang" %}</label>
+        <div class="pay-providers">
+          {% for code, label in providers %}
+            <button type="submit" name="provider" value="{{ code }}" class="pay-provider">
+              <span class="pay-provider-name">{{ label }}</span>
+              <span class="pay-provider-hint">{% trans "Karta orqali" %}</span>
+            </button>
+          {% empty %}
+            <p class="form-errors">{% trans "Hozircha birorta to'lov tizimi sozlanmagan." %}</p>
+          {% endfor %}
+        </div>
       </div>
 
-      <div class="form-row">
-        <label for="{{ form.card_expiry.id_for_label }}">{{ form.card_expiry.label }}</label>
-        {{ form.card_expiry }}
-        {% if form.card_expiry.errors %}<div class="form-errors">{{ form.card_expiry.errors|striptags }}</div>{% endif %}
-      </div>
-
-      <p class="note">
-        🔒 {% trans "Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari saqlanmaydi." %}
-      </p>
-
-      <div><button type="submit" class="btn btn-primary btn-lg">{% trans "To'ldirish" %}</button></div>
+      {% if test_mode %}
+        <p class="note">
+          🧪 {% trans "Test rejimi: haqiqiy pul yechilmaydi. To'lov tizimining sahifasi o'rniga sinov sahifasi ochiladi." %}
+        </p>
+      {% else %}
+        <p class="note">
+          🔒 {% trans "Karta ma'lumotlaringiz bu saytda emas, to'lov tizimining o'z sahifasida kiritiladi." %}
+        </p>
+      {% endif %}
     </form>
   </div>
 
-  {% if history %}
-    <div class="section-title"><h2>{% trans "To'ldirishlar tarixi" %}</h2></div>
+  {% if payments %}
+    <div class="section-title"><h2>{% trans "To'lovlar tarixi" %}</h2></div>
     <div class="table-wrap">
       <table class="data-table">
-        <thead><tr><th>{% trans "Sana" %}</th><th>{% trans "Summa" %}</th><th>{% trans "Karta" %}</th></tr></thead>
+        <thead>
+          <tr>
+            <th>{% trans "Sana" %}</th>
+            <th>{% trans "Summa" %}</th>
+            <th>{% trans "Tizim" %}</th>
+            <th>{% trans "Holati" %}</th>
+          </tr>
+        </thead>
         <tbody>
-          {% for t in history %}
+          {% for p in payments %}
             <tr>
-              <td>{{ t.created_at|date:"Y-m-d H:i" }}</td>
-              <td><strong>+{{ t.amount }} {% trans "so'm" %}</strong></td>
-              <td class="text-muted">{% if t.card_last4 %}•••• {{ t.card_last4 }}{% else %}—{% endif %}</td>
+              <td>{{ p.created_at|date:"Y-m-d H:i" }}</td>
+              <td><strong>{{ p.amount }} {% trans "so'm" %}</strong></td>
+              <td class="text-muted">{{ p.get_provider_display }}</td>
+              <td>
+                {% if p.status == "paid" %}
+                  <span class="badge success">{{ p.get_status_display }}</span>
+                {% elif p.status == "cancelled" %}
+                  <span class="badge danger">{{ p.get_status_display }}</span>
+                {% else %}
+                  <span class="badge muted">{{ p.get_status_display }}</span>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>

@@ -510,34 +510,49 @@ class MessageTests(BotTestCase):
 
 
 class MoneyTests(BotTestCase):
-    def test_botdan_hisobni_toldirish(self):
+    def test_botdan_tolov_boshlanadi(self):
+        """Bot karta so'ramaydi — buyurtma yaratib, to'lov havolasini beradi."""
+        from apps.payments.models import Payment, PaymentStatus
+
         self.link()
         self.bot.press(self.CHAT, "topup")
         self.bot.deliver(self.CHAT, "50000")
-        self.bot.deliver(self.CHAT, "8600123456789012")
+        self.bot.press(self.CHAT, "pay:payme")
+
+        payment = Payment.objects.get(user=self.buyer)
+        self.assertEqual(payment.amount, Decimal("50000.00"))
+        # Havola berilgani balansni oshirmaydi: buni provayder tasdiqlaydi.
+        self.assertEqual(payment.status, PaymentStatus.CREATED)
+        self.buyer.refresh_from_db()
+        self.assertEqual(self.buyer.balance, Decimal("500000"))
+
+    def test_botda_tolangan_summa_saytdagi_balansga_qoshiladi(self):
+        """Bot va sayt bitta hisob-kitobda ishlashi kerak."""
+        from apps.payments import testmode
+        from apps.payments.models import Payment
+
+        self.link()
+        self.bot.press(self.CHAT, "topup")
+        self.bot.deliver(self.CHAT, "50000")
+        self.bot.press(self.CHAT, "pay:click")
+
+        testmode.simulate_success(Payment.objects.get(user=self.buyer))
 
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, Decimal("550000"))
         self.assertEqual(self.buyer.topups.count(), 1)
 
     def test_juda_kichik_summa_qabul_qilinmaydi(self):
+        from apps.payments.models import Payment
+
         self.link()
         self.bot.press(self.CHAT, "topup")
         self.bot.deliver(self.CHAT, "10")
-        self.bot.deliver(self.CHAT, "8600123456789012")
+        self.bot.press(self.CHAT, "pay:payme")
 
+        self.assertFalse(Payment.objects.exists())
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, Decimal("500000"))
-
-    def test_notogri_karta_qabul_qilinmaydi(self):
-        self.link()
-        self.bot.press(self.CHAT, "topup")
-        self.bot.deliver(self.CHAT, "50000")
-        self.bot.deliver(self.CHAT, "8600")
-
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("500000"))
-        self.assertIn("16", self.bot.last)
 
     def test_botdan_pul_yechish(self):
         self.seller.balance = Decimal("300000")

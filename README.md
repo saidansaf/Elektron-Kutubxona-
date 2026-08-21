@@ -39,8 +39,11 @@ xaridorlar sotib oladi, baholaydi va sharh qoldiradi.
   xabar yuborish, hammaga e'lon tarqatish va parolni yangilash.
 - **Parolni tiklash**: parolni unutgan foydalanuvchi email orqali tiklaydi.
   SMTP sozlanmagan bo'lsa, DEBUG rejimida havola ekranda ko'rsatiladi.
-- **Hisobni to'ldirish**: xaridor balansini karta orqali to'ldiradi,
-  to'ldirishlar tarixi saqlanadi.
+- **Hisobni to'ldirish (Payme / Click)**: xaridor balansini to'lov tizimi
+  orqali to'ldiradi. Karta ma'lumotlari saytga kelmaydi — ular provayder
+  sahifasida kiritiladi, balans esa provayder tasdiqlagach oshadi.
+  Standart holda **test rejimi**: protokol haqiqiy, pul esa yechilmaydi
+  (`docs/TOLOV.md`).
 - **Istaklar ro'yxati**: kitobni "keyin sotib olaman" deb saqlab qo'yish.
 - **Xaridor ↔ sotuvchi xabarlashuvi**: kitob sahifasidan sotuvchiga savol
   yozish, suhbatlar ro'yxati va o'qilmagan xabarlar hisoblagichi.
@@ -611,6 +614,7 @@ Batafsil (serverdagi bazaga masofadan ulanish ham): `docs/RENDER.md`.
 | `docs/TZ-KESH-VA-CHEGARA.md` | Keshlash va so'rovlar chegarasi uchun alohida TZ |
 | `docs/LOYIHA-REJASI.md` | Loyiha rejasi: bajarilgan bosqichlar, qolgan ishlar, xavflar |
 | `docs/RENDER.md` | Render.com ga joylashtirish: sayt va bot, cheklovlar bilan |
+| `docs/TOLOV.md` | To'lov tizimi: Payme va Click, test rejimi, jonli rejimga o'tish |
 
 Har birining Word (`.docx`) varianti ham shu papkada.
 

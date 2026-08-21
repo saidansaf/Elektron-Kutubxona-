@@ -28,10 +28,9 @@ from .forms import (
     RegisterForm,
     RoleSelectForm,
     SettingsForm,
-    TopUpForm,
     WithdrawalForm,
 )
-from .models import Role, TelegramLink, TopUp, User, Withdrawal
+from .models import Role, TelegramLink, User, Withdrawal
 
 
 # Katalog va kitob sahifasi hammaga ochiq. Ro'yxatdan o'tish faqat sotib
@@ -155,35 +154,31 @@ class AdminLoginView(LoginView):
 
 @login_required
 def topup_view(request):
-    """Hisobni to'ldirish.
+    """Hisobni to'ldirish sahifasi.
 
-    Eslatma: haqiqiy to'lov tizimi ulanmagan (o'quv loyihasi). Karta raqami
-    saqlanmaydi - faqat chek uchun oxirgi 4 raqam qoladi.
+    Bu yerda faqat summa so'raladi va to'lov tizimi tanlanadi. Karta
+    ma'lumotlari bizga umuman kelmaydi — ular Payme yoki Click'ning o'z
+    sahifasida kiritiladi. Shuning uchun bizga PCI DSS sertifikati kerak
+    emas va karta raqamini saqlash mas'uliyati ham yo'q.
+
+    To'lovning davomi `apps/payments/` da.
     """
-    if request.method == "POST":
-        form = TopUpForm(request.POST)
-        if form.is_valid():
-            # Pul harakati sayt va bot uchun bitta joyda (services.py)
-            try:
-                services.top_up(
-                    request.user, form.cleaned_data["amount"], form.cleaned_data["card_number"]
-                )
-            except services.MoneyError as exc:
-                messages.error(request, str(exc))
-                return redirect("accounts:topup")
-            messages.success(
-                request,
-                _("Hisobingiz %(amount)s so'mga to'ldirildi.")
-                % {"amount": form.cleaned_data["amount"]},
-            )
-            return redirect("accounts:topup")
-    else:
-        form = TopUpForm()
+    from apps.payments.models import Payment
+    from apps.payments.services import available_providers
+    from apps.payments.testmode import is_test_mode
+
+    providers = [(code, code.label) for code in available_providers()]
 
     return render(
         request,
         "accounts/topup.html",
-        {"form": form, "history": TopUp.objects.filter(user=request.user)[:10]},
+        {
+            "providers": providers,
+            "test_mode": is_test_mode(),
+            "topup_min": settings.TOPUP_MIN,
+            "topup_max": settings.TOPUP_MAX,
+            "payments": Payment.objects.filter(user=request.user)[:10],
+        },
     )
 
 

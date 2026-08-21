@@ -141,19 +141,31 @@ class TopUpTests(TestCase):
         self.buyer = make_user("xaridor", Role.BUYER, "0")
         self.client.force_login(self.buyer)
 
-    def test_hisob_toldiriladi(self):
-        self.client.post(
-            reverse("accounts:topup"),
-            {"amount": "50000", "card_number": "8600123456789012", "card_expiry": "12/29"},
-        )
+    def test_hisob_tolov_tasdiqlangach_toldiriladi(self):
+        """Balans to'lov tizimi tasdiqlagandan keyingina oshadi.
+
+        Ilgari bu sahifaning o'zi balansni oshirardi. Endi u faqat
+        buyurtma yaratadi — pul harakati `apps/payments/` da.
+        """
+        from apps.payments import testmode
+        from apps.payments.models import Payment
+
+        self.client.post(reverse("payments:start"), {"amount": "50000", "provider": "payme"})
+
+        self.buyer.refresh_from_db()
+        self.assertEqual(self.buyer.balance, Decimal("0"))  # hali oshmaydi
+
+        testmode.simulate_success(Payment.objects.get(user=self.buyer))
+
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, Decimal("50000"))
 
     def test_juda_kichik_summa_qabul_qilinmaydi(self):
-        self.client.post(
-            reverse("accounts:topup"),
-            {"amount": "10", "card_number": "8600123456789012", "card_expiry": "12/29"},
-        )
+        from apps.payments.models import Payment
+
+        self.client.post(reverse("payments:start"), {"amount": "10", "provider": "payme"})
+
+        self.assertFalse(Payment.objects.exists())
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, Decimal("0"))
 

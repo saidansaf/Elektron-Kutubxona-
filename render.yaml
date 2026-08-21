@@ -78,6 +78,23 @@ services:
       - key: AI_API_KEY
         sync: false
 
+      # To'lov tizimi. Standart holda "test": provayder saytiga chiqilmaydi,
+      # o'zimizdagi sinov sahifasi ochiladi va haqiqiy pul yechilmaydi.
+      # Payme/Click kaliti olingach "live" qilinadi va pastdagi
+      # o'zgaruvchilar to'ldiriladi (docs/TOLOV.md).
+      - key: PAYMENT_MODE
+        value: "test"
+      - key: PAYME_MERCHANT_ID
+        sync: false
+      - key: PAYME_KEY
+        sync: false
+      - key: CLICK_SERVICE_ID
+        sync: false
+      - key: CLICK_MERCHANT_ID
+        sync: false
+      - key: CLICK_SECRET_KEY
+        sync: false
+
       # SITE_URL ko'rsatilmasa, Django Render bergan manzilni o'zi oladi
       # (RENDER_EXTERNAL_HOSTNAME). O'z domeningizni ulasangiz shu yerga yozing.
       - key: SITE_URL

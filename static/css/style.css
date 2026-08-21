@@ -3139,3 +3139,90 @@ body {
   .wx-field { flex: 1 1 100%; }
   #wxGeo { width: 100%; }
 }
+
+/* ==========================================================================
+   To'lov (Payme / Click)
+   ========================================================================== */
+
+.pay-providers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.pay-provider {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+
+.pay-provider:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -12px color-mix(in srgb, var(--primary) 70%, transparent);
+}
+
+.pay-provider-name { font-weight: 600; font-size: 1.05rem; }
+.pay-provider-hint { font-size: .82rem; color: var(--text-muted); }
+
+.pay-sandbox { position: relative; }
+
+.pay-sandbox-tag {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--warning, #f59e0b) 18%, transparent);
+  color: var(--warning, #b45309);
+}
+
+.pay-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--surface-2, rgba(127, 127, 127, .08));
+}
+
+.pay-amount strong { font-size: 1.4rem; }
+
+.pay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.pay-result { text-align: center; }
+.pay-result .table-wrap { text-align: left; }
+.pay-result .pay-actions { justify-content: center; }
+
+.pay-result-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.pay-result-icon.success { background: var(--success); }
+.pay-result-icon.danger { background: var(--danger); }
+.pay-result-icon.waiting { background: var(--text-muted); }

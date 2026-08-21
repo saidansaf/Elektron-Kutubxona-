@@ -42,6 +42,7 @@ from apps.books.models import (
 )
 from apps.books.services import PurchaseError, purchase_book
 from apps.core import telegram as notifier
+from apps.payments import services as payment_services
 
 from .state import DialogStore
 from .ui import (
@@ -660,29 +661,44 @@ def register_handlers(bot):  # noqa: C901 - bot menyusi tabiatan katta
     # --- Hisobni to'ldirish ---
 
     def dialog_topup(message, dialog, user, text):
+        """Hisobni to'ldirish.
+
+        Karta raqami botda so'ralmaydi — uni foydalanuvchi Payme yoki
+        Click sahifasida kiritadi. Bot faqat summani oladi va to'lov
+        havolasini beradi. Balans provayder tasdiqlagach oshadi, ya'ni
+        saytdagi bilan aynan bir xil yo'ldan.
+        """
         chat_id = message.chat.id
-        if dialog.step == "amount":
-            try:
-                dialog.data["amount"] = money_services.parse_amount(text)
-            except money_services.MoneyError as exc:
-                ask(chat_id, str(exc))
-                return
-            dialog.step = "card"
-            ask(chat_id, _("Karta raqamini yozing (16 xona):"))
+        if dialog.step != "amount":
             return
 
-        if dialog.step == "card":
-            try:
-                money_services.top_up(user, dialog.data["amount"], text)
-            except money_services.MoneyError as exc:
-                ask(chat_id, str(exc))
-                return
-            finish(
-                chat_id,
-                _("✅ Hisob to'ldirildi.\nBalans: %(balance)s so'm")
-                % {"balance": money(user.balance)},
-                user,
+        try:
+            amount = money_services.parse_amount(text)
+        except money_services.MoneyError as exc:
+            ask(chat_id, str(exc))
+            return
+
+        providers = payment_services.available_providers()
+        if not providers:
+            finish(chat_id, _("Hozircha to'lov tizimi sozlanmagan."), user)
+            return
+
+        dialog.data["amount"] = str(amount)
+        dialog.step = "provider"
+
+        markup = telebot.types.InlineKeyboardMarkup()
+        for provider in providers:
+            markup.add(
+                telebot.types.InlineKeyboardButton(
+                    provider.label, callback_data=f"pay:{provider.value}"
+                )
             )
+        bot.send_message(
+            chat_id,
+            _("Summa: <b>%(amount)s so'm</b>\nTo'lov tizimini tanlang:")
+            % {"amount": money(amount)},
+            reply_markup=markup,
+        )
 
     # --- Pul yechish ---
 
@@ -1389,6 +1405,54 @@ def register_handlers(bot):  # noqa: C901 - bot menyusi tabiatan katta
                 _("Qancha to'ldirasiz? (%(min)s — %(max)s so'm)")
                 % {"min": money(settings.TOPUP_MIN), "max": money(settings.TOPUP_MAX)},
             )
+
+    @bot.callback_query_handler(func=lambda c: c.data.startswith("pay:"))
+    @safe_handler
+    def on_pay_provider(call):
+        """To'lov tizimi tanlandi: buyurtma yaratiladi va havola beriladi.
+
+        Havola tugma bo'lib chiqadi. Telegram tugmadagi manzil HTTPS
+        bo'lishini talab qiladi, shuning uchun lokal ishlaganda (http)
+        havola oddiy matn ko'rinishida yuboriladi.
+        """
+        user = callback_user(call)
+        if not user:
+            return
+        chat_id = call.message.chat.id
+        bot.answer_callback_query(call.id)
+
+        dialog = dialogs.get(chat_id)
+        if not dialog or dialog.name != "topup" or dialog.step != "provider":
+            with override(lang_of(user)):
+                bot.send_message(chat_id, _("Bu so'rov eskirgan. Qaytadan boshlang: 💰 Balans"))
+            return
+
+        provider = call.data.split(":", 1)[1]
+        with override(lang_of(user)):
+            try:
+                payment = payment_services.create_payment(
+                    user, dialog.data.get("amount", ""), provider
+                )
+            except money_services.MoneyError as exc:
+                finish(chat_id, str(exc), user)
+                return
+
+            dialogs.clear(chat_id)
+            link = payment_services.checkout_link(payment)
+            text = _(
+                "💳 To'lov: <b>%(amount)s so'm</b>\n"
+                "Tizim: %(provider)s\n\n"
+                "To'lovni yakunlash uchun quyidagi havolani oching. "
+                "Balans to'lov tasdiqlangach oshadi."
+            ) % {"amount": money(payment.amount), "provider": payment.get_provider_display()}
+
+            if link.startswith("https://"):
+                markup = telebot.types.InlineKeyboardMarkup()
+                markup.add(telebot.types.InlineKeyboardButton(_("💳 To'lash"), url=link))
+                bot.send_message(chat_id, text, reply_markup=markup)
+                bot.send_message(chat_id, _("Menyu:"), reply_markup=main_keyboard(user))
+            else:
+                finish(chat_id, f"{text}\n\n{link}", user)
 
     @bot.callback_query_handler(func=lambda c: c.data == "withdraw")
     @safe_handler

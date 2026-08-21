@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-18 14:20+0500\n"
+"POT-Creation-Date: 2026-08-21 00:28+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,6 +85,7 @@ msgid "Bir-ikki og'iz o'zingiz haqingizda"
 msgstr "Пара слов о себе"
 
 #: apps/accounts/forms.py:89 apps/accounts/forms.py:131
+#: templates/accounts/topup.html:18
 msgid "Summa (so'm)"
 msgstr "Сумма (сум)"
 
@@ -99,11 +100,13 @@ msgstr "Срок действия"
 
 #: apps/accounts/forms.py:108 apps/accounts/forms.py:150
 #: apps/accounts/services.py:62 apps/accounts/services.py:89
+#: apps/payments/services.py:52
 #, python-format
 msgid "Eng kam summa %(min)s so'm."
 msgstr "Минимальная сумма %(min)s сум."
 
 #: apps/accounts/forms.py:112 apps/accounts/services.py:64
+#: apps/payments/services.py:54
 #, python-format
 msgid "Eng ko'p summa %(max)s so'm."
 msgstr "Максимальная сумма %(max)s сум."
@@ -216,7 +219,8 @@ msgid "Administrator xabarlari"
 msgstr "Сообщения администратора"
 
 #: apps/accounts/models.py:109 apps/accounts/models.py:176
-#: templates/accounts/topup.html:53
+#: apps/payments/models.py:46 templates/accounts/topup.html:62
+#: templates/payments/history.html:15 templates/payments/result.html:33
 msgid "Summa"
 msgstr "Сумма"
 
@@ -260,7 +264,8 @@ msgstr "Привязки Telegram"
 msgid "Ko'rib chiqilmoqda"
 msgstr "На рассмотрении"
 
-#: apps/accounts/models.py:170 templates/core/admin_withdrawals.html:24
+#: apps/accounts/models.py:170 apps/payments/models.py:33
+#: templates/core/admin_withdrawals.html:24
 msgid "To'landi"
 msgstr "Выплачено"
 
@@ -268,7 +273,9 @@ msgstr "Выплачено"
 msgid "Rad etildi"
 msgstr "Отклонено"
 
-#: apps/accounts/models.py:178
+#: apps/accounts/models.py:178 apps/payments/models.py:48
+#: templates/accounts/topup.html:64 templates/payments/history.html:17
+#: templates/payments/test_checkout.html:28
 msgid "Holati"
 msgstr "Статус"
 
@@ -305,35 +312,30 @@ msgstr "Номер карты должен состоять из 16 цифр."
 msgid "Sizda ko'rib chiqilayotgan so'rov bor. Avval u hal bo'lsin."
 msgstr "У вас уже есть заявка на рассмотрении. Дождитесь решения."
 
-#: apps/accounts/views.py:76
+#: apps/accounts/views.py:75
 msgid "Ro'yxatdan muvaffaqiyatli o'tdingiz!"
 msgstr "Вы успешно зарегистрировались!"
 
-#: apps/accounts/views.py:101
+#: apps/accounts/views.py:100
 msgid "Tizimdan chiqdingiz."
 msgstr "Вы вышли из системы."
 
-#: apps/accounts/views.py:116
+#: apps/accounts/views.py:115
 msgid "Rolingiz saqlandi!"
 msgstr "Ваша роль сохранена!"
 
-#: apps/accounts/views.py:139
+#: apps/accounts/views.py:138
 msgid "Sozlamalar saqlandi."
 msgstr "Настройки сохранены."
 
-#: apps/accounts/views.py:176
-#, python-format
-msgid "Hisobingiz %(amount)s so'mga to'ldirildi."
-msgstr "Ваш счёт пополнен на %(amount)s сум."
-
-#: apps/accounts/views.py:214
+#: apps/accounts/views.py:209
 msgid ""
 "So'rov yuborildi. Administrator tasdiqlagach, pul kartangizga o'tkaziladi."
 msgstr ""
 "Заявка отправлена. После подтверждения администратором деньги поступят на "
 "вашу карту."
 
-#: apps/accounts/views.py:244
+#: apps/accounts/views.py:239
 msgid "Telegram uzildi."
 msgstr "Telegram отключён."
 
@@ -743,37 +745,37 @@ msgstr "Сначала введите название книги."
 msgid "Rasm uchun tavsif kiriting."
 msgstr "Введите описание для картинки."
 
-#: apps/core/botlib/handlers.py:148
+#: apps/core/botlib/handlers.py:149
 msgid "Bu kitob sizda yo'q."
 msgstr "Этой книги у вас нет."
 
-#: apps/core/botlib/handlers.py:151
+#: apps/core/botlib/handlers.py:152
 msgid "Bu kitobning fayli yuklanmagan."
 msgstr "Файл этой книги не загружен."
 
-#: apps/core/botlib/handlers.py:163
+#: apps/core/botlib/handlers.py:164
 msgid "Faylni yuborib bo'lmadi. Saytdan yuklab oling."
 msgstr "Не удалось отправить файл. Скачайте его на сайте."
 
-#: apps/core/botlib/handlers.py:175 templates/books/catalog.html:49
+#: apps/core/botlib/handlers.py:176 templates/books/catalog.html:49
 #: templates/core/admin_users.html:52
 msgid "Hech narsa topilmadi."
 msgstr "Ничего не найдено."
 
-#: apps/core/botlib/handlers.py:182
+#: apps/core/botlib/handlers.py:183
 #, python-format
 msgid "<b>Kitoblar</b> (%(total)s ta)"
 msgstr "<b>Книги</b> (%(total)s)"
 
-#: apps/core/botlib/handlers.py:225
+#: apps/core/botlib/handlers.py:226
 msgid "📚 Sotuvchi bo'lish"
 msgstr "📚 Стать продавцом"
 
-#: apps/core/botlib/handlers.py:228
+#: apps/core/botlib/handlers.py:229
 msgid "🛒 Xaridor bo'lish"
 msgstr "🛒 Стать покупателем"
 
-#: apps/core/botlib/handlers.py:234
+#: apps/core/botlib/handlers.py:235
 msgid ""
 "Rolingiz hali tanlanmagan. Menyu shunga qarab tuziladi:\n"
 "\n"
@@ -781,9 +783,15 @@ msgid ""
 "🛒 <b>Xaridor</b> — kitob sotib oladi va o'qiydi\n"
 "\n"
 "Keyin Sozlamalardan o'zgartirsa bo'ladi."
-msgstr "Роль ещё не выбрана. Меню зависит от неё:\n\n📚 <b>Продавец</b> — добавляет и продаёт книги\n🛒 <b>Покупатель</b> — покупает и читает книги\n\nПозже можно изменить в Настройках."
+msgstr ""
+"Роль ещё не выбрана. Меню зависит от неё:\n"
+"\n"
+"📚 <b>Продавец</b> — добавляет и продаёт книги\n"
+"🛒 <b>Покупатель</b> — покупает и читает книги\n"
+"\n"
+"Позже можно изменить в Настройках."
 
-#: apps/core/botlib/handlers.py:246
+#: apps/core/botlib/handlers.py:247
 #, python-format
 msgid ""
 "📚 <b>Elektron Kutubxona</b>\n"
@@ -804,7 +812,7 @@ msgstr ""
 "\n"
 "Сайт: %(site)s"
 
-#: apps/core/botlib/handlers.py:288
+#: apps/core/botlib/handlers.py:289
 #, python-format
 msgid ""
 "Salom, <b>%(name)s</b>! 👋\n"
@@ -815,7 +823,7 @@ msgstr ""
 "\n"
 "Пользуйтесь меню ниже."
 
-#: apps/core/botlib/handlers.py:302
+#: apps/core/botlib/handlers.py:303
 msgid ""
 "\n"
 "<b>Sotuvchi uchun</b>\n"
@@ -829,7 +837,7 @@ msgstr ""
 "📚 Мои книги — цена, снятие с продажи, удаление\n"
 "📊 Мои продажи — доход и вывод денег\n"
 
-#: apps/core/botlib/handlers.py:309
+#: apps/core/botlib/handlers.py:310
 msgid ""
 "\n"
 "<b>Xaridor uchun</b>\n"
@@ -843,7 +851,7 @@ msgstr ""
 "⭐ Избранное — сохранённые книги\n"
 "💰 Баланс — пополнение счёта\n"
 
-#: apps/core/botlib/handlers.py:317
+#: apps/core/botlib/handlers.py:318
 #, python-format
 msgid ""
 "<b>Bot sayt bilan bir xil ishlaydi</b>\n"
@@ -876,166 +884,166 @@ msgstr ""
 "\n"
 "Сайт: %(site)s"
 
-#: apps/core/botlib/handlers.py:340 apps/core/botlib/handlers.py:393
+#: apps/core/botlib/handlers.py:341 apps/core/botlib/handlers.py:394
 msgid "Bekor qilindi."
 msgstr "Отменено."
 
-#: apps/core/botlib/handlers.py:342
+#: apps/core/botlib/handlers.py:343
 msgid "Hozir bekor qiladigan amal yo'q."
 msgstr "Сейчас нечего отменять."
 
-#: apps/core/botlib/handlers.py:350
+#: apps/core/botlib/handlers.py:351
 msgid "Siz allaqachon kirgansiz."
 msgstr "Вы уже вошли."
 
-#: apps/core/botlib/handlers.py:353
+#: apps/core/botlib/handlers.py:354
 msgid "Saytdagi foydalanuvchi nomingizni yozing:"
 msgstr "Введите ваше имя пользователя с сайта:"
 
-#: apps/core/botlib/handlers.py:368
+#: apps/core/botlib/handlers.py:369
 msgid "Hisob uzildi. Qayta ulash uchun /kirish yozing."
 msgstr "Аккаунт отвязан. Чтобы привязать снова, введите /kirish."
 
-#: apps/core/botlib/handlers.py:410
+#: apps/core/botlib/handlers.py:411
 msgid "Foydalanuvchi nomini yozing:"
 msgstr "Введите имя пользователя:"
 
-#: apps/core/botlib/handlers.py:414
+#: apps/core/botlib/handlers.py:415
 msgid "Endi parolingizni yozing:"
 msgstr "Теперь введите пароль:"
 
-#: apps/core/botlib/handlers.py:429
+#: apps/core/botlib/handlers.py:430
 msgid "Login yoki parol noto'g'ri. Qayta urinish: /kirish"
 msgstr "Неверный логин или пароль. Попробуйте снова: /kirish"
 
-#: apps/core/botlib/handlers.py:435
+#: apps/core/botlib/handlers.py:436
 msgid "Hisobingiz bloklangan."
 msgstr "Ваш аккаунт заблокирован."
 
-#: apps/core/botlib/handlers.py:453
+#: apps/core/botlib/handlers.py:454
 #, python-format
 msgid "✅ Xush kelibsiz, <b>%(name)s</b>!"
 msgstr "✅ Добро пожаловать, <b>%(name)s</b>!"
 
-#: apps/core/botlib/handlers.py:467 apps/core/botlib/handlers.py:882
+#: apps/core/botlib/handlers.py:468 apps/core/botlib/handlers.py:898
 msgid "Kitob nomini yozing:"
 msgstr "Введите название книги:"
 
-#: apps/core/botlib/handlers.py:473
+#: apps/core/botlib/handlers.py:474
 msgid "Muallif ismini yozing (yoki ro'yxatdan tanlang):"
 msgstr "Введите имя автора (или выберите из списка):"
 
-#: apps/core/botlib/handlers.py:478
+#: apps/core/botlib/handlers.py:479
 msgid "Muallif ismini yozing:"
 msgstr "Введите имя автора:"
 
-#: apps/core/botlib/handlers.py:485
+#: apps/core/botlib/handlers.py:486
 msgid "Janrni tanlang yoki yangisini yozing:"
 msgstr "Выберите жанр или введите новый:"
 
-#: apps/core/botlib/handlers.py:491
+#: apps/core/botlib/handlers.py:492
 msgid "Kitob tili:"
 msgstr "Язык книги:"
 
-#: apps/core/botlib/handlers.py:498
+#: apps/core/botlib/handlers.py:499
 msgid "Sahifalar soni (raqam):"
 msgstr "Количество страниц (число):"
 
-#: apps/core/botlib/handlers.py:504
+#: apps/core/botlib/handlers.py:505
 msgid "Sahifalar sonini raqam bilan yozing. Masalan: 250"
 msgstr "Введите количество страниц числом. Например: 250"
 
-#: apps/core/botlib/handlers.py:508
+#: apps/core/botlib/handlers.py:509
 msgid "Narxi (so'm):"
 msgstr "Цена (сум):"
 
-#: apps/core/botlib/handlers.py:518
+#: apps/core/botlib/handlers.py:519
 msgid "Qisqacha tavsif yozing:"
 msgstr "Напишите краткое описание:"
 
-#: apps/core/botlib/handlers.py:524
+#: apps/core/botlib/handlers.py:525
 msgid "Muqova rasmini yuboring:"
 msgstr "Отправьте изображение обложки:"
 
-#: apps/core/botlib/handlers.py:533
+#: apps/core/botlib/handlers.py:534
 msgid "Rasmni olib bo'lmadi. Qayta yuboring yoki o'tkazib yuboring."
 msgstr "Не удалось получить изображение. Отправьте ещё раз или пропустите."
 
-#: apps/core/botlib/handlers.py:536
+#: apps/core/botlib/handlers.py:537
 #, python-format
 msgid "Rasm yuboring yoki «%(skip)s» tugmasini bosing."
 msgstr "Отправьте изображение или нажмите «%(skip)s»."
 
-#: apps/core/botlib/handlers.py:539
+#: apps/core/botlib/handlers.py:540
 msgid "Endi kitobning PDF faylini yuboring:"
 msgstr "Теперь отправьте PDF-файл книги:"
 
-#: apps/core/botlib/handlers.py:546 templates/books/book_form.html:31
+#: apps/core/botlib/handlers.py:547 templates/books/book_form.html:31
 msgid "Faqat PDF fayl qabul qilinadi."
 msgstr "Принимается только файл PDF."
 
-#: apps/core/botlib/handlers.py:551
+#: apps/core/botlib/handlers.py:552
 #, python-format
 msgid "Fayl juda katta (%(max)s MB dan oshmasin). Saytdan yuklang."
 msgstr "Файл слишком большой (не более %(max)s МБ). Загрузите через сайт."
 
-#: apps/core/botlib/handlers.py:560
+#: apps/core/botlib/handlers.py:561
 msgid "Faylni olib bo'lmadi. Qayta yuboring."
 msgstr "Не удалось получить файл. Отправьте ещё раз."
 
-#: apps/core/botlib/handlers.py:563
+#: apps/core/botlib/handlers.py:564
 #, python-format
 msgid "PDF yuboring yoki «%(skip)s» tugmasini bosing."
 msgstr "Отправьте PDF или нажмите «%(skip)s»."
 
-#: apps/core/botlib/handlers.py:570
+#: apps/core/botlib/handlers.py:571
 #, python-format
 msgid "✅ <b>%(title)s</b> qo'shildi va saytda ko'rinmoqda."
 msgstr "✅ «<b>%(title)s</b>» добавлена и уже видна на сайте."
 
-#: apps/core/botlib/handlers.py:613 apps/core/botlib/handlers.py:632
+#: apps/core/botlib/handlers.py:614 apps/core/botlib/handlers.py:633
 msgid "Kitob topilmadi."
 msgstr "Книга не найдена."
 
-#: apps/core/botlib/handlers.py:623
+#: apps/core/botlib/handlers.py:624
 #, python-format
 msgid "✅ Yangi narx: %(price)s so'm"
 msgstr "✅ Новая цена: %(price)s сум"
 
-#: apps/core/botlib/handlers.py:640
+#: apps/core/botlib/handlers.py:641
 msgid "✅ Sharhingiz saqlandi. Saytda ham ko'rinadi."
 msgstr "✅ Ваш отзыв сохранён. Он также виден на сайте."
 
-#: apps/core/botlib/handlers.py:646
+#: apps/core/botlib/handlers.py:647
 msgid "Xabar matnini yozing:"
 msgstr "Напишите текст сообщения:"
 
-#: apps/core/botlib/handlers.py:651
+#: apps/core/botlib/handlers.py:652
 msgid "Suhbat topilmadi."
 msgstr "Переписка не найдена."
 
-#: apps/core/botlib/handlers.py:657
+#: apps/core/botlib/handlers.py:658
 msgid "✅ Xabar yuborildi."
 msgstr "✅ Сообщение отправлено."
 
-#: apps/core/botlib/handlers.py:671
-msgid "Karta raqamini yozing (16 xona):"
-msgstr "Введите номер карты (16 цифр):"
-
-#: apps/core/botlib/handlers.py:682
-#, python-format
-msgid ""
-"✅ Hisob to'ldirildi.\n"
-"Balans: %(balance)s so'm"
-msgstr ""
-"✅ Счёт пополнен.\n"
-"Баланс: %(balance)s сум"
+#: apps/core/botlib/handlers.py:683
+msgid "Hozircha to'lov tizimi sozlanmagan."
+msgstr "Платёжная система пока не настроена."
 
 #: apps/core/botlib/handlers.py:698
+#, python-format
+msgid ""
+"Summa: <b>%(amount)s so'm</b>\n"
+"To'lov tizimini tanlang:"
+msgstr ""
+"Сумма: <b>%(amount)s сум</b>\n"
+"Выберите платёжную систему:"
+
+#: apps/core/botlib/handlers.py:714
 msgid "Pul o'tkaziladigan karta raqamini yozing:"
 msgstr "Введите номер карты для перевода:"
 
-#: apps/core/botlib/handlers.py:710
+#: apps/core/botlib/handlers.py:726
 #, python-format
 msgid ""
 "✅ So'rov yuborildi. Administrator tasdiqlagach pul kartangizga "
@@ -1046,123 +1054,123 @@ msgstr ""
 "карту.\n"
 "Баланс: %(balance)s сум"
 
-#: apps/core/botlib/handlers.py:722
+#: apps/core/botlib/handlers.py:738
 msgid "Qidiruv bekor qilindi."
 msgstr "Поиск отменён."
 
-#: apps/core/botlib/handlers.py:756
+#: apps/core/botlib/handlers.py:772
 msgid "Kod noto'g'ri yoki muddati o'tgan. Saytdan yangi kod oling."
 msgstr "Код неверный или истёк. Получите новый код на сайте."
 
-#: apps/core/botlib/handlers.py:769
+#: apps/core/botlib/handlers.py:785
 #, python-format
 msgid "✅ Hisob ulandi: <b>%(name)s</b>"
 msgstr "✅ Аккаунт привязан: <b>%(name)s</b>"
 
-#: apps/core/botlib/handlers.py:795
+#: apps/core/botlib/handlers.py:811
 msgid "Kitob nomi yoki muallif ismini yozing:"
 msgstr "Введите название книги или имя автора:"
 
-#: apps/core/botlib/handlers.py:806
+#: apps/core/botlib/handlers.py:822
 msgid "Hali kitob sotib olmagansiz."
 msgstr "Вы ещё не купили ни одной книги."
 
-#: apps/core/botlib/handlers.py:810
+#: apps/core/botlib/handlers.py:826
 msgid "<b>Mening kutubxonam</b>"
 msgstr "<b>Моя библиотека</b>"
 
-#: apps/core/botlib/handlers.py:834
+#: apps/core/botlib/handlers.py:850
 msgid "Istaklar ro'yxati bo'sh. Katalogdan kitob qo'shing."
 msgstr "Список желаний пуст. Добавьте книгу из каталога."
 
-#: apps/core/botlib/handlers.py:837
+#: apps/core/botlib/handlers.py:853
 msgid "<b>Istaklarim</b>"
 msgstr "<b>Мои желания</b>"
 
-#: apps/core/botlib/handlers.py:859
+#: apps/core/botlib/handlers.py:875
 msgid "💳 To'ldirish"
 msgstr "💳 Пополнить"
 
-#: apps/core/botlib/handlers.py:863 apps/core/botlib/handlers.py:923
+#: apps/core/botlib/handlers.py:879 apps/core/botlib/handlers.py:939
 msgid "🏧 Pul yechish"
 msgstr "🏧 Вывести деньги"
 
-#: apps/core/botlib/handlers.py:867
+#: apps/core/botlib/handlers.py:883
 #, python-format
 msgid "💰 <b>Balansingiz:</b> %(amount)s so'm"
 msgstr "💰 <b>Ваш баланс:</b> %(amount)s сум"
 
-#: apps/core/botlib/handlers.py:879
+#: apps/core/botlib/handlers.py:895
 msgid "Kitob qo'shish uchun sotuvchi rejimiga o'ting."
 msgstr "Чтобы добавить книгу, перейдите в режим продавца."
 
-#: apps/core/botlib/handlers.py:893 templates/books/my_books.html:41
+#: apps/core/botlib/handlers.py:909 templates/books/my_books.html:41
 #: templates/books/seller_dashboard.html:101
 msgid "Hali kitob qo'shmagansiz."
 msgstr "Вы ещё не добавили книг."
 
-#: apps/core/botlib/handlers.py:896
+#: apps/core/botlib/handlers.py:912
 msgid "<b>Mening kitoblarim</b>"
 msgstr "<b>Мои книги</b>"
 
-#: apps/core/botlib/handlers.py:902
+#: apps/core/botlib/handlers.py:918
 #, python-format
 msgid "   %(price)s so'm · %(sold)s marta sotilgan"
 msgstr "   %(price)s сум · продано %(sold)s раз"
 
-#: apps/core/botlib/handlers.py:927
+#: apps/core/botlib/handlers.py:943
 msgid "📊 To'liq kabinet"
 msgstr "📊 Полный кабинет"
 
-#: apps/core/botlib/handlers.py:931
+#: apps/core/botlib/handlers.py:947
 msgid "<b>Savdo hisoboti</b>"
 msgstr "<b>Отчёт о продажах</b>"
 
-#: apps/core/botlib/handlers.py:933
+#: apps/core/botlib/handlers.py:949
 #, python-format
 msgid "Sotilgan: %(count)s ta"
 msgstr "Продано: %(count)s"
 
-#: apps/core/botlib/handlers.py:934
+#: apps/core/botlib/handlers.py:950
 #, python-format
 msgid "Daromad: %(amount)s so'm"
 msgstr "Доход: %(amount)s сум"
 
-#: apps/core/botlib/handlers.py:935
+#: apps/core/botlib/handlers.py:951
 #, python-format
 msgid "Balans: %(amount)s so'm"
 msgstr "Баланс: %(amount)s сум"
 
-#: apps/core/botlib/handlers.py:938
+#: apps/core/botlib/handlers.py:954
 msgid "<b>Oxirgi sotuvlar:</b>"
 msgstr "<b>Последние продажи:</b>"
 
-#: apps/core/botlib/handlers.py:958
+#: apps/core/botlib/handlers.py:974
 msgid "Hali yozishma yo'q. Kitob sahifasidan sotuvchiga savol bering."
 msgstr "Переписки пока нет. Задайте вопрос продавцу со страницы книги."
 
-#: apps/core/botlib/handlers.py:963
+#: apps/core/botlib/handlers.py:979
 msgid "<b>Xabarlar</b>"
 msgstr "<b>Сообщения</b>"
 
-#: apps/core/botlib/handlers.py:997
+#: apps/core/botlib/handlers.py:1013
 msgid "🔔 Bildirishnoma: yoqilgan"
 msgstr "🔔 Уведомления: включены"
 
-#: apps/core/botlib/handlers.py:997
+#: apps/core/botlib/handlers.py:1013
 msgid "🔕 Bildirishnoma: o'chiq"
 msgstr "🔕 Уведомления: выключены"
 
-#: apps/core/botlib/handlers.py:1008
+#: apps/core/botlib/handlers.py:1024
 #, python-format
 msgid "🔄 %(role)s bo'lish"
 msgstr "🔄 Стать: %(role)s"
 
-#: apps/core/botlib/handlers.py:1018
+#: apps/core/botlib/handlers.py:1034
 msgid "🌐 Saytdagi sozlamalar"
 msgstr "🌐 Настройки на сайте"
 
-#: apps/core/botlib/handlers.py:1024
+#: apps/core/botlib/handlers.py:1040
 #, python-format
 msgid ""
 "<b>Sozlamalar</b>\n"
@@ -1179,11 +1187,11 @@ msgstr ""
 "Язык: %(lang)s\n"
 "Баланс: %(balance)s сум"
 
-#: apps/core/botlib/handlers.py:1051
+#: apps/core/botlib/handlers.py:1067
 msgid "Avval hisobingizni ulang."
 msgstr "Сначала привяжите аккаунт."
 
-#: apps/core/botlib/handlers.py:1089
+#: apps/core/botlib/handlers.py:1105
 #, python-format
 msgid ""
 "<b>%(title)s</b>\n"
@@ -1198,165 +1206,191 @@ msgstr ""
 "Доход: %(earned)s сум\n"
 "Статус: %(state)s"
 
-#: apps/core/botlib/handlers.py:1100
+#: apps/core/botlib/handlers.py:1116
 msgid "sotuvda"
 msgstr "в продаже"
 
-#: apps/core/botlib/handlers.py:1100
+#: apps/core/botlib/handlers.py:1116
 msgid "sotuvda emas"
 msgstr "не в продаже"
 
-#: apps/core/botlib/handlers.py:1124
+#: apps/core/botlib/handlers.py:1140
 #, python-format
 msgid "«%(title)s» uchun yangi narxni yozing (hozirgi: %(price)s):"
 msgstr "Введите новую цену для «%(title)s» (сейчас: %(price)s):"
 
-#: apps/core/botlib/handlers.py:1142
+#: apps/core/botlib/handlers.py:1158
 msgid "Sotuvga qo'yildi"
 msgstr "Выставлено на продажу"
 
-#: apps/core/botlib/handlers.py:1142
+#: apps/core/botlib/handlers.py:1158
 msgid "Sotuvdan olindi"
 msgstr "Снято с продажи"
 
-#: apps/core/botlib/handlers.py:1166
+#: apps/core/botlib/handlers.py:1182
 msgid "Ha, o'chirilsin"
 msgstr "Да, удалить"
 
-#: apps/core/botlib/handlers.py:1167
+#: apps/core/botlib/handlers.py:1183
 msgid "Yo'q"
 msgstr "Нет"
 
-#: apps/core/botlib/handlers.py:1171
+#: apps/core/botlib/handlers.py:1187
 #, python-format
 msgid "«%(title)s» butunlay o'chirilsinmi?"
 msgstr "Удалить «%(title)s» безвозвратно?"
 
-#: apps/core/botlib/handlers.py:1188
+#: apps/core/botlib/handlers.py:1204
 msgid "O'chirildi"
 msgstr "Удалено"
 
-#: apps/core/botlib/handlers.py:1190
+#: apps/core/botlib/handlers.py:1206
 #, python-format
 msgid "🗑 «%(title)s» o'chirildi."
 msgstr "🗑 «%(title)s» удалена."
 
-#: apps/core/botlib/handlers.py:1207
+#: apps/core/botlib/handlers.py:1223
 msgid "Istaklardan olib tashlandi"
 msgstr "Убрано из желаний"
 
-#: apps/core/botlib/handlers.py:1210
+#: apps/core/botlib/handlers.py:1226
 msgid "Istaklarga qo'shildi"
 msgstr "Добавлено в желания"
 
-#: apps/core/botlib/handlers.py:1234
+#: apps/core/botlib/handlers.py:1250
 msgid "Yoqtirish olib tashlandi"
 msgstr "Лайк убран"
 
-#: apps/core/botlib/handlers.py:1237 templates/books/checkout.html:100
+#: apps/core/botlib/handlers.py:1253 templates/books/checkout.html:100
 msgid "Yoqtirdingiz"
 msgstr "Вам нравится"
 
-#: apps/core/botlib/handlers.py:1258
+#: apps/core/botlib/handlers.py:1274
 msgid "Nechta yulduz berasiz?"
 msgstr "Сколько звёзд поставите?"
 
-#: apps/core/botlib/handlers.py:1274
+#: apps/core/botlib/handlers.py:1290
 msgid "Fikringizni yozing:"
 msgstr "Напишите ваш отзыв:"
 
-#: apps/core/botlib/handlers.py:1287
+#: apps/core/botlib/handlers.py:1303
 msgid "Bu kitobga hali sharh yozilmagan."
 msgstr "У этой книги пока нет отзывов."
 
-#: apps/core/botlib/handlers.py:1289
+#: apps/core/botlib/handlers.py:1305
 #, python-format
 msgid "<b>Sharhlar — %(title)s</b>"
 msgstr "<b>Отзывы — %(title)s</b>"
 
-#: apps/core/botlib/handlers.py:1309
+#: apps/core/botlib/handlers.py:1325
 msgid "Bu sizning kitobingiz."
 msgstr "Это ваша книга."
 
-#: apps/core/botlib/handlers.py:1319
+#: apps/core/botlib/handlers.py:1335
 #, python-format
 msgid "«%(title)s» bo'yicha savolingizni yozing:"
 msgstr "Напишите ваш вопрос по «%(title)s»:"
 
-#: apps/core/botlib/handlers.py:1345
+#: apps/core/botlib/handlers.py:1361
 #, python-format
 msgid "<b>%(name)s</b> — %(title)s"
 msgstr "<b>%(name)s</b> — %(title)s"
 
-#: apps/core/botlib/handlers.py:1350
+#: apps/core/botlib/handlers.py:1366
 msgid "Siz"
 msgstr "Вы"
 
-#: apps/core/botlib/handlers.py:1355
+#: apps/core/botlib/handlers.py:1371
 msgid "✍️ Javob yozish"
 msgstr "✍️ Ответить"
 
-#: apps/core/botlib/handlers.py:1376
+#: apps/core/botlib/handlers.py:1392
 msgid "Javobingizni yozing:"
 msgstr "Напишите ответ:"
 
-#: apps/core/botlib/handlers.py:1389
+#: apps/core/botlib/handlers.py:1405
 #, python-format
 msgid "Qancha to'ldirasiz? (%(min)s — %(max)s so'm)"
 msgstr "На сколько пополнить? (%(min)s — %(max)s сум)"
 
-#: apps/core/botlib/handlers.py:1402
+#: apps/core/botlib/handlers.py:1427
+msgid "Bu so'rov eskirgan. Qaytadan boshlang: 💰 Balans"
+msgstr "Этот запрос устарел. Начните заново: 💰 Баланс"
+
+#: apps/core/botlib/handlers.py:1443
+#, python-format
+msgid ""
+"💳 To'lov: <b>%(amount)s so'm</b>\n"
+"Tizim: %(provider)s\n"
+"\n"
+"To'lovni yakunlash uchun quyidagi havolani oching. Balans to'lov "
+"tasdiqlangach oshadi."
+msgstr ""
+"💳 Оплата: <b>%(amount)s сум</b>\n"
+"Система: %(provider)s\n"
+"\n"
+"Откройте ссылку ниже, чтобы завершить оплату. Баланс пополнится после подтверждения."
+
+#: apps/core/botlib/handlers.py:1451
+msgid "💳 To'lash"
+msgstr "💳 Оплатить"
+
+#: apps/core/botlib/handlers.py:1453
+msgid "Menyu:"
+msgstr "Меню:"
+
+#: apps/core/botlib/handlers.py:1466
 msgid "Bu faqat sotuvchilar uchun."
 msgstr "Это только для продавцов."
 
-#: apps/core/botlib/handlers.py:1407
+#: apps/core/botlib/handlers.py:1471
 #, python-format
 msgid "Qancha yechasiz? (eng kam %(min)s so'm, balans %(balance)s so'm)"
 msgstr "Сколько вывести? (минимум %(min)s сум, баланс %(balance)s сум)"
 
-#: apps/core/botlib/handlers.py:1422
+#: apps/core/botlib/handlers.py:1486
 msgid "Til o'zgartirildi"
 msgstr "Язык изменён"
 
-#: apps/core/botlib/handlers.py:1424
+#: apps/core/botlib/handlers.py:1488
 msgid "Til o'zgartirildi."
 msgstr "Язык изменён."
 
-#: apps/core/botlib/handlers.py:1438
+#: apps/core/botlib/handlers.py:1502
 msgid "Bildirishnoma yoqildi"
 msgstr "Уведомления включены"
 
-#: apps/core/botlib/handlers.py:1438
+#: apps/core/botlib/handlers.py:1502
 msgid "Bildirishnoma o'chirildi"
 msgstr "Уведомления выключены"
 
-#: apps/core/botlib/handlers.py:1458
+#: apps/core/botlib/handlers.py:1522
 msgid "Rol o'zgartirildi"
 msgstr "Роль изменена"
 
-#: apps/core/botlib/handlers.py:1461
+#: apps/core/botlib/handlers.py:1525
 #, python-format
 msgid "Yangi rol: <b>%(role)s</b>"
 msgstr "Новая роль: <b>%(role)s</b>"
 
-#: apps/core/botlib/handlers.py:1479
+#: apps/core/botlib/handlers.py:1543
 msgid "Sotib olish uchun xaridor rejimiga o'ting."
 msgstr "Для покупки переключитесь в режим покупателя."
 
-#: apps/core/botlib/handlers.py:1483
+#: apps/core/botlib/handlers.py:1547
 msgid "Bu kitob sizda bor."
 msgstr "Эта книга у вас уже есть."
 
-#: apps/core/botlib/handlers.py:1488 templates/accounts/settings.html:107
+#: apps/core/botlib/handlers.py:1552 templates/accounts/settings.html:107
 #: templates/accounts/telegram.html:7 templates/core/home.html:88
 msgid "Telegram bot"
 msgstr "Telegram-бот"
 
-#: apps/core/botlib/handlers.py:1493
+#: apps/core/botlib/handlers.py:1557
 msgid "Sotib olindi!"
 msgstr "Куплено!"
 
-#: apps/core/botlib/handlers.py:1496
+#: apps/core/botlib/handlers.py:1560
 #, python-format
 msgid ""
 "✅ <b>%(book)s</b> sotib olindi.\n"
@@ -1420,14 +1454,16 @@ msgid "🗑 O'chirish"
 msgstr "🗑 Удалить"
 
 #: apps/core/botlib/ui.py:185 templates/accounts/settings.html:98
-#: templates/accounts/topup.html:12 templates/accounts/topup.html:58
+#: templates/accounts/topup.html:12 templates/accounts/topup.html:71
 #: templates/accounts/withdrawal.html:16 templates/books/_book_card.html:24
 #: templates/books/checkout.html:83 templates/books/checkout.html:87
 #: templates/books/detail.html:37 templates/books/my_library.html:6
 #: templates/books/seller_dashboard.html:23
 #: templates/books/seller_dashboard.html:46
 #: templates/books/seller_dashboard.html:127 templates/books/wishlist.html:21
-#: templates/core/admin_withdrawals.html:19
+#: templates/core/admin_withdrawals.html:19 templates/payments/history.html:24
+#: templates/payments/result.html:15 templates/payments/result.html:33
+#: templates/payments/test_checkout.html:20
 msgid "so'm"
 msgstr "сум"
 
@@ -1711,6 +1747,53 @@ msgstr "Ваш браузер не может определить местоп�
 msgid "Joylashuvni aniqlab bo'lmadi. Ro'yxatdan shahar tanlang."
 msgstr "Не удалось определить местоположение. Выберите город из списка."
 
+#: apps/payments/apps.py:8 apps/payments/models.py:78 templates/base.html:40
+msgid "To'lovlar"
+msgstr "Выплаты"
+
+#: apps/payments/models.py:29
+msgid "Yaratildi"
+msgstr "Создан"
+
+#: apps/payments/models.py:31
+msgid "Kutilmoqda"
+msgstr "Ожидание"
+
+#: apps/payments/models.py:36
+msgid "Bekor qilindi"
+msgstr "Отменён"
+
+#: apps/payments/models.py:45 templates/payments/result.html:34
+#: templates/payments/test_checkout.html:27
+msgid "To'lov tizimi"
+msgstr "Платёжная система"
+
+#: apps/payments/models.py:53
+msgid "Tranzaksiya ID"
+msgstr "ID транзакции"
+
+#: apps/payments/models.py:77 templates/books/checkout.html:15
+#: templates/payments/test_checkout.html:6
+msgid "To'lov"
+msgstr "Оплата"
+
+#: apps/payments/services.py:57
+msgid "Bu to'lov tizimi hozircha sozlanmagan."
+msgstr "Эта платёжная система пока не настроена."
+
+#: apps/payments/services.py:73
+msgid "Bekor qilingan to'lovni yakunlab bo'lmaydi."
+msgstr "Отменённый платёж нельзя завершить."
+
+#: apps/payments/testmode.py:68 apps/payments/testmode.py:109
+#, python-format
+msgid "To'lov amalga oshmadi: %(reason)s"
+msgstr "Платёж не прошёл: %(reason)s"
+
+#: apps/payments/views.py:54
+msgid "Test rejimi o'chirilgan."
+msgstr "Тестовый режим отключён."
+
 #: templates/accounts/admin_login.html:3 templates/accounts/admin_login.html:6
 msgid "Administrator kirishi"
 msgstr "Вход администратора"
@@ -1912,7 +1995,7 @@ msgstr "Текущее фото"
 msgid "Hisob"
 msgstr "Аккаунт"
 
-#: templates/accounts/settings.html:100 templates/accounts/topup.html:45
+#: templates/accounts/settings.html:100
 msgid "To'ldirish"
 msgstr "Пополнить"
 
@@ -1947,6 +2030,7 @@ msgid "Saqlash"
 msgstr "Сохранить"
 
 #: templates/accounts/settings.html:126
+#: templates/payments/test_checkout.html:40
 msgid "Bekor qilish"
 msgstr "Отмена"
 
@@ -2047,34 +2131,53 @@ msgid "Kitob qo'shish, balansni to'ldirish va sozlamalar saytda bajariladi."
 msgstr "Добавление книг, пополнение баланса и настройки — на сайте."
 
 #: templates/accounts/topup.html:3 templates/accounts/topup.html:7
-#: templates/core/home.html:77
+#: templates/core/home.html:77 templates/payments/history.html:6
+#: templates/payments/result.html:41
 msgid "Hisobni to'ldirish"
 msgstr "Пополнить счёт"
 
-#: templates/accounts/topup.html:11
+#: templates/accounts/topup.html:11 templates/payments/result.html:14
 msgid "Joriy balans"
 msgstr "Текущий баланс"
 
-#: templates/accounts/topup.html:42 templates/books/checkout.html:43
+#: templates/accounts/topup.html:30
+msgid "To'lov tizimini tanlang"
+msgstr "Выберите платёжную систему"
+
+#: templates/accounts/topup.html:35 templates/books/checkout.html:21
+msgid "Karta orqali"
+msgstr "Картой"
+
+#: templates/accounts/topup.html:38
+msgid "Hozircha birorta to'lov tizimi sozlanmagan."
+msgstr "Пока не настроена ни одна платёжная система."
+
+#: templates/accounts/topup.html:45
 msgid ""
-"Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari "
-"saqlanmaydi."
-msgstr ""
-"Это учебный проект — реальная оплата не производится и данные карты не "
-"сохраняются."
+"Test rejimi: haqiqiy pul yechilmaydi. To'lov tizimining sahifasi o'rniga "
+"sinov sahifasi ochiladi."
+msgstr "Тестовый режим: реальные деньги не списываются. Вместо страницы платёжной системы откроется тестовая страница."
 
-#: templates/accounts/topup.html:50
-msgid "To'ldirishlar tarixi"
-msgstr "История пополнений"
+#: templates/accounts/topup.html:49
+msgid ""
+"Karta ma'lumotlaringiz bu saytda emas, to'lov tizimining o'z sahifasida "
+"kiritiladi."
+msgstr "Данные карты вводятся не на этом сайте, а на странице платёжной системы."
 
-#: templates/accounts/topup.html:53 templates/core/admin_dashboard.html:36
-#: templates/core/admin_users.html:28
+#: templates/accounts/topup.html:56 templates/payments/history.html:3
+#: templates/payments/history.html:7
+msgid "To'lovlar tarixi"
+msgstr "История платежей"
+
+#: templates/accounts/topup.html:61 templates/core/admin_dashboard.html:36
+#: templates/core/admin_users.html:28 templates/payments/history.html:14
+#: templates/payments/result.html:35
 msgid "Sana"
 msgstr "Дата"
 
-#: templates/accounts/topup.html:53 templates/core/admin_withdrawals.html:16
-msgid "Karta"
-msgstr "Карта"
+#: templates/accounts/topup.html:63 templates/payments/history.html:16
+msgid "Tizim"
+msgstr "Система"
 
 #: templates/accounts/withdrawal.html:3 templates/accounts/withdrawal.html:8
 #: templates/books/seller_dashboard.html:129
@@ -2177,10 +2280,6 @@ msgstr "ИИ-помощник"
 msgid "Statistika"
 msgstr "Статистика"
 
-#: templates/base.html:40
-msgid "To'lovlar"
-msgstr "Выплаты"
-
 #: templates/base.html:46
 msgid "Kitob qidirish..."
 msgstr "Поиск книг..."
@@ -2213,7 +2312,7 @@ msgstr "Магазин электронных книг на узбекском, 
 msgid "Bog'lanish"
 msgstr "Контакты"
 
-#: templates/base.html:169
+#: templates/base.html:169 templates/payments/result.html:42
 msgid "Katalog"
 msgstr "Каталог"
 
@@ -2304,21 +2403,21 @@ msgstr "Купить"
 msgid "Buyurtmani rasmiylashtirish"
 msgstr "Оформление заказа"
 
-#: templates/books/checkout.html:15
-msgid "To'lov"
-msgstr "Оплата"
-
 #: templates/books/checkout.html:16
 msgid "To'lov bank kartasi orqali amalga oshiriladi."
 msgstr "Оплата производится банковской картой."
 
-#: templates/books/checkout.html:21
-msgid "Karta orqali"
-msgstr "Картой"
-
 #: templates/books/checkout.html:22
 msgid "Summa hisobingizdan darhol yechiladi."
 msgstr "Сумма сразу спишется с вашего счёта."
+
+#: templates/books/checkout.html:43
+msgid ""
+"Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari "
+"saqlanmaydi."
+msgstr ""
+"Это учебный проект — реальная оплата не производится и данные карты не "
+"сохраняются."
 
 #: templates/books/checkout.html:51
 msgid "Buyurtma"
@@ -2777,6 +2876,10 @@ msgstr "К статистике"
 msgid "Kutayotgan so'rovlar"
 msgstr "Ожидающие заявки"
 
+#: templates/core/admin_withdrawals.html:16
+msgid "Karta"
+msgstr "Карта"
+
 #: templates/core/admin_withdrawals.html:22
 msgid "Izoh (ixtiyoriy)"
 msgstr "Комментарий (необязательно)"
@@ -2949,3 +3052,80 @@ msgstr "Почасовой прогноз — 24 часа"
 #: templates/core/weather.html:51
 msgid "Haftalik prognoz"
 msgstr "Прогноз на неделю"
+
+#: templates/payments/history.html:41
+msgid "Hozircha to'lov qilinmagan."
+msgstr "Платежей пока не было."
+
+#: templates/payments/result.html:3
+msgid "To'lov natijasi"
+msgstr "Результат платежа"
+
+#: templates/payments/result.html:9
+msgid "To'lov amalga oshdi"
+msgstr "Платёж выполнен"
+
+#: templates/payments/result.html:11
+#, python-format
+msgid "Hisobingiz %(amount)s so'mga to'ldirildi."
+msgstr "Ваш счёт пополнен на %(amount)s сум."
+
+#: templates/payments/result.html:19
+msgid "To'lov bekor qilindi"
+msgstr "Платёж отменён"
+
+#: templates/payments/result.html:20
+msgid "Pul yechilmadi. Qaytadan urinib ko'rishingiz mumkin."
+msgstr "Деньги не списаны. Вы можете попробовать снова."
+
+#: templates/payments/result.html:23
+msgid "To'lov kutilmoqda"
+msgstr "Платёж в обработке"
+
+#: templates/payments/result.html:25
+msgid ""
+"To'lov tizimi hali tasdiqlamadi. Bu bir necha daqiqa olishi mumkin — "
+"sahifani keyinroq yangilang."
+msgstr "Платёжная система ещё не подтвердила операцию. Это может занять несколько минут — обновите страницу позже."
+
+#: templates/payments/result.html:32 templates/payments/test_checkout.html:26
+msgid "Buyurtma raqami"
+msgstr "Номер заказа"
+
+#: templates/payments/test_checkout.html:3
+msgid "To'lov (sinov)"
+msgstr "Оплата (тест)"
+
+#: templates/payments/test_checkout.html:9
+msgid "Sinov sahifasi"
+msgstr "Тестовая страница"
+
+#: templates/payments/test_checkout.html:12
+#, python-format
+msgid ""
+"\n"
+"        Bu sahifa %(provider)s to'lov sahifasining o'rnini bosadi. Haqiqiy "
+"pul yechilmaydi,\n"
+"        lekin to'lov tizimi bilan almashinuv aynan haqiqiydek kechadi.\n"
+"      "
+msgstr ""
+"\n"
+"        Эта страница заменяет страницу оплаты %(provider)s. Реальные деньги не списываются,\n"
+"        но обмен с платёжной системой происходит точно так же, как в реальности.\n"
+"      "
+
+#: templates/payments/test_checkout.html:19
+msgid "To'lov summasi"
+msgstr "Сумма платежа"
+
+#: templates/payments/test_checkout.html:37
+msgid "To'lashni tasdiqlash"
+msgstr "Подтвердить оплату"
+
+#: templates/payments/test_checkout.html:44
+msgid "Bu buyurtma allaqachon yakunlangan."
+msgstr "Этот заказ уже завершён."
+
+#: templates/payments/test_checkout.html:45
+msgid "Natijani ko'rish"
+msgstr "Посмотреть результат"

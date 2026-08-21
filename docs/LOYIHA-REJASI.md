@@ -239,27 +239,31 @@ keyin buzilgan kodning serverga chiqib ketishi mumkin.
 
 **Taxminiy vaqt:** 1 kun.
 
-## 10-bosqich. Haqiqiy to'lov
+## 10-bosqich. Haqiqiy to'lov ✅ (kod tayyor, kalit kutilmoqda)
 
-**Hozirgi holat:** to'lov taqlid qilinadi — karta raqami so'raladi, lekin
-hech qayerga yuborilmaydi, balans shunchaki oshadi. Sinov uchun bu
-yetarli, real pul uchun emas.
+**Bajarildi:** Payme Merchant API va Click SHOP-API to'liq yozildi.
+Hisobni to'ldirish shu tizimga o'tkazildi — karta ma'lumotlari endi
+saytga umuman kelmaydi va balans faqat provayder tasdiqlagach oshadi.
 
-**Vazifalar:**
+| Vazifa | Holati |
+|---|---|
+| Payme Merchant API (6 metod) | ✅ |
+| Click SHOP-API (Prepare / Complete) | ✅ |
+| Imzo va parol tekshiruvi (`compare_digest`) | ✅ |
+| Takroriy so'rovdan himoya (idempotentlik) | ✅ |
+| To'langandan keyin bekor qilish → pulni qaytarish | ✅ |
+| Botda ham xuddi shu oqim | ✅ |
+| Test rejimi (kalitsiz to'liq sinash) | ✅ |
+| 41 ta test | ✅ |
+| Haqiqiy karta bilan to'lov | ⏳ kalit kutilmoqda |
 
-1. To'lov tizimini tanlash (Payme yoki Click)
-2. Hisobni to'ldirishni shu tizimga ulash
-3. Webhook orqali to'lov tasdig'ini qabul qilish va **imzosini
-   tekshirish** (aks holda soxta so'rov bilan balans oshirib olish
-   mumkin)
-4. Pul yechishni operator tasdig'i bilan bog'lash
-5. Har bir tranzaksiyani jurnalga yozish
+**Nega hali "jonli" emas:** Payme va Click kalitni faqat YaTT/yuridik
+shaxsga, shartnoma va bank hisobidan keyin beradi. Shu sababli loyiha
+`PAYMENT_MODE=test` da turibdi: protokol haqiqiy yo'ldan o'tadi, pul
+esa yechilmaydi.
 
-**Bosqich tugadi:** haqiqiy karta bilan bitta to'lov o'tkazilgan, pul
-hisobga tushgan, jurnalda ko'rinadi va qaytarish (refund) ham sinovdan
-o'tgan.
-
-**Taxminiy vaqt:** 3–5 kun (to'lov tizimi hujjatlariga bog'liq).
+**Kalit kelganda:** Render → Environment da `PAYMENT_MODE=live` va
+kalitlar qo'yiladi. **Kodga tegilmaydi.** Batafsil: `docs/TOLOV.md`.
 
 ## 11-bosqich. Foydalanish qulayligi va yakuniy sayqal
 
@@ -308,7 +312,7 @@ emas, keyinroq qimmatroq tushadigan kamchilik.
 |---|---|---|
 | `ADMIN_PASSWORD` `settings.py` da standart qiymat sifatida turibdi | **Yuqori** — kodni ko'rgan har kim admin parolini biladi | 8-bosqich |
 | Deploy va CI yo'q | O'rta — buzilgan kod sezilmay qolishi mumkin | 8–9-bosqich |
-| To'lov taqlid qilingan | Yuqori (real pul uchun) | 10-bosqich |
+| To'lov kodi tayyor, lekin `test` rejimida | O'rta — jonli rejim uchun YaTT va shartnoma kerak | 10-bosqich (kod bajarildi) |
 | Ob-havo sahifasi geolokatsiyasiz qotib qoladi | Past — alohida sahifa, asosiy oqimga tegmaydi | 11-bosqich |
 | Kitob muqovasi ixtiyoriy, ko'p kitob muqovasiz | Past — ko'rinish masalasi | 11-bosqich |
 

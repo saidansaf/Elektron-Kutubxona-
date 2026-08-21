@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "To'lovlar tarixi" %}{% endblock %}
+{% block content %}
+<div class="narrow-lg">
+  <a href="{% url 'accounts:topup' %}" class="back-link">← {% trans "Hisobni to'ldirish" %}</a>
+  <h1>{% trans "To'lovlar tarixi" %}</h1>
+
+  {% if payments %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{% trans "Sana" %}</th>
+            <th>{% trans "Summa" %}</th>
+            <th>{% trans "Tizim" %}</th>
+            <th>{% trans "Holati" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in payments %}
+            <tr>
+              <td>{{ p.created_at|date:"Y-m-d H:i" }}</td>
+              <td><strong>{{ p.amount }} {% trans "so'm" %}</strong></td>
+              <td class="text-muted">{{ p.get_provider_display }}</td>
+              <td>
+                {% if p.status == "paid" %}
+                  <span class="badge success">{{ p.get_status_display }}</span>
+                {% elif p.status == "cancelled" %}
+                  <span class="badge danger">{{ p.get_status_display }}</span>
+                {% else %}
+                  <span class="badge muted">{{ p.get_status_display }}</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="card"><p class="text-muted">{% trans "Hozircha to'lov qilinmagan." %}</p></div>
+  {% endif %}
+</div>
+{% endblock %}
