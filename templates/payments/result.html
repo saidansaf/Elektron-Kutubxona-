@@ -6,10 +6,17 @@
   <div class="card pay-result">
     {% if payment.status == "paid" %}
       <div class="pay-result-icon success">✓</div>
-      <h1>{% trans "To'lov amalga oshdi" %}</h1>
-      <p class="text-muted">
-        {% blocktrans with amount=payment.amount %}Hisobingiz {{ amount }} so'mga to'ldirildi.{% endblocktrans %}
-      </p>
+      {% if payment.purchase %}
+        <h1>{% trans "Kitob sotib olindi" %}</h1>
+        <p class="text-muted">
+          {% blocktrans with title=payment.book.title %}«{{ title }}» kutubxonangizga qo'shildi.{% endblocktrans %}
+        </p>
+      {% else %}
+        <h1>{% trans "To'lov amalga oshdi" %}</h1>
+        <p class="text-muted">
+          {% blocktrans with amount=payment.amount %}Hisobingiz {{ amount }} so'mga to'ldirildi.{% endblocktrans %}
+        </p>
+      {% endif %}
       <div class="pay-amount">
         <span class="text-muted">{% trans "Joriy balans" %}</span>
         <strong>{{ user.balance }} {% trans "so'm" %}</strong>
@@ -38,8 +45,16 @@
     </div>
 
     <div class="pay-actions">
-      <a href="{% url 'accounts:topup' %}" class="btn btn-primary">{% trans "Hisobni to'ldirish" %}</a>
-      <a href="{% url 'books:catalog' %}" class="btn btn-ghost">{% trans "Katalog" %}</a>
+      {% if payment.purchase %}
+        <a href="{% url 'books:my_library' %}" class="btn btn-primary">{% trans "Mening kutubxonam" %}</a>
+      {% else %}
+        <a href="{% url 'accounts:topup' %}" class="btn btn-primary">{% trans "Hisobni to'ldirish" %}</a>
+      {% endif %}
+      {% if payment.book and not payment.purchase %}
+        <a href="{% url 'books:buy' payment.book.pk %}" class="btn btn-ghost">{% trans "Kitobga qaytish" %}</a>
+      {% else %}
+        <a href="{% url 'books:catalog' %}" class="btn btn-ghost">{% trans "Katalog" %}</a>
+      {% endif %}
     </div>
   </div>
 </div>

@@ -13,35 +13,57 @@
 
     <div class="card">
       <div class="card-title">{% trans "To'lov" %}</div>
-      <p class="card-hint">{% trans "To'lov bank kartasi orqali amalga oshiriladi." %}</p>
 
-      <div class="pay-badge">
-        <span class="choice-icon">💳</span>
-        <span>
-          <span class="choice-title">{% trans "Karta orqali" %}</span>
-          <span class="choice-desc">{% trans "Summa hisobingizdan darhol yechiladi." %}</span>
-        </span>
-      </div>
+      {% if missing %}
+        <p class="card-hint">
+          {% blocktrans %}Balansingizda mablag' yetmayapti. Yetmagan qismini to'lov tizimi orqali to'lang — kitob to'lov tasdiqlangach o'zi sotib olinadi.{% endblocktrans %}
+        </p>
+        <div class="pay-amount">
+          <span class="text-muted">{% trans "To'lash kerak" %}</span>
+          <strong>{{ missing }} {% trans "so'm" %}</strong>
+        </div>
+      {% else %}
+        <div class="pay-badge">
+          <span class="choice-icon">💰</span>
+          <span>
+            <span class="choice-title">{% trans "Balansdan to'lash" %}</span>
+            <span class="choice-desc">{% trans "Summa hisobingizdan darhol yechiladi." %}</span>
+          </span>
+        </div>
+      {% endif %}
 
       <div class="card-fields">
-        <div class="form-row">
-          <label for="{{ form.card_number.id_for_label }}">{{ form.card_number.label }}</label>
-          {{ form.card_number }}
-          {% if form.card_number.errors %}<div class="form-errors">{{ form.card_number.errors|striptags }}</div>{% endif %}
-        </div>
-        <div class="form-row">
-          <label for="{{ form.card_expiry.id_for_label }}">{{ form.card_expiry.label }}</label>
-          {{ form.card_expiry }}
-          {% if form.card_expiry.errors %}<div class="form-errors">{{ form.card_expiry.errors|striptags }}</div>{% endif %}
-        </div>
         <div class="form-row">
           <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
           {{ form.address }}
           {% if form.address.errors %}<div class="form-errors">{{ form.address.errors|striptags }}</div>{% endif %}
         </div>
-        <p class="note">
-          🔒 {% trans "Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari saqlanmaydi." %}
-        </p>
+
+        {% if missing %}
+          <div class="form-row">
+            <label>{% trans "To'lov tizimini tanlang" %}</label>
+            <div class="pay-providers">
+              {% for code, label in providers %}
+                <button type="submit" name="provider" value="{{ code }}" class="pay-provider">
+                  <span class="pay-provider-name">{{ label }}</span>
+                  <span class="pay-provider-hint">{% trans "Karta orqali" %}</span>
+                </button>
+              {% empty %}
+                <p class="form-errors">{% trans "Hozircha birorta to'lov tizimi sozlanmagan." %}</p>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if test_mode %}
+          <p class="note">
+            🧪 {% trans "Test rejimi: haqiqiy pul yechilmaydi. To'lov tizimining sahifasi o'rniga sinov sahifasi ochiladi." %}
+          </p>
+        {% else %}
+          <p class="note">
+            🔒 {% trans "Karta ma'lumotlaringiz bu saytda emas, to'lov tizimining o'z sahifasida kiritiladi." %}
+          </p>
+        {% endif %}
       </div>
     </div>
   </form>
@@ -86,11 +108,23 @@
           <span class="text-muted">{% trans "Hisob balansi" %}</span>
           <span>{{ user.balance }} {% trans "so'm" %}</span>
         </div>
+        {% if missing %}
+          <div class="summary-row">
+            <span class="text-muted">{% trans "To'lash kerak" %}</span>
+            <span class="price-tag">{{ missing }} {% trans "so'm" %}</span>
+          </div>
+        {% endif %}
       </div>
 
-      <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg">
-        {% trans "Tasdiqlash va sotib olish" %}
-      </button>
+      {% if missing %}
+        <p class="card-hint" style="text-align:center">
+          {% trans "To'lov tizimini chap tomondan tanlang." %}
+        </p>
+      {% else %}
+        <button type="submit" form="checkoutForm" class="btn btn-primary btn-block btn-lg">
+          {% trans "Tasdiqlash va sotib olish" %}
+        </button>
+      {% endif %}
 
       <form action="{% url 'books:toggle_like' book.pk %}" method="post" style="margin-top:10px">
         {% csrf_token %}

@@ -9,6 +9,7 @@ marta yuborishi mumkin (tarmoq uzilsa, javob yetib bormasa). Shuning
 uchun `mark_paid` ikkinchi marta chaqirilsa balansni yana oshirmaydi.
 """
 
+import logging
 from decimal import Decimal
 
 from django.conf import settings
@@ -19,6 +20,8 @@ from apps.accounts.models import TopUp, User
 from apps.accounts.services import MoneyError, parse_amount
 
 from .models import Payment, PaymentStatus, Provider
+
+logger = logging.getLogger(__name__)
 
 
 def available_providers():
@@ -39,24 +42,45 @@ def available_providers():
     return ready
 
 
-def create_payment(user, amount, provider):
+def create_payment(user, amount, provider, book=None, address=""):
     """Yangi to'lov buyurtmasini yaratadi.
 
     Balans bu yerda oshmaydi — faqat "shuncha to'lamoqchi" degan yozuv
     qoladi. Balans `mark_paid` da oshadi.
+
+    `book` berilsa, to'lov aynan shu kitob uchun: tasdiqlangach kitob
+    o'zi sotib olinadi.
     """
     amount = amount if isinstance(amount, Decimal) else parse_amount(amount)
 
-    low, high = settings.TOPUP_MIN, settings.TOPUP_MAX
-    if amount < low:
-        raise MoneyError(_("Eng kam summa %(min)s so'm.") % {"min": low})
+    high = settings.TOPUP_MAX
     if amount > high:
         raise MoneyError(_("Eng ko'p summa %(max)s so'm.") % {"max": high})
+
+    if book is None:
+        # Eng kam summa faqat "shunchaki to'ldirish" uchun. Kitob to'lovida
+        # summa kitob narxidan kelib chiqadi va u chegaradan kichik bo'lishi
+        # mumkin — o'shanda ham to'lashga ruxsat berish kerak.
+        if amount < settings.TOPUP_MIN:
+            raise MoneyError(_("Eng kam summa %(min)s so'm.") % {"min": settings.TOPUP_MIN})
+    elif amount <= 0:
+        raise MoneyError(_("To'lov summasi noto'g'ri."))
 
     if provider not in available_providers():
         raise MoneyError(_("Bu to'lov tizimi hozircha sozlanmagan."))
 
-    return Payment.objects.create(user=user, amount=amount, provider=provider)
+    return Payment.objects.create(
+        user=user, amount=amount, provider=provider, book=book, address=address
+    )
+
+
+def amount_for_book(user, book):
+    """Kitobni olish uchun yana qancha to'lash kerakligi.
+
+    Balansda pul bo'lsa, faqat yetmagan qismi to'lanadi.
+    """
+    missing = book.price - user.balance
+    return missing if missing > 0 else Decimal("0.00")
 
 
 def mark_paid(payment, transaction_time=0):
@@ -81,9 +105,42 @@ def mark_paid(payment, transaction_time=0):
         fresh.performed_time = transaction_time or _now_ms()
         fresh.save(update_fields=["topup", "status", "performed_time", "updated_at"])
 
+    _finish_book_purchase(fresh)
+
     payment.status = fresh.status
     payment.performed_time = fresh.performed_time
     return fresh
+
+
+def _finish_book_purchase(payment):
+    """Kitob uchun qilingan to'lovdan keyin xaridni yakunlaydi.
+
+    Alohida tranzaksiyada: xarid o'tmasa ham to'lov "to'landi" bo'lib
+    qolishi kerak, chunki pul haqiqatan yechilgan. Bunday holatda pul
+    balansda turaveradi va foydalanuvchi kitobni qo'lda sotib oladi.
+
+    Xato yutilmaydi, jurnalga yoziladi — aks holda "pul ketdi, kitob
+    yo'q" holati sezilmay qolardi.
+    """
+    if not payment.book_id or payment.purchase_id:
+        return
+
+    from apps.books.services import PurchaseError, purchase_book
+
+    try:
+        purchase = purchase_book(payment.user, payment.book, address=payment.address)
+    except PurchaseError as exc:
+        logger.warning(
+            "To'lov #%s: kitob sotib olinmadi (%s). Pul balansda qoldi.", payment.pk, exc
+        )
+        return
+
+    payment.purchase = purchase
+    payment.save(update_fields=["purchase", "updated_at"])
+
+    from apps.core import telegram
+
+    telegram.notify_sale(purchase)
 
 
 def mark_cancelled(payment, reason=None, transaction_time=0):

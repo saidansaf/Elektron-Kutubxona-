@@ -49,31 +49,18 @@ class GenreForm(forms.ModelForm):
 
 
 class CheckoutForm(forms.Form):
-    """Sotib olish sahifasi - to'lov faqat karta orqali.
+    """Sotib olish sahifasi.
 
-    Diqqat: bu o'quv loyihasi, haqiqiy to'lov tizimi ulanmagan. Karta raqami
-    hech qayerda saqlanmaydi - faqat formatining to'g'riligi tekshiriladi va
-    chek uchun oxirgi 4 raqami olinadi.
+    Karta ma'lumotlari bu yerda so'ralmaydi: to'lov Payme yoki Click
+    sahifasida amalga oshiriladi, balansda pul yetsa esa umuman karta
+    kerak emas. Ilgari bu yerda karta raqami va muddati so'ralardi, lekin
+    ular hech qayerga yuborilmasdi — endi bunday soxta maydon yo'q.
     """
 
-    card_number = forms.CharField(
-        label=_("Karta raqami"),
-        widget=forms.TextInput(attrs={"placeholder": "8600 1234 5678 9012", "inputmode": "numeric"}),
-    )
-    card_expiry = forms.CharField(
-        label=_("Amal qilish muddati"),
-        widget=forms.TextInput(attrs={"placeholder": "MM/YY"}),
-    )
     address = forms.CharField(
         label=_("Uy manzili"),
         widget=forms.TextInput(attrs={"placeholder": _("Shahar, ko'cha, uy raqami")}),
     )
-
-    def clean_card_number(self):
-        raw = (self.cleaned_data.get("card_number") or "").replace(" ", "").replace("-", "")
-        if not raw.isdigit() or not 12 <= len(raw) <= 19:
-            raise forms.ValidationError(_("Karta raqami 12-19 ta raqamdan iborat bo'lishi kerak."))
-        return raw
 
 
 class ReplyForm(forms.ModelForm):

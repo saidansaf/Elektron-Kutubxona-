@@ -19,7 +19,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.accounts.models import Role, TelegramLink, Withdrawal
-from apps.books.models import Author, Book, Conversation, Genre, Like, Review, Wish
+from apps.books.models import Author, Book, Conversation, Genre, Like, Purchase, Review, Wish
 
 User = get_user_model()
 
@@ -553,6 +553,41 @@ class MoneyTests(BotTestCase):
         self.assertFalse(Payment.objects.exists())
         self.buyer.refresh_from_db()
         self.assertEqual(self.buyer.balance, Decimal("500000"))
+
+    def test_balans_yetmasa_bot_tolov_taklif_qiladi(self):
+        """Saytdagidek: pul yetmasa xato emas, to'lov tizimi taklif qilinadi."""
+        from apps.payments.models import Payment
+
+        self.buyer.balance = Decimal("5000")
+        self.buyer.save(update_fields=["balance"])
+        self.link()
+
+        self.bot.press(self.CHAT, f"buy:{self.book.pk}")
+
+        self.assertTrue(self.bot.said("To'lov tizimini tanlang"))
+        self.assertFalse(Payment.objects.exists())  # hali tizim tanlanmadi
+
+    def test_botdagi_kitob_tolovi_kitobni_beradi(self):
+        from apps.payments import testmode
+        from apps.payments.models import Payment
+
+        self.buyer.balance = Decimal("5000")
+        self.buyer.save(update_fields=["balance"])
+        self.link()
+
+        self.bot.press(self.CHAT, f"buy:{self.book.pk}")
+        self.bot.press(self.CHAT, f"bookpay:{self.book.pk}:payme")
+
+        payment = Payment.objects.get()
+        self.assertEqual(payment.book, self.book)
+        self.assertEqual(payment.amount, Decimal("40000.00"))  # 45000 - 5000
+
+        testmode.simulate_success(payment)
+
+        # Botda qilingan to'lov saytdagi xaridlarda ko'rinishi kerak.
+        self.assertTrue(Purchase.objects.filter(buyer=self.buyer, book=self.book).exists())
+        self.buyer.refresh_from_db()
+        self.assertEqual(self.buyer.balance, Decimal("0"))
 
     def test_botdan_pul_yechish(self):
         self.seller.balance = Decimal("300000")

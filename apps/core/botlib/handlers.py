@@ -1438,7 +1438,28 @@ def register_handlers(bot):  # noqa: C901 - bot menyusi tabiatan katta
                 return
 
             dialogs.clear(chat_id)
-            link = payment_services.checkout_link(payment)
+            send_payment_link(chat_id, user, payment)
+
+    def send_payment_link(chat_id, user, payment):
+        """To'lov havolasini yuboradi.
+
+        Telegram tugmadagi manzil HTTPS bo'lishini talab qiladi, shuning
+        uchun lokal ishlaganda (http) havola oddiy matn bo'lib yuboriladi.
+        """
+        link = payment_services.checkout_link(payment)
+        if payment.book_id:
+            text = _(
+                "💳 <b>%(book)s</b>\n"
+                "To'lash kerak: <b>%(amount)s so'm</b>\n"
+                "Tizim: %(provider)s\n\n"
+                "Havolani oching va to'lovni yakunlang — kitob shundan keyin "
+                "o'zi kutubxonangizga tushadi."
+            ) % {
+                "book": payment.book.title,
+                "amount": money(payment.amount),
+                "provider": payment.get_provider_display(),
+            }
+        else:
             text = _(
                 "💳 To'lov: <b>%(amount)s so'm</b>\n"
                 "Tizim: %(provider)s\n\n"
@@ -1446,13 +1467,74 @@ def register_handlers(bot):  # noqa: C901 - bot menyusi tabiatan katta
                 "Balans to'lov tasdiqlangach oshadi."
             ) % {"amount": money(payment.amount), "provider": payment.get_provider_display()}
 
-            if link.startswith("https://"):
-                markup = telebot.types.InlineKeyboardMarkup()
-                markup.add(telebot.types.InlineKeyboardButton(_("💳 To'lash"), url=link))
-                bot.send_message(chat_id, text, reply_markup=markup)
-                bot.send_message(chat_id, _("Menyu:"), reply_markup=main_keyboard(user))
-            else:
-                finish(chat_id, f"{text}\n\n{link}", user)
+        if link.startswith("https://"):
+            markup = telebot.types.InlineKeyboardMarkup()
+            markup.add(telebot.types.InlineKeyboardButton(_("💳 To'lash"), url=link))
+            bot.send_message(chat_id, text, reply_markup=markup)
+            bot.send_message(chat_id, _("Menyu:"), reply_markup=main_keyboard(user))
+        else:
+            finish(chat_id, f"{text}\n\n{link}", user)
+
+    def offer_book_payment(chat_id, user, book, missing):
+        """Balans yetmaganda to'lov tizimini tanlashni taklif qiladi."""
+        providers = payment_services.available_providers()
+        if not providers:
+            bot.send_message(chat_id, _("Hisobingizda mablag' yetarli emas."))
+            return
+
+        markup = telebot.types.InlineKeyboardMarkup()
+        for provider in providers:
+            markup.add(
+                telebot.types.InlineKeyboardButton(
+                    provider.label, callback_data=f"bookpay:{book.pk}:{provider.value}"
+                )
+            )
+        bot.send_message(
+            chat_id,
+            _(
+                "<b>%(book)s</b> — %(price)s so'm\n"
+                "Balansingiz: %(balance)s so'm\n"
+                "To'lash kerak: <b>%(missing)s so'm</b>\n\n"
+                "To'lov tizimini tanlang:"
+            )
+            % {
+                "book": book.title,
+                "price": money(book.price),
+                "balance": money(user.balance),
+                "missing": money(missing),
+            },
+            reply_markup=markup,
+        )
+
+    @bot.callback_query_handler(func=lambda c: c.data.startswith("bookpay:"))
+    @safe_handler
+    def on_book_payment(call):
+        """Kitob uchun to'lov: buyurtma yaratiladi va havola beriladi."""
+        user = callback_user(call)
+        if not user:
+            return
+        bot.answer_callback_query(call.id)
+
+        _prefix, book_id, provider = call.data.split(":", 2)
+        book = Book.objects.filter(pk=int(book_id), is_active=True).first()
+        chat_id = call.message.chat.id
+        if not book:
+            return
+
+        with override(lang_of(user)):
+            missing = payment_services.amount_for_book(user, book)
+            if not missing:
+                # Oradan vaqt o'tib balans yetib qolgan bo'lishi mumkin.
+                bot.send_message(chat_id, _("Balansingiz yetadi — kitobni sotib olishingiz mumkin."))
+                return
+            try:
+                payment = payment_services.create_payment(
+                    user, missing, provider, book=book, address=_("Telegram bot")
+                )
+            except money_services.MoneyError as exc:
+                finish(chat_id, str(exc), user)
+                return
+            send_payment_link(chat_id, user, payment)
 
     @bot.callback_query_handler(func=lambda c: c.data == "withdraw")
     @safe_handler
@@ -1545,6 +1627,15 @@ def register_handlers(bot):  # noqa: C901 - bot menyusi tabiatan katta
                 return
             if Purchase.objects.filter(buyer=user, book=book).exists():
                 bot.answer_callback_query(call.id, _("Bu kitob sizda bor."))
+                return
+
+            # Balansda pul yetmasa, saytdagidek: yetmagan qismini to'lov
+            # tizimi orqali to'lash taklif qilinadi. To'lov tasdiqlangach
+            # kitob o'zi sotib olinadi.
+            missing = payment_services.amount_for_book(user, book)
+            if missing:
+                bot.answer_callback_query(call.id)
+                offer_book_payment(call.message.chat.id, user, book, missing)
                 return
 
             # Xarid mantiqi sayt bilan bitta joyda (apps/books/services.py)

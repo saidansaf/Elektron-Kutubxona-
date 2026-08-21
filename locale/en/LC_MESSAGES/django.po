@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 00:28+0500\n"
+"POT-Creation-Date: 2026-08-21 11:55+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,7 +64,7 @@ msgid "Kim bo'lib kirmoqchisiz?"
 msgstr "Who do you want to be?"
 
 #: apps/accounts/forms.py:65 apps/accounts/models.py:13
-#: templates/accounts/role_select.html:23 templates/books/checkout.html:78
+#: templates/accounts/role_select.html:23 templates/books/checkout.html:100
 #: templates/books/detail.html:40 templates/core/admin_dashboard.html:58
 msgid "Sotuvchi"
 msgstr "Seller"
@@ -88,28 +88,28 @@ msgid "Summa (so'm)"
 msgstr "Amount (UZS)"
 
 #: apps/accounts/forms.py:95 apps/accounts/forms.py:137
-#: apps/accounts/models.py:177 apps/books/forms.py:60
+#: apps/accounts/models.py:177
 msgid "Karta raqami"
 msgstr "Card number"
 
-#: apps/accounts/forms.py:99 apps/books/forms.py:64
+#: apps/accounts/forms.py:99
 msgid "Amal qilish muddati"
 msgstr "Expiry date"
 
 #: apps/accounts/forms.py:108 apps/accounts/forms.py:150
 #: apps/accounts/services.py:62 apps/accounts/services.py:89
-#: apps/payments/services.py:52
+#: apps/payments/services.py:65
 #, python-format
 msgid "Eng kam summa %(min)s so'm."
 msgstr "The minimum amount is %(min)s UZS."
 
 #: apps/accounts/forms.py:112 apps/accounts/services.py:64
-#: apps/payments/services.py:54
+#: apps/payments/services.py:58
 #, python-format
 msgid "Eng ko'p summa %(max)s so'm."
 msgstr "The maximum amount is %(max)s UZS."
 
-#: apps/accounts/forms.py:119 apps/accounts/forms.py:162 apps/books/forms.py:75
+#: apps/accounts/forms.py:119 apps/accounts/forms.py:162
 msgid "Karta raqami 12-19 ta raqamdan iborat bo'lishi kerak."
 msgstr "The card number must contain 12 to 19 digits."
 
@@ -144,9 +144,9 @@ msgstr "Role"
 msgid "Mavzu"
 msgstr "Theme"
 
-#: apps/accounts/models.py:26 apps/books/forms.py:134
+#: apps/accounts/models.py:26 apps/books/forms.py:121
 #: templates/accounts/settings.html:46 templates/base.html:87
-#: templates/books/checkout.html:70 templates/books/my_books.html:19
+#: templates/books/checkout.html:92 templates/books/my_books.html:19
 #: templates/core/admin_user_detail.html:38
 msgid "Til"
 msgstr "Language"
@@ -160,7 +160,7 @@ msgid "Profil rasmi"
 msgstr "Profile photo"
 
 #: apps/accounts/models.py:33 templates/accounts/settings.html:97
-#: templates/books/checkout.html:86 templates/books/my_library.html:6
+#: templates/books/checkout.html:108 templates/books/my_library.html:6
 msgid "Hisob balansi"
 msgstr "Account balance"
 
@@ -218,7 +218,7 @@ msgstr "Admin messages"
 
 #: apps/accounts/models.py:109 apps/accounts/models.py:176
 #: apps/payments/models.py:46 templates/accounts/topup.html:62
-#: templates/payments/history.html:15 templates/payments/result.html:33
+#: templates/payments/history.html:15 templates/payments/result.html:40
 msgid "Summa"
 msgstr "Amount"
 
@@ -337,80 +337,80 @@ msgstr ""
 msgid "Telegram uzildi."
 msgstr "Telegram disconnected."
 
-#: apps/books/forms.py:68 apps/books/models.py:119
+#: apps/books/forms.py:61 apps/books/models.py:119 apps/payments/models.py:86
 msgid "Uy manzili"
 msgstr "Home address"
 
-#: apps/books/forms.py:69
+#: apps/books/forms.py:62
 msgid "Shahar, ko'cha, uy raqami"
 msgstr "City, street, house number"
 
-#: apps/books/forms.py:86 templates/books/_reviews.html:34
+#: apps/books/forms.py:73 templates/books/_reviews.html:34
 msgid "Javob yozing..."
 msgstr "Write a reply..."
 
-#: apps/books/forms.py:97
+#: apps/books/forms.py:84
 msgid "Fikringiz (ixtiyoriy)"
 msgstr "Your comment (optional)"
 
-#: apps/books/forms.py:103
+#: apps/books/forms.py:90
 msgid "Avval yangilari"
 msgstr "Newest first"
 
-#: apps/books/forms.py:104
+#: apps/books/forms.py:91
 msgid "Avval eskilari"
 msgstr "Oldest first"
 
-#: apps/books/forms.py:105
+#: apps/books/forms.py:92
 msgid "Avval arzoni"
 msgstr "Cheapest first"
 
-#: apps/books/forms.py:106
+#: apps/books/forms.py:93
 msgid "Avval qimmati"
 msgstr "Most expensive first"
 
-#: apps/books/forms.py:107
+#: apps/books/forms.py:94
 msgid "Reyting bo'yicha"
 msgstr "By rating"
 
-#: apps/books/forms.py:108
+#: apps/books/forms.py:95
 msgid "Ommabopligi bo'yicha"
 msgstr "By popularity"
 
-#: apps/books/forms.py:114
+#: apps/books/forms.py:101
 msgid "Qidiruv"
 msgstr "Search"
 
-#: apps/books/forms.py:115 apps/books/forms.py:135
+#: apps/books/forms.py:102 apps/books/forms.py:122
 msgid "Barcha tillar"
 msgstr "All languages"
 
-#: apps/books/forms.py:117
+#: apps/books/forms.py:104
 msgid "Barcha janrlar"
 msgstr "All genres"
 
-#: apps/books/forms.py:117 apps/books/models.py:17
+#: apps/books/forms.py:104 apps/books/models.py:17
 msgid "Janr"
 msgstr "Genre"
 
-#: apps/books/forms.py:120
+#: apps/books/forms.py:107
 msgid "Barcha mualliflar"
 msgstr "All authors"
 
-#: apps/books/forms.py:120 apps/books/models.py:36
+#: apps/books/forms.py:107 apps/books/models.py:36
 #: templates/books/detail.html:20 templates/books/my_books.html:19
 msgid "Muallif"
 msgstr "Author"
 
-#: apps/books/forms.py:122
+#: apps/books/forms.py:109
 msgid "Narx (dan)"
 msgstr "Price (from)"
 
-#: apps/books/forms.py:123
+#: apps/books/forms.py:110
 msgid "Narx (gacha)"
 msgstr "Price (to)"
 
-#: apps/books/forms.py:126
+#: apps/books/forms.py:113
 msgid "Saralash"
 msgstr "Sort by"
 
@@ -472,7 +472,8 @@ msgstr "Publication year"
 msgid "Sotuvda"
 msgstr "On sale"
 
-#: apps/books/models.py:72 templates/books/seller_dashboard.html:70
+#: apps/books/models.py:72 apps/payments/models.py:82
+#: templates/books/seller_dashboard.html:70
 msgid "Kitob"
 msgstr "Book"
 
@@ -536,7 +537,7 @@ msgstr "Read"
 msgid "Xabarlar"
 msgstr "Messages"
 
-#: apps/books/models.py:252 templates/books/checkout.html:100
+#: apps/books/models.py:252 templates/books/checkout.html:134
 #: templates/books/seller_dashboard.html:75
 msgid "Yoqtirish"
 msgstr "Like"
@@ -590,60 +591,60 @@ msgstr "You have already purchased this book."
 msgid "O'z kitobingizni sotib ololmaysiz."
 msgstr "You cannot buy your own book."
 
-#: apps/books/services.py:44
+#: apps/books/services.py:44 apps/core/botlib/handlers.py:1482
 msgid "Hisobingizda mablag' yetarli emas."
 msgstr "Your balance is insufficient."
 
-#: apps/books/views.py:273
+#: apps/books/views.py:289
 msgid "Kitob muvaffaqiyatli sotib olindi!"
 msgstr "Book purchased successfully!"
 
-#: apps/books/views.py:332
+#: apps/books/views.py:351
 msgid "Fikringiz uchun rahmat!"
 msgstr "Thank you for your feedback!"
 
-#: apps/books/views.py:348
+#: apps/books/views.py:367
 msgid "Javob bo'sh bo'lmasligi kerak."
 msgstr "The reply cannot be empty."
 
-#: apps/books/views.py:474
+#: apps/books/views.py:493
 msgid "Kitob muvaffaqiyatli qo'shildi!"
 msgstr "Book added successfully!"
 
-#: apps/books/views.py:478
+#: apps/books/views.py:497
 msgid "Yangi kitob qo'shish"
 msgstr "Add a new book"
 
-#: apps/books/views.py:488
+#: apps/books/views.py:507
 msgid "Kitob yangilandi."
 msgstr "Book updated."
 
-#: apps/books/views.py:492
+#: apps/books/views.py:511
 msgid "Kitobni tahrirlash"
 msgstr "Edit book"
 
-#: apps/books/views.py:500
+#: apps/books/views.py:519
 msgid "Kitob o'chirildi."
 msgstr "Book deleted."
 
-#: apps/books/views.py:523
+#: apps/books/views.py:542
 msgid "Muallif qo'shildi."
 msgstr "Author added."
 
-#: apps/books/views.py:542
+#: apps/books/views.py:561
 #, python-format
 msgid "\"%(name)s\" janri qo'shildi."
 msgstr "Genre \"%(name)s\" added."
 
-#: apps/books/views.py:561
+#: apps/books/views.py:580
 msgid "Istaklar ro'yxatidan olib tashlandi."
 msgstr "Removed from your wishlist."
 
-#: apps/books/views.py:563
+#: apps/books/views.py:582
 msgid "Istaklar ro'yxatiga qo'shildi."
 msgstr "Added to your wishlist."
 
-#: apps/books/views.py:639
+#: apps/books/views.py:658
 msgid "O'zingizga xabar yoza olmaysiz."
 msgstr "You cannot message yourself."
 
@@ -1259,7 +1260,7 @@ msgstr "Added to wishlist"
 msgid "Yoqtirish olib tashlandi"
 msgstr "Like removed"
 
-#: apps/core/botlib/handlers.py:1253 templates/books/checkout.html:100
+#: apps/core/botlib/handlers.py:1253 templates/books/checkout.html:134
 msgid "Yoqtirdingiz"
 msgstr "You liked it"
 
@@ -1315,7 +1316,23 @@ msgstr "How much do you want to add? (%(min)s — %(max)s UZS)"
 msgid "Bu so'rov eskirgan. Qaytadan boshlang: 💰 Balans"
 msgstr "This request has expired. Start again: 💰 Balance"
 
-#: apps/core/botlib/handlers.py:1443
+#: apps/core/botlib/handlers.py:1452
+#, python-format
+msgid ""
+"💳 <b>%(book)s</b>\n"
+"To'lash kerak: <b>%(amount)s so'm</b>\n"
+"Tizim: %(provider)s\n"
+"\n"
+"Havolani oching va to'lovni yakunlang — kitob shundan keyin o'zi "
+"kutubxonangizga tushadi."
+msgstr ""
+"💳 <b>%(book)s</b>\n"
+"To pay: <b>%(amount)s so'm</b>\n"
+"System: %(provider)s\n"
+"\n"
+"Open the link and complete the payment — the book will then be added to your library automatically."
+
+#: apps/core/botlib/handlers.py:1464
 #, python-format
 msgid ""
 "💳 To'lov: <b>%(amount)s so'm</b>\n"
@@ -1327,70 +1344,91 @@ msgstr ""
 "💳 Payment: <b>%(amount)s so'm</b>\n"
 "System: %(provider)s\n"
 "\n"
-"Open the link below to complete the payment. Your balance will be topped up once it is confirmed."
+"Open the link below to complete the payment. Your balance will be topped up "
+"once it is confirmed."
 
-#: apps/core/botlib/handlers.py:1451
+#: apps/core/botlib/handlers.py:1472
 msgid "💳 To'lash"
 msgstr "💳 Pay"
 
-#: apps/core/botlib/handlers.py:1453
+#: apps/core/botlib/handlers.py:1474
 msgid "Menyu:"
 msgstr "Menu:"
 
-#: apps/core/botlib/handlers.py:1466
+#: apps/core/botlib/handlers.py:1495
+#, python-format
+msgid ""
+"<b>%(book)s</b> — %(price)s so'm\n"
+"Balansingiz: %(balance)s so'm\n"
+"To'lash kerak: <b>%(missing)s so'm</b>\n"
+"\n"
+"To'lov tizimini tanlang:"
+msgstr ""
+"<b>%(book)s</b> — %(price)s so'm\n"
+"Your balance: %(balance)s so'm\n"
+"To pay: <b>%(missing)s so'm</b>\n"
+"\n"
+"Choose a payment system:"
+
+#: apps/core/botlib/handlers.py:1528
+msgid "Balansingiz yetadi — kitobni sotib olishingiz mumkin."
+msgstr "Your balance is enough — you can buy the book."
+
+#: apps/core/botlib/handlers.py:1532 apps/core/botlib/handlers.py:1643
+#: templates/accounts/settings.html:107 templates/accounts/telegram.html:7
+#: templates/core/home.html:88
+msgid "Telegram bot"
+msgstr "Telegram bot"
+
+#: apps/core/botlib/handlers.py:1548
 msgid "Bu faqat sotuvchilar uchun."
 msgstr "This is for sellers only."
 
-#: apps/core/botlib/handlers.py:1471
+#: apps/core/botlib/handlers.py:1553
 #, python-format
 msgid "Qancha yechasiz? (eng kam %(min)s so'm, balans %(balance)s so'm)"
 msgstr ""
 "How much do you want to withdraw? (minimum %(min)s UZS, balance %(balance)s "
 "UZS)"
 
-#: apps/core/botlib/handlers.py:1486
+#: apps/core/botlib/handlers.py:1568
 msgid "Til o'zgartirildi"
 msgstr "Language changed"
 
-#: apps/core/botlib/handlers.py:1488
+#: apps/core/botlib/handlers.py:1570
 msgid "Til o'zgartirildi."
 msgstr "Language changed."
 
-#: apps/core/botlib/handlers.py:1502
+#: apps/core/botlib/handlers.py:1584
 msgid "Bildirishnoma yoqildi"
 msgstr "Notifications enabled"
 
-#: apps/core/botlib/handlers.py:1502
+#: apps/core/botlib/handlers.py:1584
 msgid "Bildirishnoma o'chirildi"
 msgstr "Notifications disabled"
 
-#: apps/core/botlib/handlers.py:1522
+#: apps/core/botlib/handlers.py:1604
 msgid "Rol o'zgartirildi"
 msgstr "Role changed"
 
-#: apps/core/botlib/handlers.py:1525
+#: apps/core/botlib/handlers.py:1607
 #, python-format
 msgid "Yangi rol: <b>%(role)s</b>"
 msgstr "New role: <b>%(role)s</b>"
 
-#: apps/core/botlib/handlers.py:1543
+#: apps/core/botlib/handlers.py:1625
 msgid "Sotib olish uchun xaridor rejimiga o'ting."
 msgstr "Switch to buyer mode to purchase."
 
-#: apps/core/botlib/handlers.py:1547
+#: apps/core/botlib/handlers.py:1629
 msgid "Bu kitob sizda bor."
 msgstr "You already have this book."
 
-#: apps/core/botlib/handlers.py:1552 templates/accounts/settings.html:107
-#: templates/accounts/telegram.html:7 templates/core/home.html:88
-msgid "Telegram bot"
-msgstr "Telegram bot"
-
-#: apps/core/botlib/handlers.py:1557
+#: apps/core/botlib/handlers.py:1648
 msgid "Sotib olindi!"
 msgstr "Purchased!"
 
-#: apps/core/botlib/handlers.py:1560
+#: apps/core/botlib/handlers.py:1651
 #, python-format
 msgid ""
 "✅ <b>%(book)s</b> sotib olindi.\n"
@@ -1456,13 +1494,14 @@ msgstr "🗑 Delete"
 #: apps/core/botlib/ui.py:185 templates/accounts/settings.html:98
 #: templates/accounts/topup.html:12 templates/accounts/topup.html:71
 #: templates/accounts/withdrawal.html:16 templates/books/_book_card.html:24
-#: templates/books/checkout.html:83 templates/books/checkout.html:87
+#: templates/books/checkout.html:23 templates/books/checkout.html:105
+#: templates/books/checkout.html:109 templates/books/checkout.html:114
 #: templates/books/detail.html:37 templates/books/my_library.html:6
 #: templates/books/seller_dashboard.html:23
 #: templates/books/seller_dashboard.html:46
 #: templates/books/seller_dashboard.html:127 templates/books/wishlist.html:21
 #: templates/core/admin_withdrawals.html:19 templates/payments/history.html:24
-#: templates/payments/result.html:15 templates/payments/result.html:33
+#: templates/payments/result.html:22 templates/payments/result.html:40
 #: templates/payments/test_checkout.html:20
 msgid "so'm"
 msgstr "UZS"
@@ -1747,7 +1786,7 @@ msgstr "Your browser cannot determine your location."
 msgid "Joylashuvni aniqlab bo'lmadi. Ro'yxatdan shahar tanlang."
 msgstr "Could not determine your location. Pick a city from the list."
 
-#: apps/payments/apps.py:8 apps/payments/models.py:78 templates/base.html:40
+#: apps/payments/apps.py:8 apps/payments/models.py:101 templates/base.html:40
 msgid "To'lovlar"
 msgstr "Payouts"
 
@@ -1763,7 +1802,7 @@ msgstr "Pending"
 msgid "Bekor qilindi"
 msgstr "Cancelled"
 
-#: apps/payments/models.py:45 templates/payments/result.html:34
+#: apps/payments/models.py:45 templates/payments/result.html:41
 #: templates/payments/test_checkout.html:27
 msgid "To'lov tizimi"
 msgstr "Payment system"
@@ -1772,16 +1811,20 @@ msgstr "Payment system"
 msgid "Tranzaksiya ID"
 msgstr "Transaction ID"
 
-#: apps/payments/models.py:77 templates/books/checkout.html:15
+#: apps/payments/models.py:100 templates/books/checkout.html:15
 #: templates/payments/test_checkout.html:6
 msgid "To'lov"
 msgstr "Payment"
 
-#: apps/payments/services.py:57
+#: apps/payments/services.py:67
+msgid "To'lov summasi noto'g'ri."
+msgstr "Invalid payment amount."
+
+#: apps/payments/services.py:70
 msgid "Bu to'lov tizimi hozircha sozlanmagan."
 msgstr "This payment system is not configured yet."
 
-#: apps/payments/services.py:73
+#: apps/payments/services.py:97
 msgid "Bekor qilingan to'lovni yakunlab bo'lmaydi."
 msgstr "A cancelled payment cannot be completed."
 
@@ -2130,37 +2173,41 @@ msgstr "Adding books, topping up and settings are done on the website."
 
 #: templates/accounts/topup.html:3 templates/accounts/topup.html:7
 #: templates/core/home.html:77 templates/payments/history.html:6
-#: templates/payments/result.html:41
+#: templates/payments/result.html:51
 msgid "Hisobni to'ldirish"
 msgstr "Top up balance"
 
-#: templates/accounts/topup.html:11 templates/payments/result.html:14
+#: templates/accounts/topup.html:11 templates/payments/result.html:21
 msgid "Joriy balans"
 msgstr "Current balance"
 
-#: templates/accounts/topup.html:30
+#: templates/accounts/topup.html:30 templates/books/checkout.html:44
 msgid "To'lov tizimini tanlang"
 msgstr "Choose a payment system"
 
-#: templates/accounts/topup.html:35 templates/books/checkout.html:21
+#: templates/accounts/topup.html:35 templates/books/checkout.html:49
 msgid "Karta orqali"
 msgstr "By card"
 
-#: templates/accounts/topup.html:38
+#: templates/accounts/topup.html:38 templates/books/checkout.html:52
 msgid "Hozircha birorta to'lov tizimi sozlanmagan."
 msgstr "No payment system has been configured yet."
 
-#: templates/accounts/topup.html:45
+#: templates/accounts/topup.html:45 templates/books/checkout.html:60
 msgid ""
 "Test rejimi: haqiqiy pul yechilmaydi. To'lov tizimining sahifasi o'rniga "
 "sinov sahifasi ochiladi."
-msgstr "Test mode: no real money is charged. A sandbox page opens instead of the payment provider's page."
+msgstr ""
+"Test mode: no real money is charged. A sandbox page opens instead of the "
+"payment provider's page."
 
-#: templates/accounts/topup.html:49
+#: templates/accounts/topup.html:49 templates/books/checkout.html:64
 msgid ""
 "Karta ma'lumotlaringiz bu saytda emas, to'lov tizimining o'z sahifasida "
 "kiritiladi."
-msgstr "Your card details are entered on the payment provider's page, not on this site."
+msgstr ""
+"Your card details are entered on the payment provider's page, not on this "
+"site."
 
 #: templates/accounts/topup.html:56 templates/payments/history.html:3
 #: templates/payments/history.html:7
@@ -2169,7 +2216,7 @@ msgstr "Payment history"
 
 #: templates/accounts/topup.html:61 templates/core/admin_dashboard.html:36
 #: templates/core/admin_users.html:28 templates/payments/history.html:14
-#: templates/payments/result.html:35
+#: templates/payments/result.html:42
 msgid "Sana"
 msgstr "Date"
 
@@ -2245,6 +2292,7 @@ msgstr "Electronic Library"
 
 #: templates/base.html:21 templates/books/my_library.html:3
 #: templates/books/my_library.html:5 templates/core/home.html:30
+#: templates/payments/result.html:49
 msgid "Mening kutubxonam"
 msgstr "My library"
 
@@ -2310,7 +2358,7 @@ msgstr "A marketplace for e-books in Uzbek, Russian and English."
 msgid "Bog'lanish"
 msgstr "Contact"
 
-#: templates/base.html:169 templates/payments/result.html:42
+#: templates/base.html:169 templates/payments/result.html:56
 msgid "Katalog"
 msgstr "Catalogue"
 
@@ -2401,39 +2449,45 @@ msgstr "Buy"
 msgid "Buyurtmani rasmiylashtirish"
 msgstr "Checkout"
 
-#: templates/books/checkout.html:16
-msgid "To'lov bank kartasi orqali amalga oshiriladi."
-msgstr "Payment is made by bank card."
+#: templates/books/checkout.html:19
+msgid ""
+"Balansingizda mablag' yetmayapti. Yetmagan qismini to'lov tizimi orqali "
+"to'lang — kitob to'lov tasdiqlangach o'zi sotib olinadi."
+msgstr "Your balance is not enough. Pay the remaining part through a payment system — the book is purchased automatically once the payment is confirmed."
 
-#: templates/books/checkout.html:22
+#: templates/books/checkout.html:22 templates/books/checkout.html:113
+msgid "To'lash kerak"
+msgstr "To pay"
+
+#: templates/books/checkout.html:29
+msgid "Balansdan to'lash"
+msgstr "Pay from balance"
+
+#: templates/books/checkout.html:30
 msgid "Summa hisobingizdan darhol yechiladi."
 msgstr "The amount is deducted from your balance immediately."
 
-#: templates/books/checkout.html:43
-msgid ""
-"Bu o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi va karta ma'lumotlari "
-"saqlanmaydi."
-msgstr ""
-"This is a study project — no real payment is made and card details are not "
-"stored."
-
-#: templates/books/checkout.html:51
+#: templates/books/checkout.html:73
 msgid "Buyurtma"
 msgstr "Order"
 
-#: templates/books/checkout.html:74
+#: templates/books/checkout.html:96
 msgid "Sahifalar"
 msgstr "Pages"
 
-#: templates/books/checkout.html:82
+#: templates/books/checkout.html:104
 msgid "Jami"
 msgstr "Total"
 
-#: templates/books/checkout.html:92
+#: templates/books/checkout.html:121
+msgid "To'lov tizimini chap tomondan tanlang."
+msgstr "Choose a payment system on the left."
+
+#: templates/books/checkout.html:125
 msgid "Tasdiqlash va sotib olish"
 msgstr "Confirm and buy"
 
-#: templates/books/checkout.html:109
+#: templates/books/checkout.html:143
 msgid "Xaridorlar fikri"
 msgstr "What buyers say"
 
@@ -3051,36 +3105,51 @@ msgstr "No payments yet."
 msgid "To'lov natijasi"
 msgstr "Payment result"
 
-#: templates/payments/result.html:9
+#: templates/payments/result.html:10
+msgid "Kitob sotib olindi"
+msgstr "Book purchased"
+
+#: templates/payments/result.html:12
+#, python-format
+msgid "«%(title)s» kutubxonangizga qo'shildi."
+msgstr "“%(title)s” has been added to your library."
+
+#: templates/payments/result.html:15
 msgid "To'lov amalga oshdi"
 msgstr "Payment successful"
 
-#: templates/payments/result.html:11
+#: templates/payments/result.html:17
 #, python-format
 msgid "Hisobingiz %(amount)s so'mga to'ldirildi."
 msgstr "Your balance was topped up by %(amount)s UZS."
 
-#: templates/payments/result.html:19
+#: templates/payments/result.html:26
 msgid "To'lov bekor qilindi"
 msgstr "Payment cancelled"
 
-#: templates/payments/result.html:20
+#: templates/payments/result.html:27
 msgid "Pul yechilmadi. Qaytadan urinib ko'rishingiz mumkin."
 msgstr "No money was charged. You can try again."
 
-#: templates/payments/result.html:23
+#: templates/payments/result.html:30
 msgid "To'lov kutilmoqda"
 msgstr "Payment pending"
 
-#: templates/payments/result.html:25
+#: templates/payments/result.html:32
 msgid ""
 "To'lov tizimi hali tasdiqlamadi. Bu bir necha daqiqa olishi mumkin — "
 "sahifani keyinroq yangilang."
-msgstr "The payment provider has not confirmed it yet. This can take a few minutes — refresh the page later."
+msgstr ""
+"The payment provider has not confirmed it yet. This can take a few minutes — "
+"refresh the page later."
 
-#: templates/payments/result.html:32 templates/payments/test_checkout.html:26
+#: templates/payments/result.html:39 templates/payments/test_checkout.html:26
 msgid "Buyurtma raqami"
 msgstr "Order number"
+
+#: templates/payments/result.html:54
+msgid "Kitobga qaytish"
+msgstr "Back to the book"
 
 #: templates/payments/test_checkout.html:3
 msgid "To'lov (sinov)"
@@ -3100,8 +3169,10 @@ msgid ""
 "      "
 msgstr ""
 "\n"
-"        This page stands in for the %(provider)s checkout page. No real money is charged,\n"
-"        but the exchange with the payment system runs exactly as it would in production.\n"
+"        This page stands in for the %(provider)s checkout page. No real "
+"money is charged,\n"
+"        but the exchange with the payment system runs exactly as it would in "
+"production.\n"
 "      "
 
 #: templates/payments/test_checkout.html:19
@@ -3119,3 +3190,4 @@ msgstr "This order has already been completed."
 #: templates/payments/test_checkout.html:45
 msgid "Natijani ko'rish"
 msgstr "View result"
+

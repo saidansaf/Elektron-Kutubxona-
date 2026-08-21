@@ -69,6 +69,29 @@ class Payment(models.Model):
         related_name="payment",
     )
 
+    # To'lov aynan bitta kitob uchun bo'lsa shu maydon to'ladi. Provayder
+    # tasdiqlagach balans oshadi va kitob DARROV sotib olinadi — foydalanuvchi
+    # "to'ladim, endi yana bir marta bosishim kerakmi?" degan holatga
+    # tushmasligi uchun.
+    book = models.ForeignKey(
+        "books.Book",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payments",
+        verbose_name=_("Kitob"),
+    )
+    # Xarid uchun kerak bo'ladigan manzil. To'lov sahifasiga o'tishdan oldin
+    # yozib qo'yiladi, chunki provayderdan qaytgach forma qayta to'ldirilmaydi.
+    address = models.CharField(_("Uy manzili"), max_length=255, blank=True)
+    purchase = models.OneToOneField(
+        "books.Purchase",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="payment",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -254,24 +254,40 @@ def buy_book_view(request, pk):
         messages.info(request, _("Siz bu kitobni allaqachon sotib olgansiz."))
         return redirect("books:detail", pk=pk)
 
+    from apps.accounts.services import MoneyError
+    from apps.payments import services as payment_services
+
+    # Balansda pul yetsa — darrov sotib olinadi. Yetmasa — yetmagan qismi
+    # Payme yoki Click orqali to'lanadi va kitob to'lov tasdiqlangach
+    # o'zi sotib olinadi (foydalanuvchi qayta bosishi shart emas).
+    missing = payment_services.amount_for_book(buyer, book)
+
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            card_number = form.cleaned_data["card_number"]
-            try:
-                # Pul harakati sayt va bot uchun bitta joyda (services.py)
-                purchase = purchase_book(
-                    buyer,
-                    book,
-                    card_last4=card_number[-4:],
-                    address=form.cleaned_data["address"],
-                )
-            except PurchaseError as exc:
-                messages.error(request, str(exc))
+            address = form.cleaned_data["address"]
+            provider = request.POST.get("provider", "")
+
+            if provider:
+                try:
+                    payment = payment_services.create_payment(
+                        buyer, missing, provider, book=book, address=address
+                    )
+                except MoneyError as exc:
+                    messages.error(request, str(exc))
+                else:
+                    base = request.build_absolute_uri("/").rstrip("/")
+                    return redirect(payment_services.checkout_link(payment, base))
             else:
-                telegram.notify_sale(purchase)
-                messages.success(request, _("Kitob muvaffaqiyatli sotib olindi!"))
-                return redirect("books:my_library")
+                try:
+                    # Pul harakati sayt va bot uchun bitta joyda (services.py)
+                    purchase = purchase_book(buyer, book, address=address)
+                except PurchaseError as exc:
+                    messages.error(request, str(exc))
+                else:
+                    telegram.notify_sale(purchase)
+                    messages.success(request, _("Kitob muvaffaqiyatli sotib olindi!"))
+                    return redirect("books:my_library")
     else:
         form = CheckoutForm(initial={"address": getattr(buyer, "address", "")})
 
@@ -281,6 +297,9 @@ def buy_book_view(request, pk):
         {
             "book": book,
             "form": form,
+            "missing": missing,
+            "providers": [(code, code.label) for code in payment_services.available_providers()],
+            "test_mode": settings.PAYMENT_MODE != "live",
             "reviews": book.reviews.select_related("buyer").prefetch_related("replies__author")[:10],
             "liked": book.liked_by(buyer),
         },

@@ -455,3 +455,152 @@ class TestModeTests(PaymentTestCase):
     @override_settings(PAYMENT_MODE="live", PAYME_MERCHANT_ID="", PAYME_KEY="")
     def test_sozlanmagan_tizim_korinmaydi(self):
         self.assertNotIn(Provider.PAYME, services.available_providers())
+
+
+# ---------------------------------------------------------------- Kitob to'lovi
+
+
+class BookPaymentTests(PaymentTestCase):
+    """Kitobni to'g'ridan-to'g'ri to'lov tizimi orqali sotib olish.
+
+    Balansda pul yetmasa, yetmagan qismi to'lanadi va kitob to'lov
+    tasdiqlangach **o'zi** sotib olinadi — foydalanuvchi ikkinchi marta
+    tugma bosishi shart emas.
+    """
+
+    def setUp(self):
+        super().setUp()
+        from apps.books.models import Author, Book
+
+        self.seller = User.objects.create_user(
+            username="sotuvchi", password="Parol-12345", role=Role.SELLER
+        )
+        self.author = Author.objects.create(full_name="Abdulla Qodiriy")
+        self.book = Book.objects.create(
+            title="O'tkan kunlar",
+            author=self.author,
+            seller=self.seller,
+            pages=100,
+            price=Decimal("45000"),
+            language="uz",
+        )
+        self.client.force_login(self.user)
+
+    def buy_url(self):
+        return reverse("books:buy", args=[self.book.pk])
+
+    def test_yetmagan_qism_hisoblanadi(self):
+        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("45000"))
+
+        self.user.balance = Decimal("20000")
+        self.user.save(update_fields=["balance"])
+        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("25000"))
+
+        self.user.balance = Decimal("50000")
+        self.user.save(update_fields=["balance"])
+        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("0.00"))
+
+    def test_sahifada_tolov_tizimlari_korinadi(self):
+        response = self.client.get(self.buy_url())
+        self.assertContains(response, "Payme")
+        self.assertContains(response, "Click")
+
+    def test_sahifada_karta_raqami_sorlmaydi(self):
+        """Ilgari bu yerda ishlamaydigan karta maydoni turardi."""
+        response = self.client.get(self.buy_url())
+        self.assertNotContains(response, 'name="card_number"')
+        self.assertNotContains(response, 'name="card_expiry"')
+
+    def test_balans_yetsa_tizim_sorlmaydi(self):
+        self.user.balance = Decimal("50000")
+        self.user.save(update_fields=["balance"])
+        response = self.client.get(self.buy_url())
+        self.assertNotContains(response, 'name="provider"')
+
+    def test_tolov_kitobni_ozi_sotib_oladi(self):
+        from apps.books.models import Purchase
+
+        self.client.post(
+            self.buy_url(), {"address": "Toshkent, Amir Temur 1", "provider": "payme"}
+        )
+        payment = Payment.objects.get()
+        self.assertEqual(payment.book, self.book)
+        self.assertEqual(payment.amount, Decimal("45000"))
+        self.assertFalse(Purchase.objects.exists())  # hali to'lanmagan
+
+        testmode.simulate_success(payment)
+
+        payment.refresh_from_db()
+        self.assertIsNotNone(payment.purchase)
+        self.assertTrue(Purchase.objects.filter(buyer=self.user, book=self.book).exists())
+        # Balans: 45000 tushdi, 45000 kitobga ketdi.
+        self.assertEqual(self.balance(), Decimal("0"))
+
+    def test_balansdagi_pul_hisobga_olinadi(self):
+        self.user.balance = Decimal("20000")
+        self.user.save(update_fields=["balance"])
+
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "click"})
+        payment = Payment.objects.get()
+        self.assertEqual(payment.amount, Decimal("25000"))  # faqat yetmagan qismi
+
+        testmode.simulate_success(payment)
+        self.assertEqual(self.balance(), Decimal("0"))
+        payment.refresh_from_db()
+        self.assertIsNotNone(payment.purchase)
+
+    def test_bekor_qilinsa_kitob_berilmaydi(self):
+        from apps.books.models import Purchase
+
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
+        payment = Payment.objects.get()
+        testmode.simulate_cancel(payment)
+
+        payment.refresh_from_db()
+        self.assertIsNone(payment.purchase)
+        self.assertFalse(Purchase.objects.exists())
+        self.assertEqual(self.balance(), Decimal("0"))
+
+    def test_takroriy_tasdiq_ikkinchi_kitob_bermaydi(self):
+        from apps.books.models import Purchase
+
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
+        payment = Payment.objects.get()
+        testmode.simulate_success(payment)
+        services.mark_paid(payment)  # provayder so'rovni takrorladi
+
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(self.balance(), Decimal("0"))
+
+    def test_balans_yetsa_darrov_sotib_olinadi(self):
+        from apps.books.models import Purchase
+
+        self.user.balance = Decimal("50000")
+        self.user.save(update_fields=["balance"])
+
+        self.client.post(self.buy_url(), {"address": "Toshkent"})
+
+        self.assertFalse(Payment.objects.exists())  # to'lov tizimi kerak emas
+        self.assertTrue(Purchase.objects.filter(buyer=self.user, book=self.book).exists())
+        self.assertEqual(self.balance(), Decimal("5000"))
+
+    def test_kitob_allaqachon_olingan_bolsa_pul_balansda_qoladi(self):
+        """Poyga holati: to'lov ketayotganda kitob boshqa yo'l bilan olingan.
+
+        Bunday holatda pul yo'qolmasligi kerak — balansda qoladi.
+        """
+        from apps.books.services import purchase_book
+
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
+        payment = Payment.objects.get()
+
+        self.user.balance = Decimal("45000")
+        self.user.save(update_fields=["balance"])
+        purchase_book(self.user, self.book)
+        self.assertEqual(self.balance(), Decimal("0"))
+
+        testmode.simulate_success(payment)
+
+        payment.refresh_from_db()
+        self.assertIsNone(payment.purchase)
+        self.assertEqual(self.balance(), Decimal("45000"))  # pul yo'qolmadi

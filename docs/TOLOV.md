@@ -6,22 +6,29 @@ Kalit olingan kuni bitta sozlamani almashtirish yetadi — kodga tegilmaydi.
 
 ---
 
-## Nega balans, nega har kitobga alohida to'lov emas
+## To'lov qayerda ishlaydi
 
-Sayt "hamyon" modeli bo'yicha ishlaydi:
+Ikkita joyda, ikkalasi ham bir xil kodda:
 
-```
-To'lov  →  Balans  →  Kitob xaridi
-```
+| Qayerda | Nima bo'ladi |
+|---|---|
+| **Hisobni to'ldirish** | Summani o'zingiz yozasiz, balans oshadi |
+| **Kitob sotib olish** | Balans yetmasa, **yetmagan qismi** to'lanadi va kitob to'lov tasdiqlangach **o'zi** sotib olinadi |
 
-Foydalanuvchi balansini to'ldiradi, kitoblarni esa balansdan sotib
-oladi. Shuning uchun to'lov tizimi **faqat bitta joyga** ulanadi —
-hisobni to'ldirishga. Kitob xaridi allaqachon ishlab turgan ichki
-mantiqda qoladi va o'zgarmaydi.
+Misol: kitob 45 000 so'm, balansingizda 20 000 so'm bor. To'lov
+sahifasida 25 000 so'm so'raladi. To'lagach balans 45 000 bo'ladi,
+kitob darrov sotib olinadi va balans yana 0 ga tushadi. Foydalanuvchi
+ikkinchi marta "sotib olish" ni bosishi shart emas.
 
-Muqobil yo'l — har bir kitobga alohida to'lov buyurtmasi — ancha
-murakkab: har xaridda provayder bilan almashinuv, qaytarish, chek.
-Hamyon modeli sotuvchiga pul o'tkazishni ham soddalashtiradi.
+Balansda pul yetsa to'lov tizimi umuman so'ralmaydi — kitob to'g'ridan-
+to'g'ri balansdan olinadi.
+
+Xuddi shu narsa Telegram botda ham ishlaydi.
+
+> **Nega balans orqali:** sotuvchiga pul o'tkazish, qaytarish va
+> hisob-kitob bitta joyda bo'lgani ma'qul. Kitob to'lovi ham
+> texnik jihatdan balans orqali o'tadi, lekin foydalanuvchi buni
+> sezmaydi — u shunchaki kitobni to'lab oladi.
 
 ---
 
@@ -186,15 +193,22 @@ Yana ikkita qoida:
 | `apps/payments/click.py` | Click SHOP-API (Prepare/Complete) |
 | `apps/payments/testmode.py` | Test rejimi: provayder o'rnini bosuvchi |
 | `apps/payments/views.py` | Sahifalar va webhook'lar |
-| `apps/payments/tests.py` | 41 test |
+| `apps/payments/tests.py` | 51 test |
 
 ---
 
 ## Telegram botda
 
-Bot ham xuddi shu tizimdan foydalanadi: `💰 Balans` → `💳 To'ldirish` →
-summa → tizim tanlash → to'lov havolasi. Balans provayder tasdiqlagach
-oshadi, ya'ni saytdagi bilan bir xil yo'ldan.
+Bot ham xuddi shu tizimdan foydalanadi:
+
+- **Hisobni to'ldirish:** `💰 Balans` → `💳 To'ldirish` → summa → tizim →
+  to'lov havolasi
+- **Kitob sotib olish:** balans yetmasa bot xato bermaydi, yetmagan
+  summani ko'rsatib to'lov tizimini taklif qiladi. To'lovdan keyin kitob
+  o'zi kutubxonaga tushadi.
+
+Balans provayder tasdiqlagach oshadi, ya'ni saytdagi bilan bir xil
+yo'ldan.
 
 Bot havolani tugma qilib beradi. Telegram tugmadagi manzil HTTPS
 bo'lishini talab qiladi, shuning uchun lokal kompyuterda (http) havola

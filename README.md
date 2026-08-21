@@ -39,11 +39,12 @@ xaridorlar sotib oladi, baholaydi va sharh qoldiradi.
   xabar yuborish, hammaga e'lon tarqatish va parolni yangilash.
 - **Parolni tiklash**: parolni unutgan foydalanuvchi email orqali tiklaydi.
   SMTP sozlanmagan bo'lsa, DEBUG rejimida havola ekranda ko'rsatiladi.
-- **Hisobni to'ldirish (Payme / Click)**: xaridor balansini to'lov tizimi
-  orqali to'ldiradi. Karta ma'lumotlari saytga kelmaydi — ular provayder
-  sahifasida kiritiladi, balans esa provayder tasdiqlagach oshadi.
-  Standart holda **test rejimi**: protokol haqiqiy, pul esa yechilmaydi
-  (`docs/TOLOV.md`).
+- **To'lov (Payme / Click)**: hisobni to'ldirish ham, kitob sotib olish
+  ham to'lov tizimi orqali. Kitob sahifasida balans yetmasa, yetmagan
+  qismi to'lanadi va kitob to'lov tasdiqlangach o'zi sotib olinadi.
+  Karta ma'lumotlari saytga kelmaydi — ular provayder sahifasida
+  kiritiladi. Standart holda **test rejimi**: protokol haqiqiy, pul esa
+  yechilmaydi (`docs/TOLOV.md`).
 - **Istaklar ro'yxati**: kitobni "keyin sotib olaman" deb saqlab qo'yish.
 - **Xaridor ↔ sotuvchi xabarlashuvi**: kitob sahifasidan sotuvchiga savol
   yozish, suhbatlar ro'yxati va o'qilmagan xabarlar hisoblagichi.
