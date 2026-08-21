@@ -14,7 +14,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils.translation import gettext as _
 
-from .models import TopUp, User, Withdrawal
+from .models import User, Withdrawal
 
 
 class MoneyError(Exception):
@@ -46,32 +46,6 @@ def clean_card(raw):
     if len(digits) < 16:
         raise MoneyError(_("Karta raqami 16 xonali bo'lishi kerak."))
     return digits[:16]
-
-
-def top_up(user, amount, card_number):
-    """Hisobni to'ldiradi.
-
-    Eslatma: haqiqiy to'lov tizimi ulanmagan (o'quv loyihasi). Karta
-    raqami saqlanmaydi — chek uchun faqat oxirgi 4 raqam qoladi.
-    """
-    amount = amount if isinstance(amount, Decimal) else parse_amount(amount)
-    card = clean_card(card_number)
-
-    low, high = settings.TOPUP_MIN, settings.TOPUP_MAX
-    if amount < low:
-        raise MoneyError(_("Eng kam summa %(min)s so'm.") % {"min": low})
-    if amount > high:
-        raise MoneyError(_("Eng ko'p summa %(max)s so'm.") % {"max": high})
-
-    with transaction.atomic():
-        fresh = User.objects.select_for_update().get(pk=user.pk)
-        fresh.balance += amount
-        fresh.save(update_fields=["balance"])
-        topup = TopUp.objects.create(user=fresh, amount=amount, card_last4=card[-4:])
-
-    # Chaqiruvchidagi nusxa ham yangilansin, aks holda eski balans ko'rinadi.
-    user.balance = fresh.balance
-    return topup
 
 
 def request_withdrawal(seller, amount, card_number):

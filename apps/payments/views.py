@@ -2,7 +2,7 @@
 
 Ikki xil manzil bor va ular butunlay boshqacha:
 
-* **Foydalanuvchi uchun** (`/tolov/boshlash/`, `/tolov/holat/<id>/`) —
+* **Foydalanuvchi uchun** (`/tolov/holat/<id>/`, `/tolov/tarix/`) —
   oddiy sahifalar, kirish talab qilinadi.
 * **Provayder uchun** (`/tolov/payme/`, `/tolov/click/`) — Payme va Click
   serverlari chaqiradi. Bu yerda sessiya ham, CSRF ham yo'q: himoya
@@ -29,30 +29,15 @@ logger = logging.getLogger(__name__)
 
 
 @login_required
-@require_POST
-def start_view(request):
-    """"To'lash" tugmasi. Buyurtma yaratadi va to'lov sahifasiga yuboradi."""
-    provider = request.POST.get("provider", "")
-    try:
-        payment = services.create_payment(request.user, request.POST.get("amount", ""), provider)
-    except MoneyError as exc:
-        messages.error(request, str(exc))
-        return redirect("accounts:topup")
-
-    base = request.build_absolute_uri("/").rstrip("/")
-    return redirect(services.checkout_link(payment, base))
-
-
-@login_required
 def test_checkout_view(request, pk):
     """Test rejimidagi soxta to'lov sahifasi.
 
     Payme/Click sahifasining o'rnini bosadi. Jonli rejimda ochilmaydi —
-    aks holda haqiqiy pulsiz balans to'ldirib olish mumkin bo'lardi.
+    aks holda kitoblarni haqiqiy pul to'lamasdan olish mumkin bo'lardi.
     """
     if not testmode.is_test_mode():
         messages.error(request, _("Test rejimi o'chirilgan."))
-        return redirect("accounts:topup")
+        return redirect("books:catalog")
 
     payment = get_object_or_404(Payment, pk=pk, user=request.user)
 

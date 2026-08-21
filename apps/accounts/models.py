@@ -98,27 +98,6 @@ class AdminMessage(models.Model):
         return self.subject or self.body[:40]
 
 
-class TopUp(models.Model):
-    """Hisobni to'ldirish yozuvi.
-
-    Eslatma: haqiqiy to'lov tizimi ulanmagan - bu o'quv loyihasi. Karta
-    ma'lumotlari saqlanmaydi, faqat chek uchun oxirgi 4 raqam qoladi.
-    """
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="topups")
-    amount = models.DecimalField(_("Summa"), max_digits=12, decimal_places=2)
-    card_last4 = models.CharField(_("Karta oxirgi 4 raqami"), max_length=4, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = _("Hisob to'ldirish")
-        verbose_name_plural = _("Hisob to'ldirishlar")
-
-    def __str__(self):
-        return f"{self.user} +{self.amount}"
-
-
 class TelegramLink(models.Model):
     """Saytdagi hisobni Telegram akkaunti bilan bog'laydi.
 

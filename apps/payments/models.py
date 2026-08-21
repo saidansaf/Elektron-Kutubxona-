@@ -6,7 +6,7 @@ kiritadi, SMS kodni tasdiqlaydi — bu bir necha daqiqa davom etishi mumkin.
 Shu vaqt ichida saytda "kutilayotgan buyurtma" turishi kerak, aks holda
 provayder "shu buyurtmani to'ladim" deb qaytganda uni topa olmaymiz.
 
-Muhim qoida: **balans faqat provayder tasdiqlaganda oshadi.** Foydalanuvchi
+Muhim qoida: **kitob faqat provayder tasdiqlaganda beriladi.** Foydalanuvchi
 to'lov sahifasiga o'tgani hech narsani anglatmaydi — u yerdan qaytmasligi
 ham mumkin.
 """
@@ -29,10 +29,10 @@ class PaymentStatus(models.TextChoices):
     CREATED = "created", _("Yaratildi")
     # Provayder tranzaksiyani ochdi va pulni "ushlab turibdi".
     WAITING = "waiting", _("Kutilmoqda")
-    # Pul o'tdi va balans oshirildi.
+    # Pul o'tdi va kitob xaridorga berildi.
     PAID = "paid", _("To'landi")
     # Bekor qilindi. To'langandan keyin ham bekor qilinishi mumkin
-    # (Payme buni 12 soat ichida qila oladi) — u holda balans qaytariladi.
+    # (Payme buni 12 soat ichida qila oladi) — u holda kitob qaytariladi.
     CANCELLED = "cancelled", _("Bekor qilindi")
 
 
@@ -59,20 +59,8 @@ class Payment(models.Model):
     cancelled_time = models.BigIntegerField(default=0)
     cancel_reason = models.IntegerField(null=True, blank=True)
 
-    # Balans oshirilgach yaratilgan `TopUp` yozuvi. Ikki marta oshirib
-    # yubormaslikning qo'shimcha kafolati.
-    topup = models.OneToOneField(
-        "accounts.TopUp",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="payment",
-    )
-
-    # To'lov aynan bitta kitob uchun bo'lsa shu maydon to'ladi. Provayder
-    # tasdiqlagach balans oshadi va kitob DARROV sotib olinadi — foydalanuvchi
-    # "to'ladim, endi yana bir marta bosishim kerakmi?" degan holatga
-    # tushmasligi uchun.
+    # Har bir to'lov aynan bitta kitob uchun: xaridorda hisob (balans)
+    # yo'q, kitoblar bittalab karta orqali to'lanadi.
     book = models.ForeignKey(
         "books.Book",
         on_delete=models.SET_NULL,
@@ -82,7 +70,8 @@ class Payment(models.Model):
         verbose_name=_("Kitob"),
     )
     # Xarid uchun kerak bo'ladigan manzil. To'lov sahifasiga o'tishdan oldin
-    # yozib qo'yiladi, chunki provayderdan qaytgach forma qayta to'ldirilmaydi.
+    # yozib qo'yiladi, chunki provayderdan qaytgach forma qayta
+    # to'ldirilmaydi.
     address = models.CharField(_("Uy manzili"), max_length=255, blank=True)
     purchase = models.OneToOneField(
         "books.Purchase",

@@ -93,13 +93,16 @@
           <div class="card-title" style="margin:0">{% trans "Hisob" %}</div>
           <span class="text-muted">{{ user.username }}{% if user.email %} · {{ user.email }}{% endif %}</span>
         </div>
-        <div style="text-align:end">
-          <div class="text-muted" style="font-size:.8rem">{% trans "Hisob balansi" %}</div>
-          <strong>{{ user.balance }} {% trans "so'm" %}</strong>
-          <div style="margin-top:8px">
-            <a href="{% url 'accounts:topup' %}" class="btn btn-outline btn-sm">+ {% trans "To'ldirish" %}</a>
+        {% if user.role == "seller" %}
+          <div style="text-align:end">
+            <div class="text-muted" style="font-size:.8rem">{% trans "Daromadingiz" %}</div>
+            <strong>{{ user.balance }} {% trans "so'm" %}</strong>
           </div>
-        </div>
+        {% else %}
+          <div style="text-align:end">
+            <a href="{% url 'payments:history' %}" class="btn btn-outline btn-sm">{% trans "To'lovlarim" %}</a>
+          </div>
+        {% endif %}
       </div>
     </div>
 

@@ -3,7 +3,7 @@
 {% block title %}{% trans "To'lovlar tarixi" %}{% endblock %}
 {% block content %}
 <div class="narrow-lg">
-  <a href="{% url 'accounts:topup' %}" class="back-link">← {% trans "Hisobni to'ldirish" %}</a>
+  <a href="{% url 'books:my_library' %}" class="back-link">← {% trans "Mening kutubxonam" %}</a>
   <h1>{% trans "To'lovlar tarixi" %}</h1>
 
   {% if payments %}
@@ -13,6 +13,7 @@
           <tr>
             <th>{% trans "Sana" %}</th>
             <th>{% trans "Summa" %}</th>
+            <th>{% trans "Kitob" %}</th>
             <th>{% trans "Tizim" %}</th>
             <th>{% trans "Holati" %}</th>
           </tr>
@@ -22,6 +23,7 @@
             <tr>
               <td>{{ p.created_at|date:"Y-m-d H:i" }}</td>
               <td><strong>{{ p.amount }} {% trans "so'm" %}</strong></td>
+              <td class="text-muted">{% if p.book %}{{ p.book.title }}{% else %}—{% endif %}</td>
               <td class="text-muted">{{ p.get_provider_display }}</td>
               <td>
                 {% if p.status == "paid" %}

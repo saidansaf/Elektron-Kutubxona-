@@ -6,7 +6,6 @@ app_name = "payments"
 
 urlpatterns = [
     # Foydalanuvchi uchun
-    path("boshlash/", views.start_view, name="start"),
     path("holat/<int:pk>/", views.result_view, name="result"),
     path("tarix/", views.history_view, name="history"),
     path("test/<int:pk>/", views.test_checkout_view, name="test_checkout"),

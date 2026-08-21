@@ -24,17 +24,22 @@ def money(value):
 
 
 def menu_labels(role):
-    """Pastdagi doimiy menyu tugmalari (rolga qarab)."""
+    """Pastdagi doimiy menyu tugmalari (rolga qarab).
+
+    Xaridorda hisob (balans) yo'q — kitoblar bittalab karta orqali
+    to'lanadi, shuning uchun unda "To'lovlarim" turadi. "Daromadim" esa
+    faqat sotuvchida: bu uning sotuvdan tushgan puli.
+    """
     rows = [["📚 Katalog", "🔍 Qidiruv"]]
     if role == Role.BUYER:
         rows.append(["📖 Kutubxonam", "⭐ Istaklarim"])
-        rows.append(["💰 Balans", "💬 Xabarlar"])
+        rows.append(["🧾 To'lovlarim", "💬 Xabarlar"])
     elif role == Role.SELLER:
         rows.append(["➕ Kitob qo'shish", "📚 Kitoblarim"])
         rows.append(["📊 Savdolarim", "💬 Xabarlar"])
-        rows.append(["💰 Balans", "⚙️ Sozlamalar"])
+        rows.append(["💰 Daromadim", "⚙️ Sozlamalar"])
     else:
-        rows.append(["💰 Balans", "💬 Xabarlar"])
+        rows.append(["🧾 To'lovlarim", "💬 Xabarlar"])
     if role != Role.SELLER:
         rows.append(["⚙️ Sozlamalar", "ℹ️ Yordam"])
     else:

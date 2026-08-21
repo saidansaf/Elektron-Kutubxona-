@@ -72,9 +72,9 @@
   {% endif %}
 
   {% if user.is_authenticated and user.is_buyer %}
-    <a href="{% url 'accounts:topup' %}" class="quick-link">
-      <span class="quick-link-icon">💳</span>
-      <span class="quick-link-text">{% trans "Hisobni to'ldirish" %}</span>
+    <a href="{% url 'payments:history' %}" class="quick-link">
+      <span class="quick-link-icon">🧾</span>
+      <span class="quick-link-text">{% trans "To'lovlarim" %}</span>
     </a>
   {% endif %}
 

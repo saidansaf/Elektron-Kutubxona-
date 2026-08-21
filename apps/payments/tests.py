@@ -7,7 +7,11 @@ bekor qilish, begona buyurtma.
 
 Takroriy so'rov alohida ahamiyatga ega: Payme ham, Click ham javobni
 olmasa xuddi shu so'rovni qayta yuboradi. Agar kod bunga tayyor
-bo'lmasa, foydalanuvchining balansi bir to'lovdan ikki marta oshadi.
+bo'lmasa, bitta to'lovdan foydalanuvchi ikkita kitob olib qo'yishi yoki
+sotuvchi daromadi ikki marta oshib ketishi mumkin.
+
+Pul modeli: **xaridorda hisob yo'q.** Har bir kitob karta orqali alohida
+to'lanadi, sotuvchining hisobi esa uning daromadi.
 """
 
 import base64
@@ -20,6 +24,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from apps.accounts.models import Role
+from apps.books.models import Author, Book, Purchase
 from apps.payments import click, payme, services, testmode
 from apps.payments.models import Payment, PaymentStatus, Provider
 
@@ -43,17 +48,37 @@ click_settings = override_settings(
 class PaymentTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            username="xaridor", password="Parol-12345", role=Role.BUYER, balance=Decimal("0")
+            username="xaridor", password="Parol-12345", role=Role.BUYER
+        )
+        self.seller = User.objects.create_user(
+            username="sotuvchi", password="Parol-12345", role=Role.SELLER
+        )
+        self.author = Author.objects.create(full_name="Abdulla Qodiriy")
+        self.book = Book.objects.create(
+            title="O'tkan kunlar",
+            author=self.author,
+            seller=self.seller,
+            pages=100,
+            price=Decimal("50000"),
+            language="uz",
         )
 
-    def make_payment(self, provider=Provider.PAYME, amount="50000"):
+    def make_payment(self, provider=Provider.PAYME, book=None):
+        book = book or self.book
         return Payment.objects.create(
-            user=self.user, provider=provider, amount=Decimal(amount)
+            user=self.user, provider=provider, amount=book.price, book=book
         )
 
-    def balance(self):
+    def seller_balance(self):
+        self.seller.refresh_from_db()
+        return self.seller.balance
+
+    def buyer_balance(self):
         self.user.refresh_from_db()
         return self.user.balance
+
+    def has_book(self):
+        return Purchase.objects.filter(buyer=self.user, book=self.book).exists()
 
 
 # ---------------------------------------------------------------- Payme
@@ -99,12 +124,12 @@ class PaymeTests(PaymentTestCase):
 
     def test_summa_tiyinda_solishtiriladi(self):
         """50 000 so'm = 5 000 000 tiyin. Adashilsa to'lov o'tmaydi."""
-        payment = self.make_payment(amount="50000")
+        payment = self.make_payment()
         self.assertEqual(payment.amount_tiyin, 5_000_000)
         response = self.call("CheckPerformTransaction", self.account(payment))
         self.assertEqual(response["result"], {"allow": True})
 
-    def test_toliq_oqim_balansni_oshiradi(self):
+    def test_toliq_oqim_kitobni_beradi(self):
         payment = self.make_payment()
         self.call("CheckPerformTransaction", self.account(payment))
 
@@ -113,20 +138,24 @@ class PaymeTests(PaymentTestCase):
         self.assertEqual(created["result"]["state"], payme.STATE_CREATED)
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.WAITING)
-        self.assertEqual(self.balance(), Decimal("0"))  # hali oshmaydi
+        self.assertFalse(self.has_book())  # hali berilmaydi
 
         performed = self.call("PerformTransaction", {"id": "tx-1"})
         self.assertEqual(performed["result"]["state"], payme.STATE_PERFORMED)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertTrue(self.has_book())
+        self.assertEqual(self.seller_balance(), Decimal("50000"))
+        # Xaridorda hisob yo'q — u kartadan to'ladi.
+        self.assertEqual(self.buyer_balance(), Decimal("0"))
 
-    def test_takroriy_perform_balansni_ikki_marta_oshirmaydi(self):
+    def test_takroriy_perform_ikkinchi_kitob_bermaydi(self):
         payment = self.make_payment()
         params = dict(self.account(payment), id="tx-2", time=int(time.time() * 1000))
         self.call("CreateTransaction", params)
         first = self.call("PerformTransaction", {"id": "tx-2"})
         second = self.call("PerformTransaction", {"id": "tx-2"})
 
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(self.seller_balance(), Decimal("50000"))
         # Javob ham bir xil bo'lishi kerak, aks holda Payme xato deb hisoblaydi.
         self.assertEqual(first["result"]["perform_time"], second["result"]["perform_time"])
 
@@ -137,21 +166,21 @@ class PaymeTests(PaymentTestCase):
         second = self.call("CreateTransaction", params)
         self.assertEqual(first["result"], second["result"])
 
-    def test_tolangandan_keyin_bekor_qilinsa_pul_qaytadi(self):
+    def test_tolangandan_keyin_bekor_qilinsa_kitob_qaytariladi(self):
         payment = self.make_payment()
         params = dict(self.account(payment), id="tx-4", time=int(time.time() * 1000))
         self.call("CreateTransaction", params)
         self.call("PerformTransaction", {"id": "tx-4"})
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertTrue(self.has_book())
 
         cancelled = self.call("CancelTransaction", {"id": "tx-4", "reason": 5})
         self.assertEqual(cancelled["result"]["state"], payme.STATE_CANCELLED_AFTER)
-        self.assertEqual(self.balance(), Decimal("0"))
 
+        self.assertFalse(self.has_book())
+        self.assertEqual(self.seller_balance(), Decimal("0"))
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.CANCELLED)
-        # Chek ham qolmasligi kerak, aks holda tarixda "to'ldirildi" bo'lib turadi.
-        self.assertIsNone(payment.topup)
+        self.assertIsNone(payment.purchase)
 
     def test_tolanmasdan_bekor_qilinsa_holat_minus_bir(self):
         payment = self.make_payment()
@@ -159,7 +188,7 @@ class PaymeTests(PaymentTestCase):
         self.call("CreateTransaction", params)
         cancelled = self.call("CancelTransaction", {"id": "tx-5", "reason": 3})
         self.assertEqual(cancelled["result"]["state"], payme.STATE_CANCELLED)
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
 
     def test_tranzaksiya_topilmasa(self):
         response = self.call("PerformTransaction", {"id": "yoq-tranzaksiya"})
@@ -187,7 +216,6 @@ class PaymeTests(PaymentTestCase):
         self.call("CreateTransaction", params)
         self.call("PerformTransaction", {"id": "tx-8"})
 
-        # Payme yangi tranzaksiya ochmoqchi bo'lsa, ruxsat berilmasligi kerak.
         response = self.call("CheckPerformTransaction", self.account(payment))
         self.assertEqual(response["error"]["code"], payme.ERR_CANNOT_PERFORM)
 
@@ -235,36 +263,36 @@ class ClickTests(PaymentTestCase):
 
     def call(self, data, action, sign=True):
         data = dict(data, action=action)
-        data["sign_string"] = (
-            click.make_sign(data, action) if sign else "0" * 32
-        )
+        data["sign_string"] = click.make_sign(data, action) if sign else "0" * 32
         return click.handle(data)
 
     def test_notogri_imzo_rad_etiladi(self):
         payment = self.make_payment(Provider.CLICK)
         response = self.call(self.base(payment), click.ACTION_PREPARE, sign=False)
         self.assertEqual(response["error"], click.ERR_SIGN)
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
 
-    def test_prepare_va_complete_balansni_oshiradi(self):
+    def test_prepare_va_complete_kitobni_beradi(self):
         payment = self.make_payment(Provider.CLICK)
         prepared = self.call(self.base(payment), click.ACTION_PREPARE)
         self.assertEqual(prepared["error"], click.OK)
         self.assertEqual(prepared["merchant_prepare_id"], payment.pk)
-        self.assertEqual(self.balance(), Decimal("0"))  # hali oshmaydi
+        self.assertFalse(self.has_book())  # hali berilmaydi
 
         data = self.base(payment, merchant_prepare_id=payment.pk)
         completed = self.call(data, click.ACTION_COMPLETE)
         self.assertEqual(completed["error"], click.OK)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertTrue(self.has_book())
+        self.assertEqual(self.seller_balance(), Decimal("50000"))
 
-    def test_takroriy_complete_balansni_ikki_marta_oshirmaydi(self):
+    def test_takroriy_complete_ikkinchi_kitob_bermaydi(self):
         payment = self.make_payment(Provider.CLICK)
         self.call(self.base(payment), click.ACTION_PREPARE)
         data = self.base(payment, merchant_prepare_id=payment.pk)
         self.call(data, click.ACTION_COMPLETE)
         self.call(data, click.ACTION_COMPLETE)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertEqual(Purchase.objects.count(), 1)
+        self.assertEqual(self.seller_balance(), Decimal("50000"))
 
     def test_summa_mos_kelmasa(self):
         payment = self.make_payment(Provider.CLICK)
@@ -280,7 +308,7 @@ class ClickTests(PaymentTestCase):
         response = self.call(data, click.ACTION_COMPLETE)
 
         self.assertEqual(response["error"], click.ERR_CANCELLED)
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.CANCELLED)
 
@@ -313,39 +341,60 @@ class ClickTests(PaymentTestCase):
 # ---------------------------------------------------------------- Sayt
 
 
-class SiteFlowTests(PaymentTestCase):
+class BookCheckoutTests(PaymentTestCase):
+    """Kitobni karta orqali sotib olish (saytdan)."""
+
     def setUp(self):
         super().setUp()
         self.client.force_login(self.user)
 
-    def test_toldirish_sahifasi_ochiladi(self):
-        response = self.client.get(reverse("accounts:topup"))
-        self.assertEqual(response.status_code, 200)
+    def buy_url(self):
+        return reverse("books:buy", args=[self.book.pk])
+
+    def test_sahifada_tolov_tizimlari_korinadi(self):
+        response = self.client.get(self.buy_url())
         self.assertContains(response, "Payme")
         self.assertContains(response, "Click")
 
-    def test_karta_raqami_sorlmaydi(self):
-        """Karta ma'lumotlari bizga umuman kelmasligi kerak."""
-        response = self.client.get(reverse("accounts:topup"))
+    def test_sahifada_karta_raqami_sorlmaydi(self):
+        """Karta ma'lumotlari provayder sahifasida kiritiladi, bizda emas."""
+        response = self.client.get(self.buy_url())
         self.assertNotContains(response, 'name="card_number"')
+        self.assertNotContains(response, 'name="card_expiry"')
+
+    def test_hisob_toldirish_sahifasi_yoq(self):
+        """Balans butunlay olib tashlangan."""
+        from django.urls import NoReverseMatch
+
+        with self.assertRaises(NoReverseMatch):
+            reverse("accounts:topup")
 
     def test_tolov_boshlanadi_va_yonaltiriladi(self):
         response = self.client.post(
-            reverse("payments:start"), {"amount": "50000", "provider": "payme"}
+            self.buy_url(), {"address": "Toshkent, Amir Temur 1", "provider": "payme"}
         )
         payment = Payment.objects.get()
-        self.assertEqual(payment.amount, Decimal("50000.00"))
+        self.assertEqual(payment.book, self.book)
+        self.assertEqual(payment.amount, self.book.price)
+        self.assertEqual(payment.address, "Toshkent, Amir Temur 1")
         self.assertRedirects(
             response, "http://testserver" + reverse("payments:test_checkout", args=[payment.pk])
         )
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
 
-    def test_juda_kichik_summa_rad_etiladi(self):
-        self.client.post(reverse("payments:start"), {"amount": "10", "provider": "payme"})
+    def test_narx_foydalanuvchidan_olinmaydi(self):
+        """Summani foydalanuvchi tanlay olmasligi kerak."""
+        self.client.post(
+            self.buy_url(), {"address": "Toshkent", "provider": "payme", "amount": "1"}
+        )
+        self.assertEqual(Payment.objects.get().amount, self.book.price)
+
+    def test_notanish_tizim_rad_etiladi(self):
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "qandaydir"})
         self.assertFalse(Payment.objects.exists())
 
     def test_sinov_sahifasida_tolash(self):
-        self.client.post(reverse("payments:start"), {"amount": "50000", "provider": "payme"})
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
         payment = Payment.objects.get()
 
         self.client.post(
@@ -353,10 +402,12 @@ class SiteFlowTests(PaymentTestCase):
         )
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.PAID)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertIsNotNone(payment.purchase)
+        self.assertTrue(self.has_book())
+        self.assertEqual(self.seller_balance(), Decimal("50000"))
 
     def test_sinov_sahifasida_bekor_qilish(self):
-        self.client.post(reverse("payments:start"), {"amount": "50000", "provider": "click"})
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "click"})
         payment = Payment.objects.get()
 
         self.client.post(
@@ -364,35 +415,43 @@ class SiteFlowTests(PaymentTestCase):
         )
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.CANCELLED)
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
+        self.assertEqual(self.seller_balance(), Decimal("0"))
 
     def test_begona_buyurtmaga_kirib_bolmaydi(self):
         other = User.objects.create_user(username="boshqa", password="Parol-12345")
         payment = Payment.objects.create(
-            user=other, provider=Provider.PAYME, amount=Decimal("50000")
+            user=other, provider=Provider.PAYME, amount=self.book.price, book=self.book
         )
         response = self.client.get(reverse("payments:test_checkout", args=[payment.pk]))
         self.assertEqual(response.status_code, 404)
 
     @override_settings(PAYMENT_MODE="live")
     def test_jonli_rejimda_sinov_sahifasi_yopiq(self):
-        """Aks holda haqiqiy pulsiz balans to'ldirib olish mumkin bo'lardi."""
+        """Aks holda kitobni haqiqiy pulsiz olish mumkin bo'lardi."""
         payment = self.make_payment()
         response = self.client.post(
             reverse("payments:test_checkout", args=[payment.pk]), {"action": "pay"}
         )
-        self.assertRedirects(response, reverse("accounts:topup"))
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertRedirects(response, reverse("books:catalog"))
+        self.assertFalse(self.has_book())
+
+    def test_allaqachon_olingan_kitob(self):
+        Purchase.objects.create(buyer=self.user, book=self.book, price_paid=self.book.price)
+        response = self.client.get(self.buy_url())
+        self.assertRedirects(response, reverse("books:detail", args=[self.book.pk]))
 
     def test_tolov_tarixi(self):
         self.make_payment()
         response = self.client.get(reverse("payments:history"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "50000")
+        # Sarlavhadagi apostrof HTML'da qochiriladi, shuning uchun qismi
+        # bo'yicha tekshiramiz.
+        self.assertContains(response, "kunlar")
 
     def test_kirmagan_foydalanuvchi_tolov_boshlay_olmaydi(self):
         self.client.logout()
-        self.client.post(reverse("payments:start"), {"amount": "50000", "provider": "payme"})
+        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
         self.assertFalse(Payment.objects.exists())
 
 
@@ -413,21 +472,33 @@ class TestModeTests(PaymentTestCase):
         self.assertEqual(payment.status, PaymentStatus.PAID)
         # Tranzaksiya ID protokol orqali yozilgan bo'lishi kerak.
         self.assertTrue(payment.transaction_id)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertTrue(self.has_book())
 
     def test_click_oqimi_imzodan_otadi(self):
         payment = self.make_payment(Provider.CLICK)
         testmode.simulate_success(payment)
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.PAID)
-        self.assertEqual(self.balance(), Decimal("50000"))
+        self.assertTrue(self.has_book())
 
     def test_bekor_qilish(self):
         payment = self.make_payment(Provider.PAYME)
         testmode.simulate_cancel(payment)
         payment.refresh_from_db()
         self.assertEqual(payment.status, PaymentStatus.CANCELLED)
-        self.assertEqual(self.balance(), Decimal("0"))
+        self.assertFalse(self.has_book())
+
+    def test_kitob_allaqachon_olingan_bolsa_xarid_takrorlanmaydi(self):
+        """Poyga holati: to'lov ketayotganda kitob boshqa yo'l bilan olingan."""
+        payment = self.make_payment(Provider.PAYME)
+        Purchase.objects.create(buyer=self.user, book=self.book, price_paid=self.book.price)
+
+        testmode.simulate_success(payment)
+
+        payment.refresh_from_db()
+        self.assertEqual(payment.status, PaymentStatus.PAID)
+        self.assertIsNone(payment.purchase)  # ikkinchi xarid yaratilmaydi
+        self.assertEqual(Purchase.objects.count(), 1)
 
     @override_settings(PAYMENT_MODE="live", PAYME_MERCHANT_ID="m1", PAYME_KEY="k1")
     def test_jonli_rejimda_havola_paymega_ketadi(self):
@@ -455,152 +526,3 @@ class TestModeTests(PaymentTestCase):
     @override_settings(PAYMENT_MODE="live", PAYME_MERCHANT_ID="", PAYME_KEY="")
     def test_sozlanmagan_tizim_korinmaydi(self):
         self.assertNotIn(Provider.PAYME, services.available_providers())
-
-
-# ---------------------------------------------------------------- Kitob to'lovi
-
-
-class BookPaymentTests(PaymentTestCase):
-    """Kitobni to'g'ridan-to'g'ri to'lov tizimi orqali sotib olish.
-
-    Balansda pul yetmasa, yetmagan qismi to'lanadi va kitob to'lov
-    tasdiqlangach **o'zi** sotib olinadi — foydalanuvchi ikkinchi marta
-    tugma bosishi shart emas.
-    """
-
-    def setUp(self):
-        super().setUp()
-        from apps.books.models import Author, Book
-
-        self.seller = User.objects.create_user(
-            username="sotuvchi", password="Parol-12345", role=Role.SELLER
-        )
-        self.author = Author.objects.create(full_name="Abdulla Qodiriy")
-        self.book = Book.objects.create(
-            title="O'tkan kunlar",
-            author=self.author,
-            seller=self.seller,
-            pages=100,
-            price=Decimal("45000"),
-            language="uz",
-        )
-        self.client.force_login(self.user)
-
-    def buy_url(self):
-        return reverse("books:buy", args=[self.book.pk])
-
-    def test_yetmagan_qism_hisoblanadi(self):
-        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("45000"))
-
-        self.user.balance = Decimal("20000")
-        self.user.save(update_fields=["balance"])
-        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("25000"))
-
-        self.user.balance = Decimal("50000")
-        self.user.save(update_fields=["balance"])
-        self.assertEqual(services.amount_for_book(self.user, self.book), Decimal("0.00"))
-
-    def test_sahifada_tolov_tizimlari_korinadi(self):
-        response = self.client.get(self.buy_url())
-        self.assertContains(response, "Payme")
-        self.assertContains(response, "Click")
-
-    def test_sahifada_karta_raqami_sorlmaydi(self):
-        """Ilgari bu yerda ishlamaydigan karta maydoni turardi."""
-        response = self.client.get(self.buy_url())
-        self.assertNotContains(response, 'name="card_number"')
-        self.assertNotContains(response, 'name="card_expiry"')
-
-    def test_balans_yetsa_tizim_sorlmaydi(self):
-        self.user.balance = Decimal("50000")
-        self.user.save(update_fields=["balance"])
-        response = self.client.get(self.buy_url())
-        self.assertNotContains(response, 'name="provider"')
-
-    def test_tolov_kitobni_ozi_sotib_oladi(self):
-        from apps.books.models import Purchase
-
-        self.client.post(
-            self.buy_url(), {"address": "Toshkent, Amir Temur 1", "provider": "payme"}
-        )
-        payment = Payment.objects.get()
-        self.assertEqual(payment.book, self.book)
-        self.assertEqual(payment.amount, Decimal("45000"))
-        self.assertFalse(Purchase.objects.exists())  # hali to'lanmagan
-
-        testmode.simulate_success(payment)
-
-        payment.refresh_from_db()
-        self.assertIsNotNone(payment.purchase)
-        self.assertTrue(Purchase.objects.filter(buyer=self.user, book=self.book).exists())
-        # Balans: 45000 tushdi, 45000 kitobga ketdi.
-        self.assertEqual(self.balance(), Decimal("0"))
-
-    def test_balansdagi_pul_hisobga_olinadi(self):
-        self.user.balance = Decimal("20000")
-        self.user.save(update_fields=["balance"])
-
-        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "click"})
-        payment = Payment.objects.get()
-        self.assertEqual(payment.amount, Decimal("25000"))  # faqat yetmagan qismi
-
-        testmode.simulate_success(payment)
-        self.assertEqual(self.balance(), Decimal("0"))
-        payment.refresh_from_db()
-        self.assertIsNotNone(payment.purchase)
-
-    def test_bekor_qilinsa_kitob_berilmaydi(self):
-        from apps.books.models import Purchase
-
-        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
-        payment = Payment.objects.get()
-        testmode.simulate_cancel(payment)
-
-        payment.refresh_from_db()
-        self.assertIsNone(payment.purchase)
-        self.assertFalse(Purchase.objects.exists())
-        self.assertEqual(self.balance(), Decimal("0"))
-
-    def test_takroriy_tasdiq_ikkinchi_kitob_bermaydi(self):
-        from apps.books.models import Purchase
-
-        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
-        payment = Payment.objects.get()
-        testmode.simulate_success(payment)
-        services.mark_paid(payment)  # provayder so'rovni takrorladi
-
-        self.assertEqual(Purchase.objects.count(), 1)
-        self.assertEqual(self.balance(), Decimal("0"))
-
-    def test_balans_yetsa_darrov_sotib_olinadi(self):
-        from apps.books.models import Purchase
-
-        self.user.balance = Decimal("50000")
-        self.user.save(update_fields=["balance"])
-
-        self.client.post(self.buy_url(), {"address": "Toshkent"})
-
-        self.assertFalse(Payment.objects.exists())  # to'lov tizimi kerak emas
-        self.assertTrue(Purchase.objects.filter(buyer=self.user, book=self.book).exists())
-        self.assertEqual(self.balance(), Decimal("5000"))
-
-    def test_kitob_allaqachon_olingan_bolsa_pul_balansda_qoladi(self):
-        """Poyga holati: to'lov ketayotganda kitob boshqa yo'l bilan olingan.
-
-        Bunday holatda pul yo'qolmasligi kerak — balansda qoladi.
-        """
-        from apps.books.services import purchase_book
-
-        self.client.post(self.buy_url(), {"address": "Toshkent", "provider": "payme"})
-        payment = Payment.objects.get()
-
-        self.user.balance = Decimal("45000")
-        self.user.save(update_fields=["balance"])
-        purchase_book(self.user, self.book)
-        self.assertEqual(self.balance(), Decimal("0"))
-
-        testmode.simulate_success(payment)
-
-        payment.refresh_from_db()
-        self.assertIsNone(payment.purchase)
-        self.assertEqual(self.balance(), Decimal("45000"))  # pul yo'qolmadi

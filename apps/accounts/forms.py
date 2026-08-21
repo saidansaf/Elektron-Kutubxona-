@@ -78,48 +78,6 @@ class SettingsForm(forms.ModelForm):
         }
 
 
-class TopUpForm(forms.Form):
-    """Hisobni to'ldirish.
-
-    Diqqat: o'quv loyihasi - haqiqiy to'lov amalga oshirilmaydi, karta raqami
-    saqlanmaydi. Faqat format tekshiriladi va chek uchun oxirgi 4 raqam olinadi.
-    """
-
-    amount = forms.DecimalField(
-        label=_("Summa (so'm)"),
-        max_digits=12,
-        decimal_places=2,
-        widget=forms.NumberInput(attrs={"placeholder": "50000", "inputmode": "numeric"}),
-    )
-    card_number = forms.CharField(
-        label=_("Karta raqami"),
-        widget=forms.TextInput(attrs={"placeholder": "8600 1234 5678 9012", "inputmode": "numeric"}),
-    )
-    card_expiry = forms.CharField(
-        label=_("Amal qilish muddati"),
-        widget=forms.TextInput(attrs={"placeholder": "MM/YY"}),
-    )
-
-    def clean_amount(self):
-        amount = self.cleaned_data["amount"]
-        low, high = settings.TOPUP_MIN, settings.TOPUP_MAX
-        if amount < low:
-            raise forms.ValidationError(
-                _("Eng kam summa %(min)s so'm.") % {"min": low}
-            )
-        if amount > high:
-            raise forms.ValidationError(
-                _("Eng ko'p summa %(max)s so'm.") % {"max": high}
-            )
-        return amount
-
-    def clean_card_number(self):
-        raw = (self.cleaned_data.get("card_number") or "").replace(" ", "").replace("-", "")
-        if not raw.isdigit() or not 12 <= len(raw) <= 19:
-            raise forms.ValidationError(_("Karta raqami 12-19 ta raqamdan iborat bo'lishi kerak."))
-        return raw
-
-
 class WithdrawalForm(forms.Form):
     """Sotuvchining balansdan pul yechish so'rovi.
 

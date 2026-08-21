@@ -136,38 +136,37 @@ class WithdrawalDecisionTests(TestCase):
         self.assertEqual(self.client.get(url).status_code, 200)
 
 
-class TopUpTests(TestCase):
+class NoWalletTests(TestCase):
+    """Xaridorda hisob (balans) yo'q.
+
+    Ilgari ro'yxatdan o'tganda 500 000 so'm "sovg'a balans" berilardi va
+    alohida "Hisobni to'ldirish" sahifasi bor edi. Endi har bir kitob
+    karta orqali alohida to'lanadi, shuning uchun ikkalasi ham olib
+    tashlangan.
+    """
+
     def setUp(self):
         self.buyer = make_user("xaridor", Role.BUYER, "0")
         self.client.force_login(self.buyer)
 
-    def test_hisob_tolov_tasdiqlangach_toldiriladi(self):
-        """Balans to'lov tizimi tasdiqlagandan keyingina oshadi.
+    def test_hisob_toldirish_sahifasi_yoq(self):
+        from django.urls import NoReverseMatch
 
-        Ilgari bu sahifaning o'zi balansni oshirardi. Endi u faqat
-        buyurtma yaratadi — pul harakati `apps/payments/` da.
-        """
-        from apps.payments import testmode
-        from apps.payments.models import Payment
+        with self.assertRaises(NoReverseMatch):
+            reverse("accounts:topup")
 
-        self.client.post(reverse("payments:start"), {"amount": "50000", "provider": "payme"})
+    def test_rol_tanlash_bepul_balans_bermaydi(self):
+        user = make_user("yangi-xaridor", Role.NONE, "0")
+        self.client.force_login(user)
+        self.client.post(reverse("accounts:role_select"), {"role": Role.BUYER})
 
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("0"))  # hali oshmaydi
+        user.refresh_from_db()
+        self.assertEqual(user.role, Role.BUYER)
+        self.assertEqual(user.balance, Decimal("0"))
 
-        testmode.simulate_success(Payment.objects.get(user=self.buyer))
-
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("50000"))
-
-    def test_juda_kichik_summa_qabul_qilinmaydi(self):
-        from apps.payments.models import Payment
-
-        self.client.post(reverse("payments:start"), {"amount": "10", "provider": "payme"})
-
-        self.assertFalse(Payment.objects.exists())
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("0"))
+    def test_sozlamalarda_xaridorga_balans_korsatilmaydi(self):
+        response = self.client.get(reverse("accounts:settings"))
+        self.assertNotContains(response, "Daromadingiz")
 
 
 class TelegramLinkTests(TestCase):

@@ -287,36 +287,28 @@ class PurchaseTests(TestCase):
             title="Kitob", author=author, seller=cls.seller, pages=10, price=Decimal("45000")
         )
 
-    def _checkout(self):
+    def _checkout(self, provider="payme"):
+        """Kitobni karta orqali to'lash: buyurtma yaratiladi."""
         return self.client.post(
             reverse("books:buy", args=[self.book.pk]),
-            {
-                "card_number": "8600123456789012",
-                "card_expiry": "12/29",
-                "card_cvv": "123",
-                "address": "Toshkent, Chilonzor",
-            },
+            {"address": "Toshkent, Chilonzor", "provider": provider},
         )
 
-    def test_xarid_pulni_sotuvchiga_otkazadi(self):
+    def test_xarid_tolovdan_keyin_pulni_sotuvchiga_otkazadi(self):
+        from apps.payments import testmode
+        from apps.payments.models import Payment
+
         self.client.force_login(self.buyer)
         self.assertEqual(self._checkout().status_code, 302)
 
-        self.buyer.refresh_from_db()
+        # To'lov tasdiqlanmaguncha kitob berilmaydi.
+        self.assertFalse(Purchase.objects.filter(buyer=self.buyer, book=self.book).exists())
+
+        testmode.simulate_success(Payment.objects.get(user=self.buyer))
+
         self.seller.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("55000"))
         self.assertEqual(self.seller.balance, Decimal("45000"))
         self.assertTrue(Purchase.objects.filter(buyer=self.buyer, book=self.book).exists())
-
-    def test_mablag_yetmasa_xarid_bolmaydi(self):
-        self.buyer.balance = Decimal("1000")
-        self.buyer.save()
-        self.client.force_login(self.buyer)
-        self._checkout()
-
-        self.assertFalse(Purchase.objects.filter(buyer=self.buyer).exists())
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("1000"))
 
 
 class CatalogSortTests(TestCase):
@@ -491,8 +483,6 @@ class PurchaseServiceTests(TestCase):
     def setUp(self):
         self.seller = make_user("sotuvchi", Role.SELLER)
         self.buyer = make_user("xaridor", Role.BUYER)
-        self.buyer.balance = Decimal("100000")
-        self.buyer.save()
         author = Author.objects.create(full_name="Test Muallif")
         self.book = Book.objects.create(
             title="Kitob", author=author, seller=self.seller, pages=10, price=Decimal("45000")
@@ -501,19 +491,12 @@ class PurchaseServiceTests(TestCase):
     def test_pul_sotuvchiga_otadi(self):
         purchase = purchase_book(self.buyer, self.book)
 
-        self.buyer.refresh_from_db()
         self.seller.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("55000"))
         self.assertEqual(self.seller.balance, Decimal("45000"))
         self.assertEqual(purchase.price_paid, Decimal("45000"))
-
-    def test_mablag_yetmasa_xato(self):
-        self.buyer.balance = Decimal("1000")
-        self.buyer.save()
-
-        with self.assertRaises(PurchaseError):
-            purchase_book(self.buyer, self.book)
-        self.assertFalse(Purchase.objects.exists())
+        # Xaridorda hisob yo'q — pul kartadan olingan.
+        self.buyer.refresh_from_db()
+        self.assertEqual(self.buyer.balance, Decimal("0"))
 
     def test_takroriy_xarid_bolmaydi(self):
         purchase_book(self.buyer, self.book)
@@ -522,8 +505,6 @@ class PurchaseServiceTests(TestCase):
         self.assertEqual(Purchase.objects.count(), 1)
 
     def test_ozining_kitobini_sotib_ololmaydi(self):
-        self.seller.balance = Decimal("100000")
-        self.seller.save()
         with self.assertRaises(PurchaseError):
             purchase_book(self.seller, self.book)
 
@@ -533,7 +514,16 @@ class PurchaseServiceTests(TestCase):
         with self.assertRaises(PurchaseError):
             purchase_book(self.buyer, self.book)
 
-    def test_chaqiruvchidagi_balans_yangilanadi(self):
-        """Bot xariddan keyin balansni darhol ko'rsatadi."""
-        purchase_book(self.buyer, self.book)
-        self.assertEqual(self.buyer.balance, Decimal("55000"))
+    def test_xarid_bekor_qilinsa_pul_qaytadi(self):
+        """To'lov qaytarilganda sotuvchining daromadi ham qaytariladi."""
+        from apps.books.services import cancel_purchase
+
+        purchase = purchase_book(self.buyer, self.book)
+        self.seller.refresh_from_db()
+        self.assertEqual(self.seller.balance, Decimal("45000"))
+
+        cancel_purchase(purchase)
+
+        self.seller.refresh_from_db()
+        self.assertEqual(self.seller.balance, Decimal("0"))
+        self.assertFalse(Purchase.objects.exists())

@@ -19,12 +19,16 @@ class PurchaseError(Exception):
     """Xaridni amalga oshirib bo'lmadi. Matni foydalanuvchiga ko'rsatiladi."""
 
 
-def purchase_book(buyer, book, card_last4="", address=""):
-    """Kitobni sotib oladi va pulni sotuvchiga o'tkazadi.
+def purchase_book(buyer, book, address=""):
+    """Kitobni xaridorga biriktiradi va pulni sotuvchiga o'tkazadi.
 
-    Balans bazadan qayta o'qiladi (`select_for_update`): foydalanuvchi ayni
-    paytda saytda ham, botda ham xarid qilayotgan bo'lishi mumkin, eskirgan
-    qiymatga ishonib bo'lmaydi.
+    **Xaridorda hisob (balans) yo'q.** Har bir kitob karta orqali alohida
+    to'lanadi, shuning uchun bu funksiya chaqirilganda pul allaqachon
+    yechilgan bo'ladi — uni faqat to'lov tasdiqlangandan keyin chaqirish
+    mumkin (`apps/payments/services.py`).
+
+    Sotuvchining hisobi esa qoladi: bu uning daromadi, u yerdan pul
+    yechish so'rovi beriladi.
 
     Muvaffaqiyatli bo'lsa `Purchase` qaytaradi, aks holda `PurchaseError`
     ko'taradi.
@@ -39,25 +43,29 @@ def purchase_book(buyer, book, card_last4="", address=""):
         raise PurchaseError(_("O'z kitobingizni sotib ololmaysiz."))
 
     with transaction.atomic():
-        fresh_buyer = User.objects.select_for_update().get(pk=buyer.pk)
-        if fresh_buyer.balance < book.price:
-            raise PurchaseError(_("Hisobingizda mablag' yetarli emas."))
-
+        # `select_for_update`: bir sotuvchining ikkita kitobi bir vaqtda
+        # sotilishi mumkin, daromad hisobi adashmasligi kerak.
         seller = User.objects.select_for_update().get(pk=book.seller_id)
-
-        fresh_buyer.balance -= book.price
-        fresh_buyer.save(update_fields=["balance"])
         seller.balance += book.price
         seller.save(update_fields=["balance"])
 
         purchase = Purchase.objects.create(
-            buyer=fresh_buyer,
+            buyer=buyer,
             book=book,
             price_paid=book.price,
-            card_last4=card_last4,
             address=address,
         )
 
-    # Chaqiruvchi tomondagi obyekt eskirmasligi uchun
-    buyer.balance = fresh_buyer.balance
     return purchase
+
+
+def cancel_purchase(purchase):
+    """Xaridni bekor qiladi va sotuvchining daromadini qaytaradi.
+
+    To'lov qaytarilganda (Payme buni 12 soat ichida qila oladi) chaqiriladi.
+    """
+    with transaction.atomic():
+        seller = User.objects.select_for_update().get(pk=purchase.book.seller_id)
+        seller.balance -= purchase.price_paid
+        seller.save(update_fields=["balance"])
+        purchase.delete()

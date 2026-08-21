@@ -10,7 +10,6 @@ urlpatterns = [
     path("chiqish/", views.logout_view, name="logout"),
     path("rol-tanlash/", views.role_select_view, name="role_select"),
     path("sozlamalar/", views.settings_view, name="settings"),
-    path("hisobni-toldirish/", views.topup_view, name="topup"),
     path("pul-yechish/", views.withdrawal_view, name="withdrawal"),
     path("telegram/", views.telegram_link_view, name="telegram"),
     # Parolni tiklash (Django'ning xavfsiz token tizimi asosida)

@@ -242,8 +242,9 @@ keyin buzilgan kodning serverga chiqib ketishi mumkin.
 ## 10-bosqich. Haqiqiy to'lov ✅ (kod tayyor, kalit kutilmoqda)
 
 **Bajarildi:** Payme Merchant API va Click SHOP-API to'liq yozildi.
-Hisobni to'ldirish shu tizimga o'tkazildi — karta ma'lumotlari endi
-saytga umuman kelmaydi va balans faqat provayder tasdiqlagach oshadi.
+Xaridordagi hisob (balans) butunlay olib tashlandi — endi har bir kitob
+alohida, karta orqali to'lanadi. Karta ma'lumotlari saytga umuman
+kelmaydi va kitob faqat provayder tasdiqlagach beriladi.
 
 | Vazifa | Holati |
 |---|---|
@@ -253,8 +254,9 @@ saytga umuman kelmaydi va balans faqat provayder tasdiqlagach oshadi.
 | Takroriy so'rovdan himoya (idempotentlik) | ✅ |
 | To'langandan keyin bekor qilish → pulni qaytarish | ✅ |
 | Botda ham xuddi shu oqim | ✅ |
+| Xaridorda balans yo'q, faqat karta | ✅ |
 | Test rejimi (kalitsiz to'liq sinash) | ✅ |
-| 41 ta test | ✅ |
+| 45 ta test | ✅ |
 | Haqiqiy karta bilan to'lov | ⏳ kalit kutilmoqda |
 
 **Nega hali "jonli" emas:** Payme va Click kalitni faqat YaTT/yuridik

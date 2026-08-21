@@ -109,8 +109,6 @@ def role_select_view(request):
         form = RoleSelectForm(request.POST)
         if form.is_valid():
             request.user.role = form.cleaned_data["role"]
-            if request.user.role == Role.BUYER:
-                request.user.balance = settings.DEFAULT_BUYER_BALANCE
             request.user.save()
             messages.success(request, _("Rolingiz saqlandi!"))
             # Foydalanuvchi kitob sotib olmoqchi bo'lib kelgan bo'lsa,
@@ -124,14 +122,9 @@ def role_select_view(request):
 @login_required
 def settings_view(request):
     if request.method == "POST":
-        old_role = request.user.role
         form = SettingsForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             user = form.save()
-            # Xaridor rejimiga birinchi marta o'tganda boshlang'ich balans beriladi.
-            if user.role == Role.BUYER and old_role != Role.BUYER and user.balance == 0:
-                user.balance = settings.DEFAULT_BUYER_BALANCE
-                user.save(update_fields=["balance"])
             request.session[THEME_SESSION_KEY] = user.theme
             response = redirect("accounts:settings")
             response.set_cookie(dj_settings.LANGUAGE_COOKIE_NAME, user.language)
@@ -152,41 +145,11 @@ class AdminLoginView(LoginView):
         return reverse("core:admin_dashboard")
 
 
-@login_required
-def topup_view(request):
-    """Hisobni to'ldirish sahifasi.
-
-    Bu yerda faqat summa so'raladi va to'lov tizimi tanlanadi. Karta
-    ma'lumotlari bizga umuman kelmaydi — ular Payme yoki Click'ning o'z
-    sahifasida kiritiladi. Shuning uchun bizga PCI DSS sertifikati kerak
-    emas va karta raqamini saqlash mas'uliyati ham yo'q.
-
-    To'lovning davomi `apps/payments/` da.
-    """
-    from apps.payments.models import Payment
-    from apps.payments.services import available_providers
-    from apps.payments.testmode import is_test_mode
-
-    providers = [(code, code.label) for code in available_providers()]
-
-    return render(
-        request,
-        "accounts/topup.html",
-        {
-            "providers": providers,
-            "test_mode": is_test_mode(),
-            "topup_min": settings.TOPUP_MIN,
-            "topup_max": settings.TOPUP_MAX,
-            "payments": Payment.objects.filter(user=request.user)[:10],
-        },
-    )
-
-
 @seller_required
 def withdrawal_view(request):
     """Sotuvchining pul yechish so'rovi.
 
-    Summa so'rov yuborilishi bilan balansdan ushlab qolinadi - aks holda
+    Summa so'rov yuborilishi bilan daromaddan ushlab qolinadi - aks holda
     bir pulni bir necha marta so'rash mumkin bo'lardi. Administrator rad
     etsa, pul avtomatik qaytariladi.
     """

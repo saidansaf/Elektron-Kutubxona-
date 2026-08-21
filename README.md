@@ -14,8 +14,8 @@ xaridorlar sotib oladi, baholaydi va sharh qoldiradi.
 - Ikki tema: **yorug' / qorong'i** (header'dagi tugma yoki Sozlamalar orqali).
 - Sotuvchi: kitob qo'shish/tahrirlash/o'chirish, muallif qo'shish, o'z kitoblari
   ro'yxati, Excel/PDF eksport.
-- Xaridor: katalogdan qidirish/filtrlash (til, janr, muallif, narx), sotib olish
-  (ichki hamyon balansi orqali), 1-5 yulduz baho va sharh qoldirish, "Mening
+- Xaridor: katalogdan qidirish/filtrlash (til, janr, muallif, narx), kitobni
+  karta orqali sotib olish, 1-5 yulduz baho va sharh qoldirish, "Mening
   kutubxonam" bo'limi.
 - **Kitobni brauzerda o'qish**: sotib olingan kitob saytning o'zida ochiladi
   (PDF.js), varaqlash, masshtab, butun ekran va klaviatura bilan boshqarish
@@ -23,7 +23,7 @@ xaridorlar sotib oladi, baholaydi va sharh qoldiradi.
 - **Sotuvchi kabineti**: daromad, sotilgan nusxalar, xaridorlar soni, oxirgi
   30 kunlik grafik, kitoblar kesimidagi jadval, oxirgi sotuvlar va savdo
   hisobotini Excel'ga yuklash.
-- **Pul yechish**: sotuvchi balansdan kartaga pul yechish uchun so'rov
+- **Pul yechish**: sotuvchi daromadidan kartaga pul yechish uchun so'rov
   yuboradi, administrator tasdiqlaydi yoki rad etadi.
 - Admin: `#admin` bilan tugaydigan maxfiy kirish (`/boshqaruv-panel/kirish/`ga
   yo'naltiradi), statistika paneli (`/boshqaruv-panel/statistika/`) va to'liq
@@ -39,19 +39,19 @@ xaridorlar sotib oladi, baholaydi va sharh qoldiradi.
   xabar yuborish, hammaga e'lon tarqatish va parolni yangilash.
 - **Parolni tiklash**: parolni unutgan foydalanuvchi email orqali tiklaydi.
   SMTP sozlanmagan bo'lsa, DEBUG rejimida havola ekranda ko'rsatiladi.
-- **To'lov (Payme / Click)**: hisobni to'ldirish ham, kitob sotib olish
-  ham to'lov tizimi orqali. Kitob sahifasida balans yetmasa, yetmagan
-  qismi to'lanadi va kitob to'lov tasdiqlangach o'zi sotib olinadi.
-  Karta ma'lumotlari saytga kelmaydi — ular provayder sahifasida
-  kiritiladi. Standart holda **test rejimi**: protokol haqiqiy, pul esa
-  yechilmaydi (`docs/TOLOV.md`).
+- **To'lov (Payme / Click)**: xaridorda hisob (balans) yo'q — har bir
+  kitob alohida, karta orqali to'lanadi (Uzcard, Humo, Visa, Mastercard).
+  Karta ma'lumotlari saytga kelmaydi, ular provayder sahifasida
+  kiritiladi; kitob to'lov tasdiqlangach kutubxonaga tushadi. Sotuvchida
+  esa hisob bor — bu uning daromadi. Standart holda **test rejimi**:
+  protokol haqiqiy, pul esa yechilmaydi (`docs/TOLOV.md`).
 - **Istaklar ro'yxati**: kitobni "keyin sotib olaman" deb saqlab qo'yish.
 - **Xaridor ↔ sotuvchi xabarlashuvi**: kitob sahifasidan sotuvchiga savol
   yozish, suhbatlar ro'yxati va o'qilmagan xabarlar hisoblagichi.
 - **Katalogda saralash**: yangilik, narx, reyting va ommabopligi bo'yicha.
 - **Telegram bot**: sayt bilan bitta bazada ishlaydi va sayt qila oladigan
-  hamma ishni qiladi — kitob qo'shish, narx o'zgartirish, xarid, sharh,
-  yozishuv, hisobni to'ldirish va pul yechish. Botda qilingan ish saytda
+  hamma ishni qiladi — kitob qo'shish, narx o'zgartirish, karta orqali
+  xarid, sharh, yozishuv va pul yechish. Botda qilingan ish saytda
   darrov ko'rinadi.
 - **Ob-havo**: davlat va shahar tanlanadi (Toshkent, Moskva, Dubay...),
   soatlik va haftalik prognoz saytning o'zida ochiladi.
@@ -252,7 +252,7 @@ botda ko'rinadi. Hech qanday sinxronizatsiya yo'q — manba bitta.
 | Sotuvchi bilan yozishuv | ✅ | ✅ |
 | **Kitob qo'shish** | ✅ | ✅ |
 | Narxni o'zgartirish, sotuvdan olish, o'chirish | ✅ | ✅ |
-| Hisobni to'ldirish | ✅ | ✅ |
+| Kitobni karta orqali to'lash | ✅ | ✅ |
 | Pul yechish so'rovi | ✅ | ✅ |
 | Til, bildirishnoma, rol | ✅ | ✅ |
 | Sotuvchi kabineti (diagramma, Excel) | ✅ | havola |
@@ -348,7 +348,7 @@ qaytaradimi, kabinetdagi daromad to'g'ri hisoblanadimi.
 Telegram bot ham to'liq test bilan qoplangan (`apps/core/test_bot.py`,
 51 ta test): soxta bot obyekti orqali butun oqim — login/parol bilan
 kirish, kod bilan ulash, kitob qo'shish (PDF bilan), narx o'zgartirish,
-xarid, sharh, yozishuv, hisobni to'ldirish va pul yechish — haqiqiy
+xarid, sharh, yozishuv va pul yechish — haqiqiy
 Telegram'ga chiqmasdan tekshiriladi.
 
 Alohida tekshiriladigan narsa: **botda qilingan ish saytda ko'rinadi.**

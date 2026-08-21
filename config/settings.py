@@ -324,9 +324,6 @@ ADMIN_SEED_EMAIL = os.environ.get("ADMIN_EMAIL", "admin@kutubxona.uz")
 # keyin parol qaytadan tiklanaveradi.
 ADMIN_RESET_PASSWORD = env_bool("ADMIN_RESET_PASSWORD", False)
 
-# Xaridorga ro'yxatdan o'tganda beriladigan boshlang'ich hamyon balansi (so'm)
-DEFAULT_BUYER_BALANCE = 500000
-
 # --- Email (parolni tiklash uchun) ---
 # Gmail bilan: https://myaccount.google.com/apppasswords dan "App password"
 # olib, EMAIL_HOST_USER va EMAIL_HOST_PASSWORD ga yozing.
@@ -345,11 +342,11 @@ EMAIL_BACKEND = (
     else "django.core.mail.backends.console.EmailBackend"
 )
 
-# Hisobni to'ldirish chegaralari (so'm)
-TOPUP_MIN = 1000
-TOPUP_MAX = 10_000_000
+# Bitta to'lovda ruxsat etilgan eng ko'p summa (so'm). Xato kiritilgan
+# narxdan himoya: kitob narxi shundan oshsa to'lov boshlanmaydi.
+PAYMENT_MAX = 10_000_000
 
-# Sotuvchi balansdan pul yechish uchun so'raydigan eng kam summa
+# Sotuvchi daromadidan pul yechish uchun so'raydigan eng kam summa
 WITHDRAWAL_MIN = 10_000
 
 

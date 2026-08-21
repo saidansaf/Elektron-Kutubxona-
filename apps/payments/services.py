@@ -16,7 +16,7 @@ from django.conf import settings
 from django.db import transaction
 from django.utils.translation import gettext as _
 
-from apps.accounts.models import TopUp, User
+from apps.accounts.models import User
 from apps.accounts.services import MoneyError, parse_amount
 
 from .models import Payment, PaymentStatus, Provider
@@ -42,68 +42,45 @@ def available_providers():
     return ready
 
 
-def create_payment(user, amount, provider, book=None, address=""):
-    """Yangi to'lov buyurtmasini yaratadi.
+def create_payment(user, book, provider):
+    """Kitob uchun yangi to'lov buyurtmasini yaratadi.
 
-    Balans bu yerda oshmaydi — faqat "shuncha to'lamoqchi" degan yozuv
-    qoladi. Balans `mark_paid` da oshadi.
+    Xaridorda hisob yo'q: har bir kitob alohida to'lanadi. Shuning uchun
+    summa har doim kitob narxiga teng va uni foydalanuvchi tanlamaydi.
 
-    `book` berilsa, to'lov aynan shu kitob uchun: tasdiqlangach kitob
-    o'zi sotib olinadi.
+    Bu yerda hech qanday pul harakati bo'lmaydi — faqat "shu kitobni
+    to'lamoqchi" degan yozuv qoladi. Kitob `mark_paid` da beriladi.
     """
-    amount = amount if isinstance(amount, Decimal) else parse_amount(amount)
+    amount = book.price if isinstance(book.price, Decimal) else parse_amount(book.price)
 
-    high = settings.TOPUP_MAX
-    if amount > high:
-        raise MoneyError(_("Eng ko'p summa %(max)s so'm.") % {"max": high})
-
-    if book is None:
-        # Eng kam summa faqat "shunchaki to'ldirish" uchun. Kitob to'lovida
-        # summa kitob narxidan kelib chiqadi va u chegaradan kichik bo'lishi
-        # mumkin — o'shanda ham to'lashga ruxsat berish kerak.
-        if amount < settings.TOPUP_MIN:
-            raise MoneyError(_("Eng kam summa %(min)s so'm.") % {"min": settings.TOPUP_MIN})
-    elif amount <= 0:
+    if amount <= 0:
         raise MoneyError(_("To'lov summasi noto'g'ri."))
+    if amount > settings.PAYMENT_MAX:
+        raise MoneyError(_("Eng ko'p summa %(max)s so'm.") % {"max": settings.PAYMENT_MAX})
 
     if provider not in available_providers():
         raise MoneyError(_("Bu to'lov tizimi hozircha sozlanmagan."))
 
-    return Payment.objects.create(
-        user=user, amount=amount, provider=provider, book=book, address=address
-    )
-
-
-def amount_for_book(user, book):
-    """Kitobni olish uchun yana qancha to'lash kerakligi.
-
-    Balansda pul bo'lsa, faqat yetmagan qismi to'lanadi.
-    """
-    missing = book.price - user.balance
-    return missing if missing > 0 else Decimal("0.00")
+    return Payment.objects.create(user=user, amount=amount, provider=provider, book=book)
 
 
 def mark_paid(payment, transaction_time=0):
-    """To'lovni yakunlaydi va balansni oshiradi.
+    """To'lovni yakunlaydi va kitobni xaridorga beradi.
 
-    Takroriy chaqiruvda hech narsa qilmaydi va bor `Payment` ni qaytaradi.
+    Takroriy chaqiruvda hech narsa qilmaydi va bor `Payment` ni qaytaradi
+    — provayder javobni olmasa xuddi shu so'rovni qayta yuboradi.
     """
     with transaction.atomic():
         fresh = Payment.objects.select_for_update().get(pk=payment.pk)
 
         if fresh.status == PaymentStatus.PAID:
-            return fresh  # allaqachon hisoblangan, ikkinchi marta oshirmaymiz
+            return fresh  # allaqachon hisoblangan
         if fresh.status == PaymentStatus.CANCELLED:
             raise MoneyError(_("Bekor qilingan to'lovni yakunlab bo'lmaydi."))
 
-        user = User.objects.select_for_update().get(pk=fresh.user_id)
-        user.balance += fresh.amount
-        user.save(update_fields=["balance"])
-
-        fresh.topup = TopUp.objects.create(user=user, amount=fresh.amount)
         fresh.status = PaymentStatus.PAID
         fresh.performed_time = transaction_time or _now_ms()
-        fresh.save(update_fields=["topup", "status", "performed_time", "updated_at"])
+        fresh.save(update_fields=["status", "performed_time", "updated_at"])
 
     _finish_book_purchase(fresh)
 
@@ -113,14 +90,15 @@ def mark_paid(payment, transaction_time=0):
 
 
 def _finish_book_purchase(payment):
-    """Kitob uchun qilingan to'lovdan keyin xaridni yakunlaydi.
+    """To'lovdan keyin kitobni xaridorga biriktiradi.
 
     Alohida tranzaksiyada: xarid o'tmasa ham to'lov "to'landi" bo'lib
-    qolishi kerak, chunki pul haqiqatan yechilgan. Bunday holatda pul
-    balansda turaveradi va foydalanuvchi kitobni qo'lda sotib oladi.
+    qolishi kerak, chunki pul haqiqatan yechilgan.
 
     Xato yutilmaydi, jurnalga yoziladi — aks holda "pul ketdi, kitob
-    yo'q" holati sezilmay qolardi.
+    yo'q" holati sezilmay qolardi. Bunday holat faqat poyga vaziyatida
+    bo'lishi mumkin (kitob shu orada boshqa yo'l bilan olingan yoki
+    sotuvdan yechilgan) va uni administrator qo'lda hal qiladi.
     """
     if not payment.book_id or payment.purchase_id:
         return
@@ -131,7 +109,9 @@ def _finish_book_purchase(payment):
         purchase = purchase_book(payment.user, payment.book, address=payment.address)
     except PurchaseError as exc:
         logger.warning(
-            "To'lov #%s: kitob sotib olinmadi (%s). Pul balansda qoldi.", payment.pk, exc
+            "To'lov #%s: kitob berilmadi (%s). Administrator ko'rib chiqishi kerak.",
+            payment.pk,
+            exc,
         )
         return
 
@@ -146,32 +126,27 @@ def _finish_book_purchase(payment):
 def mark_cancelled(payment, reason=None, transaction_time=0):
     """To'lovni bekor qiladi.
 
-    To'langan bo'lsa pul balansdan qaytariladi. Payme buni "reverse"
-    deb ataydi va uni 12 soat ichida qila oladi.
-
-    Balans yetmay qolgan bo'lsa (foydalanuvchi pulni sarflab ulgurgan)
-    balans manfiy bo'ladi. Bu ataylab: pulni "yo'q qilib" yuborgandan
-    ko'ra qarzni ko'rsatib turgan ma'qul, aks holda hisob-kitob buziladi.
+    To'langan bo'lsa xarid ham bekor qilinadi: kitob xaridordan olinadi
+    va sotuvchining daromadi qaytariladi. Payme buni "reverse" deb ataydi
+    va uni 12 soat ichida qila oladi.
     """
+    from apps.books.services import cancel_purchase
+
     with transaction.atomic():
         fresh = Payment.objects.select_for_update().get(pk=payment.pk)
 
         if fresh.status == PaymentStatus.CANCELLED:
             return fresh
 
-        if fresh.status == PaymentStatus.PAID:
-            user = User.objects.select_for_update().get(pk=fresh.user_id)
-            user.balance -= fresh.amount
-            user.save(update_fields=["balance"])
-            if fresh.topup_id:
-                fresh.topup.delete()
-                fresh.topup = None
+        if fresh.status == PaymentStatus.PAID and fresh.purchase_id:
+            cancel_purchase(fresh.purchase)
+            fresh.purchase = None
 
         fresh.status = PaymentStatus.CANCELLED
         fresh.cancel_reason = reason
         fresh.cancelled_time = transaction_time or _now_ms()
         fresh.save(
-            update_fields=["topup", "status", "cancel_reason", "cancelled_time", "updated_at"]
+            update_fields=["purchase", "status", "cancel_reason", "cancelled_time", "updated_at"]
         )
 
     payment.status = fresh.status

@@ -6,38 +6,38 @@ Kalit olingan kuni bitta sozlamani almashtirish yetadi — kodga tegilmaydi.
 
 ---
 
-## To'lov qayerda ishlaydi
+## Pul modeli: xaridorda hisob yo'q
 
-Ikkita joyda, ikkalasi ham bir xil kodda:
+Foydalanuvchida **balans yo'q** va "Hisobni to'ldirish" degan sahifa
+ham yo'q. Har bir kitob alohida, karta orqali to'lanadi:
 
-| Qayerda | Nima bo'ladi |
-|---|---|
-| **Hisobni to'ldirish** | Summani o'zingiz yozasiz, balans oshadi |
-| **Kitob sotib olish** | Balans yetmasa, **yetmagan qismi** to'lanadi va kitob to'lov tasdiqlangach **o'zi** sotib olinadi |
+```
+Kitobni tanlash  →  Payme yoki Click  →  Karta  →  Kitob kutubxonada
+```
 
-Misol: kitob 45 000 so'm, balansingizda 20 000 so'm bor. To'lov
-sahifasida 25 000 so'm so'raladi. To'lagach balans 45 000 bo'ladi,
-kitob darrov sotib olinadi va balans yana 0 ga tushadi. Foydalanuvchi
-ikkinchi marta "sotib olish" ni bosishi shart emas.
+Kitob narxi o'zgarmaydi va uni foydalanuvchi tanlay olmaydi — summa
+har doim kitob narxiga teng.
 
-Balansda pul yetsa to'lov tizimi umuman so'ralmaydi — kitob to'g'ridan-
-to'g'ri balansdan olinadi.
+**Sotuvchining hisobi bor** — bu uning daromadi. Kitob sotilganda
+sotuvchining hisobiga narx qo'shiladi, u yerdan pul yechish so'rovi
+beriladi (administrator tasdiqlaydi).
 
-Xuddi shu narsa Telegram botda ham ishlaydi.
+Qaysi kartalar: Payme va Click sahifalarida **Uzcard, Humo, Visa,
+Mastercard** qabul qilinadi. Kartani qaysi biri ekanini foydalanuvchi
+o'sha yerda tanlaydi — bizning saytimizga karta ma'lumotlari umuman
+kelmaydi.
 
-> **Nega balans orqali:** sotuvchiga pul o'tkazish, qaytarish va
-> hisob-kitob bitta joyda bo'lgani ma'qul. Kitob to'lovi ham
-> texnik jihatdan balans orqali o'tadi, lekin foydalanuvchi buni
-> sezmaydi — u shunchaki kitobni to'lab oladi.
+Xuddi shu narsa Telegram botda ham ishlaydi: kitobni bosasiz, to'lov
+tizimini tanlaysiz, havolani ochib to'laysiz — kitob o'zi keladi.
 
 ---
 
 ## To'lov qanday kechadi
 
 ```
-1. Foydalanuvchi summani yozadi va "Payme"/"Click" ni bosadi
+1. Foydalanuvchi kitob sahifasida "Payme" yoki "Click" ni bosadi
         ↓
-2. Bizda Payment yozuvi yaratiladi (holati: Yaratildi)
+2. Bizda Payment yozuvi yaratiladi (holati: Yaratildi, summa = kitob narxi)
         ↓
 3. Foydalanuvchi provayder sahifasiga yo'naltiriladi
         ↓
@@ -47,7 +47,7 @@ Xuddi shu narsa Telegram botda ham ishlaydi.
         ↓
 6. Pul yechilgach yana chaqiradi: "bajarildi"
         ↓
-7. ANA SHUNDA balans oshadi (Payment: To'landi)
+7. ANA SHUNDA kitob beriladi va pul sotuvchiga o'tadi (Payment: To'landi)
 ```
 
 **Karta raqami bizga umuman kelmaydi.** U provayderning o'z sahifasida
@@ -60,8 +60,8 @@ juda katta yengillik.
 |---|---|
 | `Yaratildi` | Buyurtma bor, provayder hali tegmagan |
 | `Kutilmoqda` | Provayder tranzaksiyani ochdi |
-| `To'landi` | Pul o'tdi, balans oshdi |
-| `Bekor qilindi` | Bekor qilindi. To'langan bo'lsa pul qaytarildi |
+| `To'landi` | Pul o'tdi, kitob xaridorga berildi |
+| `Bekor qilindi` | Bekor qilindi. To'langan bo'lsa kitob olinib, pul sotuvchidan qaytarildi |
 
 ---
 
@@ -170,16 +170,16 @@ so'rovning **ichida**:
 Ikkalasi ham `hmac.compare_digest` bilan solishtiriladi (vaqt bo'yicha
 hujumdan himoya).
 
-Busiz istalgan odam webhook'ga "to'landi" deb yozib, balansini bepul
-to'ldirib olishi mumkin bo'lardi.
+Busiz istalgan odam webhook'ga "to'landi" deb yozib, kitoblarni bepul
+olib ketishi mumkin bo'lardi.
 
 Yana ikkita qoida:
 
-- **Sinov sahifasi jonli rejimda ochilmaydi.** Aks holda haqiqiy
-  pulsiz balans to'ldirib olish mumkin bo'lardi.
-- **Takroriy so'rov balansni ikki marta oshirmaydi.** Provayder javobni
-  olmasa, xuddi shu so'rovni qayta yuboradi — bu normal holat va kod
-  unga tayyor (`services.mark_paid` idempotent).
+- **Sinov sahifasi jonli rejimda ochilmaydi.** Aks holda kitoblarni
+  haqiqiy pul to'lamasdan olish mumkin bo'lardi.
+- **Takroriy so'rov ikkinchi kitob bermaydi.** Provayder javobni olmasa,
+  xuddi shu so'rovni qayta yuboradi — bu normal holat va kod unga tayyor
+  (`services.mark_paid` idempotent).
 
 ---
 
@@ -188,12 +188,12 @@ Yana ikkita qoida:
 | Fayl | Vazifasi |
 |---|---|
 | `apps/payments/models.py` | `Payment` — to'lov buyurtmasi |
-| `apps/payments/services.py` | Pul harakati (balansni oshirish/qaytarish) |
+| `apps/payments/services.py` | Pul harakati (kitobni berish, qaytarish) |
 | `apps/payments/payme.py` | Payme Merchant API (6 metod) |
 | `apps/payments/click.py` | Click SHOP-API (Prepare/Complete) |
 | `apps/payments/testmode.py` | Test rejimi: provayder o'rnini bosuvchi |
 | `apps/payments/views.py` | Sahifalar va webhook'lar |
-| `apps/payments/tests.py` | 51 test |
+| `apps/payments/tests.py` | 45 test |
 
 ---
 
@@ -201,13 +201,12 @@ Yana ikkita qoida:
 
 Bot ham xuddi shu tizimdan foydalanadi:
 
-- **Hisobni to'ldirish:** `💰 Balans` → `💳 To'ldirish` → summa → tizim →
-  to'lov havolasi
-- **Kitob sotib olish:** balans yetmasa bot xato bermaydi, yetmagan
-  summani ko'rsatib to'lov tizimini taklif qiladi. To'lovdan keyin kitob
-  o'zi kutubxonaga tushadi.
+- **Kitob sotib olish:** kitobni bosasiz → bot to'lov tizimini so'raydi →
+  havolani ochib to'laysiz → kitob o'zi kutubxonaga tushadi
+- **🧾 To'lovlarim:** xaridorning to'lovlar tarixi
+- **💰 Daromadim:** faqat sotuvchida — sotuvdan tushgan pul va uni yechish
 
-Balans provayder tasdiqlagach oshadi, ya'ni saytdagi bilan bir xil
+Kitob provayder tasdiqlagach beriladi, ya'ni saytdagi bilan bir xil
 yo'ldan.
 
 Bot havolani tugma qilib beradi. Telegram tugmadagi manzil HTTPS
@@ -221,6 +220,11 @@ oddiy matn ko'rinishida yuboriladi — bu normal.
 **Test rejimida ham to'lovlar tarixi to'liq ko'rinadimi?**
 Ha. `Payment` yozuvlari bir xil yaratiladi, faqat pul haqiqiy emas.
 
+**Nega foydalanuvchi balans to'ldira olmaydi?**
+Ataylab: balans bo'lsa, undagi pul uchun javobgarlik bizda bo'ladi
+(qaytarish, hisobot, soliq). Har bir kitobni alohida to'lash ancha
+sodda va xavfsiz.
+
 **Jonli rejimga o'tsam eski test to'lovlari nima bo'ladi?**
 Bazada qoladi. Xohlasangiz administrator panelidan o'chirasiz.
 
@@ -232,7 +236,7 @@ summa formatini tekshiring.
 `CLICK_SECRET_KEY` noto'g'ri yoki ortiqcha bo'shliq bilan yozilgan.
 Kabinetdagi qiymat bilan belgima-belgi solishtiring.
 
-**Balans oshmadi, lekin pul yechildi.**
+**Kitob berilmadi, lekin pul yechildi.**
 `/tolov/holat/` dan rejimni tekshiring, so'ng Render → Logs da
 `payme` yoki `click` so'zi bo'yicha qidiring — xato o'sha yerda
 yozilgan bo'ladi.

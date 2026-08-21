@@ -272,10 +272,18 @@ class CatalogTests(BotTestCase):
         self.assertIn("Otkan kunlar", self.bot.last)
         self.assertNotIn("Mehrobdan", self.bot.last)
 
-    def test_balans_korinadi(self):
+    def test_xaridorda_balans_yoq(self):
+        """Xaridorda hisob yo'q — o'rniga to'lovlar tarixi turadi."""
         self.link()
-        self.bot.deliver(self.CHAT, "💰 Balans")
-        self.assertIn("500 000", self.bot.last)
+        self.bot.deliver(self.CHAT, "💰 Daromadim")
+        self.assertIn("sotuvchilar uchun", self.bot.last)
+
+    def test_sotuvchi_daromadini_koradi(self):
+        self.seller.balance = Decimal("120000")
+        self.seller.save(update_fields=["balance"])
+        self.link(self.seller)
+        self.bot.deliver(self.CHAT, "💰 Daromadim")
+        self.assertIn("120 000", self.bot.last)
 
     def test_istaklar_royxati(self):
         self.link()
@@ -285,20 +293,12 @@ class CatalogTests(BotTestCase):
 
 
 class PurchaseTests(BotTestCase):
-    def test_bot_orqali_sotib_olish_balansdan_yechadi(self):
+    def test_bot_orqali_sotib_olish_tolov_soraydi(self):
+        """Xaridorda hisob yo'q: bot darrov to'lov tizimini taklif qiladi."""
         self.link()
         self.bot.press(self.CHAT, f"buy:{self.book.pk}")
 
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("455000"))
-        self.assertTrue(self.buyer.purchases.filter(book=self.book).exists())
-
-    def test_mablag_yetmasa_xarid_bolmaydi(self):
-        self.buyer.balance = Decimal("100")
-        self.buyer.save(update_fields=["balance"])
-        self.link()
-
-        self.bot.press(self.CHAT, f"buy:{self.book.pk}")
+        self.assertTrue(self.bot.said("To'lov tizimini tanlang"))
         self.assertFalse(self.buyer.purchases.filter(book=self.book).exists())
 
     def test_ulanmagan_chat_xarid_qila_olmaydi(self):
@@ -515,79 +515,51 @@ class MoneyTests(BotTestCase):
         from apps.payments.models import Payment, PaymentStatus
 
         self.link()
-        self.bot.press(self.CHAT, "topup")
-        self.bot.deliver(self.CHAT, "50000")
-        self.bot.press(self.CHAT, "pay:payme")
+        self.bot.press(self.CHAT, f"buy:{self.book.pk}")
+        self.bot.press(self.CHAT, f"bookpay:{self.book.pk}:payme")
 
         payment = Payment.objects.get(user=self.buyer)
-        self.assertEqual(payment.amount, Decimal("50000.00"))
-        # Havola berilgani balansni oshirmaydi: buni provayder tasdiqlaydi.
+        self.assertEqual(payment.book, self.book)
+        self.assertEqual(payment.amount, self.book.price)
+        # Havola berilgani kitobni bermaydi: buni provayder tasdiqlaydi.
         self.assertEqual(payment.status, PaymentStatus.CREATED)
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("500000"))
+        self.assertFalse(Purchase.objects.exists())
 
-    def test_botda_tolangan_summa_saytdagi_balansga_qoshiladi(self):
-        """Bot va sayt bitta hisob-kitobda ishlashi kerak."""
-        from apps.payments import testmode
+    def test_kitob_bosilganda_tolov_taklif_qilinadi(self):
+        """Xaridorda hisob yo'q, shuning uchun darrov to'lov tizimi so'raladi."""
         from apps.payments.models import Payment
 
         self.link()
-        self.bot.press(self.CHAT, "topup")
-        self.bot.deliver(self.CHAT, "50000")
-        self.bot.press(self.CHAT, "pay:click")
-
-        testmode.simulate_success(Payment.objects.get(user=self.buyer))
-
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("550000"))
-        self.assertEqual(self.buyer.topups.count(), 1)
-
-    def test_juda_kichik_summa_qabul_qilinmaydi(self):
-        from apps.payments.models import Payment
-
-        self.link()
-        self.bot.press(self.CHAT, "topup")
-        self.bot.deliver(self.CHAT, "10")
-        self.bot.press(self.CHAT, "pay:payme")
-
-        self.assertFalse(Payment.objects.exists())
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("500000"))
-
-    def test_balans_yetmasa_bot_tolov_taklif_qiladi(self):
-        """Saytdagidek: pul yetmasa xato emas, to'lov tizimi taklif qilinadi."""
-        from apps.payments.models import Payment
-
-        self.buyer.balance = Decimal("5000")
-        self.buyer.save(update_fields=["balance"])
-        self.link()
-
         self.bot.press(self.CHAT, f"buy:{self.book.pk}")
 
         self.assertTrue(self.bot.said("To'lov tizimini tanlang"))
         self.assertFalse(Payment.objects.exists())  # hali tizim tanlanmadi
 
     def test_botdagi_kitob_tolovi_kitobni_beradi(self):
+        """Bot va sayt bitta hisob-kitobda ishlashi kerak."""
         from apps.payments import testmode
         from apps.payments.models import Payment
 
-        self.buyer.balance = Decimal("5000")
-        self.buyer.save(update_fields=["balance"])
         self.link()
-
         self.bot.press(self.CHAT, f"buy:{self.book.pk}")
-        self.bot.press(self.CHAT, f"bookpay:{self.book.pk}:payme")
+        self.bot.press(self.CHAT, f"bookpay:{self.book.pk}:click")
 
-        payment = Payment.objects.get()
-        self.assertEqual(payment.book, self.book)
-        self.assertEqual(payment.amount, Decimal("40000.00"))  # 45000 - 5000
-
-        testmode.simulate_success(payment)
+        testmode.simulate_success(Payment.objects.get(user=self.buyer))
 
         # Botda qilingan to'lov saytdagi xaridlarda ko'rinishi kerak.
         self.assertTrue(Purchase.objects.filter(buyer=self.buyer, book=self.book).exists())
-        self.buyer.refresh_from_db()
-        self.assertEqual(self.buyer.balance, Decimal("0"))
+        self.seller.refresh_from_db()
+        self.assertEqual(self.seller.balance, self.book.price)
+
+    def test_allaqachon_olingan_kitobga_tolov_yaratilmaydi(self):
+        from apps.payments.models import Payment
+
+        Purchase.objects.create(buyer=self.buyer, book=self.book, price_paid=self.book.price)
+        self.link()
+        self.bot.press(self.CHAT, f"bookpay:{self.book.pk}:payme")
+
+        self.assertFalse(Payment.objects.exists())
+        self.assertIn("sizda bor", self.bot.last)
 
     def test_botdan_pul_yechish(self):
         self.seller.balance = Decimal("300000")
