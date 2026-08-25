@@ -2,7 +2,7 @@
 {# Izohlar ro'yxati: tepada username, pastida izoh, undan pastida javoblar. #}
 <div class="card">
   {% for review in reviews %}
-    <div class="review-item">
+    <div class="review-item" id="izoh-{{ review.pk }}">
       <div class="review-head">
         <span class="review-avatar">{{ review.buyer.initials }}</span>
         <div>
@@ -39,7 +39,7 @@
       {% if review.replies.all %}
         <div class="reply-list">
           {% for reply in review.replies.all %}
-            <div class="reply-item">
+            <div class="reply-item" id="javob-{{ reply.pk }}">
               <div class="review-head">
                 <span class="review-avatar sm">{{ reply.author.initials }}</span>
                 <strong>{{ reply.author.username }}</strong>

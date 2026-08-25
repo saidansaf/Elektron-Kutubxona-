@@ -10,36 +10,18 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  {% include "_sidebar.html" %}
+  <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <div class="app-shell">
   <header class="site-header">
     <div class="container header-inner">
-      <a href="{% url 'core:home' %}" class="logo">📚 <span>{% trans "Elektron Kutubxona" %}</span></a>
+      <button type="button" class="sidebar-toggle" id="sidebarToggle"
+              aria-controls="sidebar" aria-expanded="false" aria-label="{% trans 'Menyu' %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
 
-      <nav class="nav-links">
-        <a href="{% url 'books:catalog' %}">{% trans "Kitoblar" %}</a>
-        <a href="{% url 'books:author_list' %}">{% trans "Mualliflar" %}</a>
-        {% if user.is_authenticated and user.is_buyer %}
-          <a href="{% url 'books:my_library' %}">{% trans "Mening kutubxonam" %}</a>
-        {% endif %}
-        {% if user.is_authenticated %}
-          <a href="{% url 'books:wishlist' %}">{% trans "Istaklarim" %}</a>
-          <a href="{% url 'books:conversations' %}">
-            {% trans "Xabarlar" %}{% if unread_messages %}<span class="chat-badge">{{ unread_messages }}</span>{% endif %}
-          </a>
-        {% endif %}
-        {% if user.is_authenticated and user.is_seller %}
-          <a href="{% url 'books:seller_dashboard' %}">{% trans "Kabinet" %}</a>
-          <a href="{% url 'books:my_books' %}">{% trans "Mening kitoblarim" %}</a>
-          <a href="{% url 'books:book_create' %}">{% trans "Kitob qo'shish" %}</a>
-        {% endif %}
-        {% if user.is_authenticated %}
-          <a href="{% url 'core:ai_assistant' %}">✨ {% trans "AI yordamchi" %}</a>
-        {% endif %}
-        {% if user.is_staff or user.is_superuser %}
-          <a href="{% url 'core:admin_dashboard' %}">{% trans "Statistika" %}</a>
-          <a href="{% url 'core:admin_users' %}">{% trans "Foydalanuvchilar" %}</a>
-          <a href="{% url 'core:admin_withdrawals' %}">{% trans "To'lovlar" %}</a>
-        {% endif %}
-      </nav>
+      <a href="{% url 'core:home' %}" class="logo">📚 <span>{% trans "Elektron Kutubxona" %}</span></a>
 
       <form action="{% url 'books:catalog' %}" method="get" class="header-search" role="search">
         <input type="search" name="q" value="{{ request.GET.q|default:'' }}"
@@ -99,7 +81,6 @@
 
               <div class="menu-divider"></div>
 
-              <a href="{% url 'core:ai_assistant' %}" class="menu-item">✨ {% trans "AI yordamchi" %}</a>
               <a href="{% url 'accounts:settings' %}" class="menu-item">⚙ {% trans "Sozlamalar" %}</a>
               <form action="{% url 'accounts:logout' %}" method="post">
                 {% csrf_token %}
@@ -188,6 +169,23 @@
       </div>
     </div>
   </footer>
+
+  </div><!-- /app-shell -->
+
+  {% if user.is_authenticated %}
+    {% comment %}
+    AI yordamchi endi menyuni band qilmaydi: u pastki o'ng burchakda
+    suzib turadigan dumaloq tugma. Sahifa qayerda bo'lmasin qo'l ostida.
+    {% endcomment %}
+    <a href="{% url 'core:ai_assistant' %}" class="ai-fab"
+       aria-label="{% trans 'AI yordamchi' %}" title="{% trans 'AI yordamchi' %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m12 3 1.9 4.9L19 9.8l-4.4 2.4L13.4 17 12 12.9 10.6 17l-1.2-4.8L5 9.8l5.1-1.9z"/>
+        <path d="M18.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>
+      </svg>
+      <span class="ai-fab-label">{% trans "AI" %}</span>
+    </a>
+  {% endif %}
 
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}

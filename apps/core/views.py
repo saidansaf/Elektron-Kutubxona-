@@ -23,10 +23,18 @@ User = get_user_model()
 def home_view(request):
     # So'rovlar dangasa (lazy): agar shablondagi fragment keshdan olinsa,
     # bu yerdagi so'rovlar bazaga umuman bormaydi.
-    latest_books = Book.objects.filter(is_active=True).select_related("author").order_by("-created_at")[:6]
+    latest_books = (
+        Book.objects.filter(is_active=True)
+        .select_related("author")
+        .with_counts()
+        .order_by("-created_at")[:6]
+    )
+    # `select_related("author")` bu yerda ham kerak: usiz har bir kitob
+    # uchun muallif alohida so'raladi.
     top_books = (
         Book.objects.filter(is_active=True)
-        .annotate(avg_rating=Avg("reviews__rating"), reviews_total=Count("reviews"))
+        .select_related("author")
+        .with_counts()
         .order_by("-avg_rating")[:6]
     )
 

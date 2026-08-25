@@ -3226,3 +3226,278 @@ body {
 .pay-result-icon.success { background: var(--success); }
 .pay-result-icon.danger { background: var(--danger); }
 .pay-result-icon.waiting { background: var(--text-muted); }
+
+/* ==========================================================================
+   Langarlar: forma yuborilgandan keyin kerakli joyga tushish
+   ========================================================================== */
+
+/*
+  Izoh yozilgandan yoki yoqtirilgandan keyin sahifa qaytadan yuklanadi va
+  brauzer manzildagi langarga (#izoh-12) sakraydi. Header suzib turgani
+  uchun langar tepada yopilib qolardi - `scroll-margin-top` shuning uchun.
+*/
+:target,
+.review-item,
+.reply-item,
+.detail-actions,
+.section-title {
+  scroll-margin-top: 96px;
+}
+
+/* Foydalanuvchi o'z izohi qayerdaligini darrov ko'rsin. */
+@keyframes anchor-flash {
+  from { background: color-mix(in srgb, var(--primary) 16%, transparent); }
+  to   { background: transparent; }
+}
+
+.review-item:target,
+.reply-item:target {
+  animation: anchor-flash 1.6s ease-out;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .review-item:target,
+  .reply-item:target { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ==========================================================================
+   Chap menyu (sidebar)
+   ========================================================================== */
+
+/*
+  Menyu tepadagi qatordan chap tarafga ko'chirildi. Sabab: bo'limlar soni
+  o'sib bordi (sotuvchi va administrator uchun alohida) va tepadagi qator
+  ikki-uch qavat bo'lib ketardi. Chapdagi ro'yxat qancha uzaysa ham
+  o'qiladi va qaysi bo'limda turganingiz ko'rinib turadi.
+*/
+
+.sidebar {
+  position: fixed;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 248px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 12px 14px;
+  background: var(--surface);
+  border-inline-end: 1px solid var(--border);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  z-index: 120;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 16px;
+  color: var(--fg);
+  font-size: 1.05rem;
+}
+.sidebar-logo:hover { text-decoration: none; }
+.sidebar-logo-mark { font-size: 1.35rem; line-height: 1; }
+.sidebar-logo-text { font-weight: 600; letter-spacing: -0.01em; }
+.sidebar-logo-text b { font-weight: 800; color: var(--primary); }
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+
+.sidebar-group {
+  margin: 14px 10px 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  color: var(--fg-muted);
+  font-weight: 550;
+  font-size: 0.93rem;
+  line-height: 1.3;
+  transition: background-color .15s ease, color .15s ease;
+}
+.side-link:hover {
+  background: var(--surface-2);
+  color: var(--fg);
+  text-decoration: none;
+}
+.side-link.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 650;
+}
+.side-link.active svg { opacity: 1; }
+
+.side-link svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .85;
+}
+
+.side-link span { flex: 1; min-width: 0; }
+
+.side-badge {
+  flex: none;
+  min-width: 20px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+.side-link.active .side-badge { background: rgba(255, 255, 255, .28); }
+
+.sidebar-foot { margin-top: auto; padding-top: 12px; }
+.side-link-soft {
+  border: 1px solid var(--border);
+  justify-content: center;
+}
+.side-link-soft span { flex: none; }
+
+/* Sahifa qismini menyu chetiga suramiz */
+.app-shell { margin-inline-start: 248px; }
+
+.sidebar-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+}
+.sidebar-toggle svg {
+  width: 20px; height: 20px;
+  fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round;
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 15, 22, .45);
+  z-index: 110;
+}
+
+@media (max-width: 1000px) {
+  /* Telefonda menyu yon tomondan chiqadi va sahifani bosib turmaydi. */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .22s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .25);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .app-shell { margin-inline-start: 0; }
+  .sidebar-toggle { display: inline-flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar { transition: none; }
+}
+
+/* ==========================================================================
+   Suzuvchi AI tugmasi
+   ========================================================================== */
+
+.ai-fab {
+  position: fixed;
+  inset-inline-end: 22px;
+  bottom: 22px;
+  z-index: 130;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 58px;
+  height: 58px;
+  border-radius: 999px;
+  background: var(--gradient, var(--primary));
+  color: #fff;
+  box-shadow: 0 10px 28px -10px rgba(0, 0, 0, .55);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.ai-fab:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+  box-shadow: 0 14px 32px -10px rgba(0, 0, 0, .6);
+}
+.ai-fab:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+
+.ai-fab svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/*
+  Tugma faqat dumaloq belgi. Matn ekranda ko'rinmaydi, lekin ekran
+  o'quvchisi uni o'qiydi — shuning uchun o'chirilmaydi, yashiriladi.
+*/
+.ai-fab-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-fab { transition: none; }
+  .ai-fab:hover { transform: none; }
+}
+
+/*
+  Ba'zi belgilar (masalan 🛟) eski shriftlarda yo'q va bo'sh to'rtburchak
+  bo'lib chiqadi. Shunday joylarda emoji o'rniga SVG ishlatiladi.
+*/
+.quick-link-icon .ql-svg {
+  width: 1.35em;
+  height: 1.35em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+}
+
+/*
+  Katta ekranda logotip chapdagi menyuda turibdi — tepada takrorlanmasin.
+  Telefonda esa menyu yashiringan, shuning uchun logotip tepada kerak.
+*/
+@media (min-width: 1001px) {
+  .site-header .logo { display: none; }
+}
+
+/*
+  Pastki o'ng burchakdagi AI tugmasi oxirgi qatorni yopib qo'ymasin.
+*/
+.app-shell main.container { padding-bottom: 96px; }

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-21 18:56+0500\n"
+"POT-Creation-Date: 2026-08-25 13:18+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -66,8 +66,9 @@ msgid "Kim bo'lib kirmoqchisiz?"
 msgstr "Кем вы хотите быть?"
 
 #: apps/accounts/forms.py:65 apps/accounts/models.py:13
-#: templates/accounts/role_select.html:23 templates/books/checkout.html:88
-#: templates/books/detail.html:40 templates/core/admin_dashboard.html:58
+#: templates/_sidebar.html:63 templates/accounts/role_select.html:23
+#: templates/books/checkout.html:88 templates/books/detail.html:40
+#: templates/core/admin_dashboard.html:58
 msgid "Sotuvchi"
 msgstr "Продавец"
 
@@ -114,11 +115,11 @@ msgstr "Номер карты должен содержать от 12 до 19 ц
 msgid "Tanlanmagan"
 msgstr "Не выбрано"
 
-#: apps/accounts/models.py:18 templates/base.html:80
+#: apps/accounts/models.py:18 templates/base.html:62
 msgid "Yorug'"
 msgstr "Светлая"
 
-#: apps/accounts/models.py:19 templates/base.html:82
+#: apps/accounts/models.py:19 templates/base.html:64
 msgid "Qorong'i"
 msgstr "Тёмная"
 
@@ -128,12 +129,12 @@ msgid "Rol"
 msgstr "Роль"
 
 #: apps/accounts/models.py:24 templates/accounts/settings.html:34
-#: templates/base.html:76
+#: templates/base.html:58
 msgid "Mavzu"
 msgstr "Тема"
 
 #: apps/accounts/models.py:26 apps/books/forms.py:121
-#: templates/accounts/settings.html:46 templates/base.html:87
+#: templates/accounts/settings.html:46 templates/base.html:69
 #: templates/books/checkout.html:80 templates/books/my_books.html:19
 #: templates/core/admin_user_detail.html:38
 msgid "Til"
@@ -168,7 +169,7 @@ msgstr "Причина блокировки"
 msgid "Foydalanuvchi"
 msgstr "Пользователь"
 
-#: apps/accounts/models.py:41 templates/base.html:39
+#: apps/accounts/models.py:41 templates/_sidebar.html:96
 #: templates/core/admin_broadcast.html:6
 #: templates/core/admin_user_detail.html:6 templates/core/admin_users.html:3
 #: templates/core/admin_users.html:9
@@ -310,7 +311,7 @@ msgstr ""
 msgid "Telegram uzildi."
 msgstr "Telegram отключён."
 
-#: apps/books/forms.py:61 apps/books/models.py:119 apps/payments/models.py:75
+#: apps/books/forms.py:61 apps/books/models.py:190 apps/payments/models.py:75
 msgid "Uy manzili"
 msgstr "Домашний адрес"
 
@@ -362,7 +363,7 @@ msgstr "Все языки"
 msgid "Barcha janrlar"
 msgstr "Все жанры"
 
-#: apps/books/forms.py:104 apps/books/models.py:17
+#: apps/books/forms.py:104 apps/books/models.py:74
 msgid "Janr"
 msgstr "Жанр"
 
@@ -370,7 +371,7 @@ msgstr "Жанр"
 msgid "Barcha mualliflar"
 msgstr "Все авторы"
 
-#: apps/books/forms.py:107 apps/books/models.py:36
+#: apps/books/forms.py:107 apps/books/models.py:93
 #: templates/books/detail.html:20 templates/books/my_books.html:19
 msgid "Muallif"
 msgstr "Автор"
@@ -387,172 +388,172 @@ msgstr "Цена (до)"
 msgid "Saralash"
 msgstr "Сортировка"
 
-#: apps/books/models.py:13
+#: apps/books/models.py:70
 msgid "Janr nomi"
 msgstr "Название жанра"
 
-#: apps/books/models.py:18 templates/core/admin_dashboard.html:17
+#: apps/books/models.py:75 templates/core/admin_dashboard.html:17
 msgid "Janrlar"
 msgstr "Жанры"
 
-#: apps/books/models.py:25
+#: apps/books/models.py:82
 msgid "Muallif to'liq ismi"
 msgstr "Полное имя автора"
 
-#: apps/books/models.py:26
+#: apps/books/models.py:83
 msgid "Muallif haqida"
 msgstr "Об авторе"
 
-#: apps/books/models.py:37 templates/base.html:19 templates/base.html:176
+#: apps/books/models.py:94 templates/_sidebar.html:34 templates/base.html:157
 #: templates/books/author_list.html:3 templates/books/author_list.html:6
 #: templates/core/admin_dashboard.html:16 templates/core/home.html:24
 msgid "Mualliflar"
 msgstr "Авторы"
 
-#: apps/books/models.py:48
+#: apps/books/models.py:105
 msgid "Kitob nomi"
 msgstr "Название книги"
 
-#: apps/books/models.py:52
+#: apps/books/models.py:109
 msgid "Kitob tili"
 msgstr "Язык книги"
 
-#: apps/books/models.py:53
+#: apps/books/models.py:110
 msgid "Sahifalar soni"
 msgstr "Количество страниц"
 
-#: apps/books/models.py:54
+#: apps/books/models.py:111
 msgid "Narxi (so'm)"
 msgstr "Цена (сум)"
 
-#: apps/books/models.py:55
+#: apps/books/models.py:112
 msgid "Tavsif"
 msgstr "Описание"
 
-#: apps/books/models.py:56
+#: apps/books/models.py:113
 msgid "Muqova"
 msgstr "Обложка"
 
-#: apps/books/models.py:62
+#: apps/books/models.py:119
 msgid "Kitob fayli (faqat PDF)"
 msgstr "Файл книги (только PDF)"
 
-#: apps/books/models.py:65
+#: apps/books/models.py:122
 msgid "Nashr yili"
 msgstr "Год издания"
 
-#: apps/books/models.py:66 templates/books/my_books.html:20
+#: apps/books/models.py:123 templates/books/my_books.html:20
 msgid "Sotuvda"
 msgstr "В продаже"
 
-#: apps/books/models.py:72 apps/payments/models.py:70
+#: apps/books/models.py:129 apps/payments/models.py:70
 #: templates/books/seller_dashboard.html:70 templates/payments/history.html:16
 msgid "Kitob"
 msgstr "Книга"
 
-#: apps/books/models.py:73 templates/base.html:18 templates/base.html:168
+#: apps/books/models.py:130 templates/_sidebar.html:29 templates/base.html:149
 #: templates/books/seller_dashboard.html:36
 #: templates/core/admin_user_detail.html:28 templates/core/home.html:19
 msgid "Kitoblar"
 msgstr "Книги"
 
-#: apps/books/models.py:118
+#: apps/books/models.py:189
 msgid "Karta oxirgi 4 raqami"
 msgstr "Последние 4 цифры карты"
 
-#: apps/books/models.py:125
+#: apps/books/models.py:196
 msgid "Xarid"
 msgstr "Покупка"
 
-#: apps/books/models.py:126 templates/core/admin_user_detail.html:29
+#: apps/books/models.py:197 templates/core/admin_user_detail.html:29
 msgid "Xaridlar"
 msgstr "Покупки"
 
-#: apps/books/models.py:143
+#: apps/books/models.py:214
 msgid "Joriy sahifa"
 msgstr "Текущая страница"
 
-#: apps/books/models.py:144
+#: apps/books/models.py:215
 msgid "Jami sahifa"
 msgstr "Всего страниц"
 
-#: apps/books/models.py:150
+#: apps/books/models.py:221
 msgid "O'qish holati"
 msgstr "Прогресс чтения"
 
-#: apps/books/models.py:151
+#: apps/books/models.py:222
 msgid "O'qish holatlari"
 msgstr "Прогресс чтения"
 
-#: apps/books/models.py:182
+#: apps/books/models.py:253
 msgid "Istak"
 msgstr "Желание"
 
-#: apps/books/models.py:183
+#: apps/books/models.py:254
 msgid "Istaklar"
 msgstr "Желания"
 
-#: apps/books/models.py:209
+#: apps/books/models.py:280
 msgid "Suhbat"
 msgstr "Диалог"
 
-#: apps/books/models.py:210
+#: apps/books/models.py:281
 msgid "Suhbatlar"
 msgstr "Диалоги"
 
-#: apps/books/models.py:230 apps/books/models.py:236
+#: apps/books/models.py:301 apps/books/models.py:307
 msgid "Xabar"
 msgstr "Сообщение"
 
-#: apps/books/models.py:231
+#: apps/books/models.py:302
 msgid "O'qilgan"
 msgstr "Прочитано"
 
-#: apps/books/models.py:237 templates/base.html:26
+#: apps/books/models.py:308 templates/_sidebar.html:52
 #: templates/books/conversations.html:3 templates/books/conversations.html:7
 #: templates/core/home.html:58
 msgid "Xabarlar"
 msgstr "Сообщения"
 
-#: apps/books/models.py:252 templates/books/checkout.html:106
+#: apps/books/models.py:323 templates/books/checkout.html:106
 #: templates/books/seller_dashboard.html:75
 msgid "Yoqtirish"
 msgstr "Нравится"
 
-#: apps/books/models.py:253
+#: apps/books/models.py:324
 msgid "Yoqtirishlar"
 msgstr "Отметки «нравится»"
 
-#: apps/books/models.py:275
+#: apps/books/models.py:346
 msgid "Sharh"
 msgstr "Отзыв"
 
-#: apps/books/models.py:276 templates/books/detail.html:108
+#: apps/books/models.py:347 templates/books/detail.html:108
 #: templates/core/admin_dashboard.html:21
 msgid "Sharhlar"
 msgstr "Отзывы"
 
-#: apps/books/models.py:300
+#: apps/books/models.py:369
 msgid "Izoh yoqtirishi"
 msgstr "Лайк отзыва"
 
-#: apps/books/models.py:301
+#: apps/books/models.py:370
 msgid "Izoh yoqtirishlari"
 msgstr "Лайки отзывов"
 
-#: apps/books/models.py:312 apps/books/models.py:317
+#: apps/books/models.py:381 apps/books/models.py:386
 msgid "Javob"
 msgstr "Ответ"
 
-#: apps/books/models.py:318
+#: apps/books/models.py:387
 msgid "Javoblar"
 msgstr "Ответы"
 
-#: apps/books/models.py:342
+#: apps/books/models.py:409
 msgid "Javob yoqtirishi"
 msgstr "Лайк ответа"
 
-#: apps/books/models.py:343
+#: apps/books/models.py:410
 msgid "Javob yoqtirishlari"
 msgstr "Лайки ответов"
 
@@ -560,7 +561,7 @@ msgstr "Лайки ответов"
 msgid "Bu kitob sotuvda emas."
 msgstr "Эта книга не продаётся."
 
-#: apps/books/services.py:40 apps/books/views.py:253
+#: apps/books/services.py:40 apps/books/views.py:262
 msgid "Siz bu kitobni allaqachon sotib olgansiz."
 msgstr "Вы уже купили эту книгу."
 
@@ -568,52 +569,52 @@ msgstr "Вы уже купили эту книгу."
 msgid "O'z kitobingizni sotib ololmaysiz."
 msgstr "Нельзя купить собственную книгу."
 
-#: apps/books/views.py:334
+#: apps/books/views.py:359
 msgid "Fikringiz uchun rahmat!"
 msgstr "Спасибо за ваш отзыв!"
 
-#: apps/books/views.py:350
+#: apps/books/views.py:377
 msgid "Javob bo'sh bo'lmasligi kerak."
 msgstr "Ответ не может быть пустым."
 
-#: apps/books/views.py:476
+#: apps/books/views.py:507
 msgid "Kitob muvaffaqiyatli qo'shildi!"
 msgstr "Книга успешно добавлена!"
 
-#: apps/books/views.py:480
+#: apps/books/views.py:511
 msgid "Yangi kitob qo'shish"
 msgstr "Добавить новую книгу"
 
-#: apps/books/views.py:490
+#: apps/books/views.py:521
 msgid "Kitob yangilandi."
 msgstr "Книга обновлена."
 
-#: apps/books/views.py:494
+#: apps/books/views.py:525
 msgid "Kitobni tahrirlash"
 msgstr "Редактировать книгу"
 
-#: apps/books/views.py:502
+#: apps/books/views.py:533
 msgid "Kitob o'chirildi."
 msgstr "Книга удалена."
 
-#: apps/books/views.py:525
+#: apps/books/views.py:556
 msgid "Muallif qo'shildi."
 msgstr "Автор добавлен."
 
-#: apps/books/views.py:544
+#: apps/books/views.py:575
 #, python-format
 msgid "\"%(name)s\" janri qo'shildi."
 msgstr "Жанр «%(name)s» добавлен."
 
-#: apps/books/views.py:563
+#: apps/books/views.py:594
 msgid "Istaklar ro'yxatidan olib tashlandi."
 msgstr "Убрано из списка желаний."
 
-#: apps/books/views.py:565
+#: apps/books/views.py:596
 msgid "Istaklar ro'yxatiga qo'shildi."
 msgstr "Добавлено в список желаний."
 
-#: apps/books/views.py:641
+#: apps/books/views.py:672
 msgid "O'zingizga xabar yoza olmaysiz."
 msgstr "Нельзя написать самому себе."
 
@@ -1005,7 +1006,8 @@ msgid ""
 "o'tkaziladi.\n"
 "Daromad: %(balance)s so'm"
 msgstr ""
-"✅ Заявка отправлена. После подтверждения администратором деньги придут на карту.\n"
+"✅ Заявка отправлена. После подтверждения администратором деньги придут на "
+"карту.\n"
 "Доход: %(balance)s сум"
 
 #: apps/core/botlib/handlers.py:696
@@ -1412,18 +1414,18 @@ msgid "🗑 O'chirish"
 msgstr "🗑 Удалить"
 
 #: apps/core/botlib/ui.py:190 templates/accounts/settings.html:99
-#: templates/accounts/withdrawal.html:16 templates/books/_book_card.html:24
+#: templates/accounts/withdrawal.html:16 templates/books/_book_card.html:25
 #: templates/books/checkout.html:22 templates/books/checkout.html:93
 #: templates/books/detail.html:37 templates/books/my_library.html:6
 #: templates/books/seller_dashboard.html:23
 #: templates/books/seller_dashboard.html:46
-#: templates/books/seller_dashboard.html:127 templates/books/wishlist.html:21
+#: templates/books/seller_dashboard.html:127 templates/books/wishlist.html:22
 #: templates/core/admin_withdrawals.html:19 templates/payments/history.html:25
 #: templates/payments/result.html:36 templates/payments/test_checkout.html:20
 msgid "so'm"
 msgstr "сум"
 
-#: apps/core/botlib/ui.py:191 templates/books/my_library.html:26
+#: apps/core/botlib/ui.py:191 templates/books/my_library.html:27
 msgid "sahifa"
 msgstr "страница"
 
@@ -1475,235 +1477,235 @@ msgstr ""
 "❌ <b>Заявка на вывод отклонена</b>\n"
 "%(amount)s сум возвращены на баланс."
 
-#: apps/core/telegram.py:135 templates/base.html:131
+#: apps/core/telegram.py:135 templates/base.html:112
 msgid "Administratordan xabar"
 msgstr "Сообщение от администратора"
 
-#: apps/core/views.py:93
+#: apps/core/views.py:101
 msgid "Ochiq havo"
 msgstr "Ясно"
 
-#: apps/core/views.py:94
+#: apps/core/views.py:102
 msgid "Deyarli ochiq"
 msgstr "Малооблачно"
 
-#: apps/core/views.py:95
+#: apps/core/views.py:103
 msgid "Bulutli oraliq"
 msgstr "Переменная облачность"
 
-#: apps/core/views.py:96
+#: apps/core/views.py:104
 msgid "Bulutli"
 msgstr "Облачно"
 
-#: apps/core/views.py:97
+#: apps/core/views.py:105
 msgid "Tuman"
 msgstr "Туман"
 
-#: apps/core/views.py:98
+#: apps/core/views.py:106
 msgid "Muzli tuman"
 msgstr "Изморозь"
 
-#: apps/core/views.py:99
+#: apps/core/views.py:107
 msgid "Mayda yomg'ir"
 msgstr "Морось"
 
-#: apps/core/views.py:100 apps/core/views.py:105
+#: apps/core/views.py:108 apps/core/views.py:113
 msgid "Yomg'ir"
 msgstr "Дождь"
 
-#: apps/core/views.py:101 apps/core/views.py:106
+#: apps/core/views.py:109 apps/core/views.py:114
 msgid "Kuchli yomg'ir"
 msgstr "Сильный дождь"
 
-#: apps/core/views.py:102 apps/core/views.py:107
+#: apps/core/views.py:110 apps/core/views.py:115
 msgid "Muzli yomg'ir"
 msgstr "Ледяной дождь"
 
-#: apps/core/views.py:103 apps/core/views.py:108
+#: apps/core/views.py:111 apps/core/views.py:116
 msgid "Kuchli muzli yomg'ir"
 msgstr "Сильный ледяной дождь"
 
-#: apps/core/views.py:104
+#: apps/core/views.py:112
 msgid "Yengil yomg'ir"
 msgstr "Небольшой дождь"
 
-#: apps/core/views.py:109
+#: apps/core/views.py:117
 msgid "Yengil qor"
 msgstr "Небольшой снег"
 
-#: apps/core/views.py:110
+#: apps/core/views.py:118
 msgid "Qor"
 msgstr "Снег"
 
-#: apps/core/views.py:111
+#: apps/core/views.py:119
 msgid "Kuchli qor"
 msgstr "Сильный снег"
 
-#: apps/core/views.py:112
+#: apps/core/views.py:120
 msgid "Qor donachalari"
 msgstr "Снежная крупа"
 
-#: apps/core/views.py:113
+#: apps/core/views.py:121
 msgid "Jala"
 msgstr "Ливень"
 
-#: apps/core/views.py:114
+#: apps/core/views.py:122
 msgid "Kuchli jala"
 msgstr "Сильный ливень"
 
-#: apps/core/views.py:115
+#: apps/core/views.py:123
 msgid "Juda kuchli jala"
 msgstr "Очень сильный ливень"
 
-#: apps/core/views.py:116
+#: apps/core/views.py:124
 msgid "Qor jalasi"
 msgstr "Снежный ливень"
 
-#: apps/core/views.py:117
+#: apps/core/views.py:125
 msgid "Kuchli qor jalasi"
 msgstr "Сильный снежный ливень"
 
-#: apps/core/views.py:118
+#: apps/core/views.py:126
 msgid "Momaqaldiroq"
 msgstr "Гроза"
 
-#: apps/core/views.py:119
+#: apps/core/views.py:127
 msgid "Do'l bilan momaqaldiroq"
 msgstr "Гроза с градом"
 
-#: apps/core/views.py:120
+#: apps/core/views.py:128
 msgid "Kuchli do'l"
 msgstr "Сильный град"
 
-#: apps/core/views.py:125
+#: apps/core/views.py:133
 msgid "Yakshanba"
 msgstr "Воскресенье"
 
-#: apps/core/views.py:125
+#: apps/core/views.py:133
 msgid "Dushanba"
 msgstr "Понедельник"
 
-#: apps/core/views.py:125
+#: apps/core/views.py:133
 msgid "Seshanba"
 msgstr "Вторник"
 
-#: apps/core/views.py:125
+#: apps/core/views.py:133
 msgid "Chorshanba"
 msgstr "Среда"
 
-#: apps/core/views.py:126
+#: apps/core/views.py:134
 msgid "Payshanba"
 msgstr "Четверг"
 
-#: apps/core/views.py:126
+#: apps/core/views.py:134
 msgid "Juma"
 msgstr "Пятница"
 
-#: apps/core/views.py:126
+#: apps/core/views.py:134
 msgid "Shanba"
 msgstr "Суббота"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "yanvar"
 msgstr "января"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "fevral"
 msgstr "февраля"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "mart"
 msgstr "марта"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "aprel"
 msgstr "апреля"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "may"
 msgstr "мая"
 
-#: apps/core/views.py:131
+#: apps/core/views.py:139
 msgid "iyun"
 msgstr "июня"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "iyul"
 msgstr "июля"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "avgust"
 msgstr "августа"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "sentabr"
 msgstr "сентября"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "oktabr"
 msgstr "октября"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "noyabr"
 msgstr "ноября"
 
-#: apps/core/views.py:132
+#: apps/core/views.py:140
 msgid "dekabr"
 msgstr "декабря"
 
-#: apps/core/views.py:134
+#: apps/core/views.py:142
 msgid "Bugun"
 msgstr "Сегодня"
 
-#: apps/core/views.py:135
+#: apps/core/views.py:143
 msgid "Ertaga"
 msgstr "Завтра"
 
-#: apps/core/views.py:136
+#: apps/core/views.py:144
 msgid "his qiladi"
 msgstr "ощущается как"
 
-#: apps/core/views.py:137
+#: apps/core/views.py:145
 msgid "Namlik"
 msgstr "Влажность"
 
-#: apps/core/views.py:138
+#: apps/core/views.py:146
 msgid "Shamol"
 msgstr "Ветер"
 
-#: apps/core/views.py:139
+#: apps/core/views.py:147
 msgid "km/soat"
 msgstr "км/ч"
 
-#: apps/core/views.py:140
+#: apps/core/views.py:148
 msgid "Bosim"
 msgstr "Давление"
 
-#: apps/core/views.py:141
+#: apps/core/views.py:149
 msgid "UF-indeks"
 msgstr "УФ-индекс"
 
-#: apps/core/views.py:142
+#: apps/core/views.py:150
 msgid "Yog'ingarchilik"
 msgstr "Осадки"
 
-#: apps/core/views.py:143
+#: apps/core/views.py:151
 msgid "Quyosh"
 msgstr "Солнце"
 
-#: apps/core/views.py:144
+#: apps/core/views.py:152
 msgid "Ob-havo ma'lumotini olib bo'lmadi."
 msgstr "Не удалось получить данные о погоде."
 
-#: apps/core/views.py:145
+#: apps/core/views.py:153
 msgid "Brauzeringiz joylashuvni aniqlay olmaydi."
 msgstr "Ваш браузер не может определить местоположение."
 
-#: apps/core/views.py:146
+#: apps/core/views.py:154
 msgid "Joylashuvni aniqlab bo'lmadi. Ro'yxatdan shahar tanlang."
 msgstr "Не удалось определить местоположение. Выберите город из списка."
 
-#: apps/payments/apps.py:8 apps/payments/models.py:90 templates/base.html:40
+#: apps/payments/apps.py:8 apps/payments/models.py:90
 msgid "To'lovlar"
 msgstr "Выплаты"
 
@@ -1759,6 +1761,82 @@ msgstr "Платёж не прошёл: %(reason)s"
 msgid "Test rejimi o'chirilgan."
 msgstr "Тестовый режим отключён."
 
+#: templates/_sidebar.html:15
+msgid "Asosiy menyu"
+msgstr "Главное меню"
+
+#: templates/_sidebar.html:18
+msgid "Elektron"
+msgstr "Электронная "
+
+#: templates/_sidebar.html:18
+msgid "Kutubxona"
+msgstr "библиотека"
+
+#: templates/_sidebar.html:24
+msgid "Asosiy"
+msgstr "Главная"
+
+#: templates/_sidebar.html:40
+msgid "Kutubxonam"
+msgstr "Моя библиотека"
+
+#: templates/_sidebar.html:47 templates/books/wishlist.html:3
+#: templates/books/wishlist.html:6 templates/core/home.html:53
+msgid "Istaklarim"
+msgstr "Мои желания"
+
+#: templates/_sidebar.html:58 templates/accounts/settings.html:103
+#: templates/core/home.html:77
+msgid "To'lovlarim"
+msgstr "Мои платежи"
+
+#: templates/_sidebar.html:67 templates/books/my_books.html:7
+#: templates/books/seller_dashboard.html:15 templates/core/home.html:66
+msgid "Kitob qo'shish"
+msgstr "Добавить книгу"
+
+#: templates/_sidebar.html:72
+msgid "Kitoblarim"
+msgstr "Мои книги"
+
+#: templates/_sidebar.html:77 templates/core/home.html:36
+msgid "Kabinet"
+msgstr "Кабинет"
+
+#: templates/_sidebar.html:82 templates/accounts/withdrawal.html:3
+#: templates/accounts/withdrawal.html:8
+#: templates/books/seller_dashboard.html:129
+msgid "Pul yechish"
+msgstr "Вывод средств"
+
+#: templates/_sidebar.html:87 templates/_sidebar.html:123
+msgid "Administrator"
+msgstr "Администратор"
+
+#: templates/_sidebar.html:91 templates/core/admin_users.html:6
+msgid "Statistika"
+msgstr "Статистика"
+
+#: templates/_sidebar.html:101
+msgid "Pul so'rovlari"
+msgstr "Заявки на вывод"
+
+#: templates/_sidebar.html:105
+msgid "Boshqa"
+msgstr "Прочее"
+
+#: templates/_sidebar.html:109 templates/base.html:158
+#: templates/core/home.html:100 templates/core/weather.html:3
+msgid "Ob-havo"
+msgstr "Погода"
+
+#: templates/_sidebar.html:115 templates/accounts/settings.html:3
+#: templates/accounts/settings.html:9 templates/base.html:84
+#: templates/base.html:160 templates/core/home.html:106
+msgid "Sozlamalar"
+msgstr "Настройки"
+
 #: templates/accounts/admin_login.html:3 templates/accounts/admin_login.html:6
 msgid "Administrator kirishi"
 msgstr "Вход администратора"
@@ -1770,8 +1848,8 @@ msgstr "Эта страница предназначена только для �
 #: templates/accounts/admin_login.html:18 templates/accounts/login.html:3
 #: templates/accounts/login.html:17
 #: templates/accounts/password_reset_complete.html:8
-#: templates/accounts/register.html:21 templates/base.html:118
-#: templates/core/home.html:105
+#: templates/accounts/register.html:21 templates/base.html:99
+#: templates/core/home.html:111
 msgid "Kirish"
 msgstr "Войти"
 
@@ -1789,7 +1867,7 @@ msgstr "Нет аккаунта?"
 
 #: templates/accounts/login.html:20 templates/accounts/register.html:3
 #: templates/accounts/register.html:6 templates/accounts/register.html:18
-#: templates/base.html:119 templates/base.html:181 templates/core/home.html:10
+#: templates/base.html:100 templates/base.html:162 templates/core/home.html:10
 #: templates/core/home.html:42
 msgid "Ro'yxatdan o'tish"
 msgstr "Регистрация"
@@ -1919,11 +1997,6 @@ msgstr "Покупаете и читаете книги"
 msgid "Tasdiqlash"
 msgstr "Подтвердить"
 
-#: templates/accounts/settings.html:3 templates/accounts/settings.html:9
-#: templates/base.html:103 templates/base.html:179 templates/core/home.html:100
-msgid "Sozlamalar"
-msgstr "Настройки"
-
 #: templates/accounts/settings.html:7 templates/books/checkout.html:6
 #: templates/books/conversations.html:6 templates/books/read.html:16
 #: templates/books/seller_dashboard.html:6 templates/core/ai_assistant.html:6
@@ -1963,10 +2036,6 @@ msgstr "Аккаунт"
 msgid "Daromadingiz"
 msgstr "Ваш доход"
 
-#: templates/accounts/settings.html:103 templates/core/home.html:77
-msgid "To'lovlarim"
-msgstr "Мои платежи"
-
 #: templates/accounts/settings.html:112
 msgid ""
 "Katalogni ko'rish, kitob sotib olish va bildirishnomalar uchun botni ulang."
@@ -1988,7 +2057,7 @@ msgstr "Помощь"
 msgid "Savol yoki muammo bo'lsa, administratorga yozing."
 msgstr "Если есть вопрос или проблема, напишите администратору."
 
-#: templates/accounts/settings.html:123 templates/core/home.html:111
+#: templates/accounts/settings.html:123 templates/core/home.html:124
 msgid "Administrator bilan bog'lanish"
 msgstr "Связаться с администратором"
 
@@ -2002,7 +2071,7 @@ msgstr "Сохранить"
 msgid "Bekor qilish"
 msgstr "Отмена"
 
-#: templates/accounts/telegram.html:3 templates/base.html:163
+#: templates/accounts/telegram.html:3 templates/base.html:144
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -2098,11 +2167,6 @@ msgstr "Уведомления о продажах и сообщениях"
 msgid "Kitob qo'shish, balansni to'ldirish va sozlamalar saytda bajariladi."
 msgstr "Добавление книг, пополнение баланса и настройки — на сайте."
 
-#: templates/accounts/withdrawal.html:3 templates/accounts/withdrawal.html:8
-#: templates/books/seller_dashboard.html:129
-msgid "Pul yechish"
-msgstr "Вывод средств"
-
 #: templates/accounts/withdrawal.html:7
 msgid "Kabinetga"
 msgstr "В кабинет"
@@ -2159,106 +2223,78 @@ msgstr "История заявок"
 msgid "Hali so'rov yuborilmagan."
 msgstr "Заявок пока не было."
 
-#: templates/base.html:7 templates/base.html:15 templates/base.html:157
-#: templates/base.html:187
+#: templates/base.html:7 templates/base.html:24 templates/base.html:138
+#: templates/base.html:168
 msgid "Elektron Kutubxona"
 msgstr "Электронная библиотека"
 
-#: templates/base.html:21 templates/books/my_library.html:3
-#: templates/books/my_library.html:5 templates/core/home.html:30
-#: templates/payments/history.html:6 templates/payments/result.html:44
-msgid "Mening kutubxonam"
-msgstr "Моя библиотека"
+#: templates/base.html:20
+msgid "Menyu"
+msgstr "Меню"
 
-#: templates/base.html:24 templates/books/wishlist.html:3
-#: templates/books/wishlist.html:6 templates/core/home.html:53
-msgid "Istaklarim"
-msgstr "Мои желания"
-
-#: templates/base.html:30 templates/core/home.html:36
-msgid "Kabinet"
-msgstr "Кабинет"
-
-#: templates/base.html:31 templates/books/book_form.html:6
-#: templates/books/my_books.html:3 templates/books/my_books.html:6
-#: templates/core/home.html:70
-msgid "Mening kitoblarim"
-msgstr "Мои книги"
-
-#: templates/base.html:32 templates/books/my_books.html:7
-#: templates/books/seller_dashboard.html:15 templates/core/home.html:66
-msgid "Kitob qo'shish"
-msgstr "Добавить книгу"
-
-#: templates/base.html:35 templates/base.html:102
-#: templates/core/ai_assistant.html:3 templates/core/ai_assistant.html:9
-#: templates/core/home.html:84
-msgid "AI yordamchi"
-msgstr "ИИ-помощник"
-
-#: templates/base.html:38 templates/core/admin_users.html:6
-msgid "Statistika"
-msgstr "Статистика"
-
-#: templates/base.html:46
+#: templates/base.html:28
 msgid "Kitob qidirish..."
 msgstr "Поиск книг..."
 
-#: templates/base.html:46
+#: templates/base.html:28
 msgid "Kitob qidirish"
 msgstr "Поиск книг"
 
-#: templates/base.html:47 templates/core/admin_users.html:17
+#: templates/base.html:29 templates/core/admin_users.html:17
 msgid "Qidirish"
 msgstr "Искать"
 
-#: templates/base.html:54
+#: templates/base.html:36
 msgid "Profil menyusi"
 msgstr "Меню профиля"
 
-#: templates/base.html:106
+#: templates/base.html:87
 msgid "Chiqish"
 msgstr "Выйти"
 
-#: templates/base.html:137
+#: templates/base.html:118
 msgid "Yopish"
 msgstr "Закрыть"
 
-#: templates/base.html:158
+#: templates/base.html:139
 msgid "O'zbek, rus va ingliz tillaridagi elektron kitoblar bozori."
 msgstr "Магазин электронных книг на узбекском, русском и английском языках."
 
-#: templates/base.html:162
+#: templates/base.html:143
 msgid "Bog'lanish"
 msgstr "Контакты"
 
-#: templates/base.html:169 templates/payments/result.html:48
+#: templates/base.html:150 templates/payments/result.html:48
 msgid "Katalog"
 msgstr "Каталог"
 
-#: templates/base.html:170 templates/core/home.html:121
+#: templates/base.html:151 templates/core/home.html:134
 msgid "Yangi kitoblar"
 msgstr "Новые книги"
 
-#: templates/base.html:171 templates/core/home.html:132
+#: templates/base.html:152 templates/core/home.html:145
 msgid "Eng yuqori baholangan"
 msgstr "Самые высоко оценённые"
 
-#: templates/base.html:175
+#: templates/base.html:156
 msgid "Havolalar"
 msgstr "Ссылки"
 
-#: templates/base.html:177 templates/core/home.html:94
-#: templates/core/weather.html:3
-msgid "Ob-havo"
-msgstr "Погода"
-
-#: templates/base.html:187
+#: templates/base.html:168
 msgid "Barcha huquqlar himoyalangan."
 msgstr "Все права защищены."
 
-#: templates/books/_book_card.html:27 templates/books/my_library.html:41
-#: templates/books/wishlist.html:27
+#: templates/base.html:182 templates/core/ai_assistant.html:3
+#: templates/core/ai_assistant.html:9 templates/core/home.html:84
+msgid "AI yordamchi"
+msgstr "ИИ-помощник"
+
+#: templates/base.html:187
+msgid "AI"
+msgstr "ИИ"
+
+#: templates/books/_book_card.html:28 templates/books/my_library.html:42
+#: templates/books/wishlist.html:28
 msgid "Batafsil"
 msgstr "Подробнее"
 
@@ -2298,6 +2334,11 @@ msgstr "книга"
 msgid "Mualliflar mavjud emas."
 msgstr "Авторов пока нет."
 
+#: templates/books/book_form.html:6 templates/books/my_books.html:3
+#: templates/books/my_books.html:6 templates/core/home.html:70
+msgid "Mening kitoblarim"
+msgstr "Мои книги"
+
 #: templates/books/book_form.html:13
 msgid "Yangi janr qo'shish"
 msgstr "Добавить новый жанр"
@@ -2327,7 +2368,9 @@ msgstr "Оформление заказа"
 msgid ""
 "Kitob narxi karta orqali to'lanadi. To'lov tasdiqlangach kitob "
 "kutubxonangizga tushadi."
-msgstr "Цена книги оплачивается картой. После подтверждения платежа книга появится в вашей библиотеке."
+msgstr ""
+"Цена книги оплачивается картой. После подтверждения платежа книга появится в "
+"вашей библиотеке."
 
 #: templates/books/checkout.html:21
 msgid "To'lash kerak"
@@ -2404,7 +2447,7 @@ msgstr "отзыв"
 msgid "Siz bu kitobni sotib olgansiz"
 msgstr "Вы уже купили эту книгу"
 
-#: templates/books/detail.html:47 templates/books/my_library.html:37
+#: templates/books/detail.html:47 templates/books/my_library.html:38
 #: templates/books/read.html:3
 msgid "O'qish"
 msgstr "Читать"
@@ -2493,19 +2536,25 @@ msgstr "Редактировать"
 msgid "O'chirish"
 msgstr "Удалить"
 
-#: templates/books/my_library.html:17 templates/books/wishlist.html:23
+#: templates/books/my_library.html:3 templates/books/my_library.html:5
+#: templates/core/home.html:30 templates/payments/history.html:6
+#: templates/payments/result.html:44
+msgid "Mening kutubxonam"
+msgstr "Моя библиотека"
+
+#: templates/books/my_library.html:18 templates/books/wishlist.html:24
 msgid "Sotib olingan"
 msgstr "Куплено"
 
-#: templates/books/my_library.html:24
+#: templates/books/my_library.html:25
 msgid "O'qib bo'lingan"
 msgstr "Прочитано"
 
-#: templates/books/my_library.html:35
+#: templates/books/my_library.html:36
 msgid "Davom ettirish"
 msgstr "Продолжить"
 
-#: templates/books/my_library.html:45
+#: templates/books/my_library.html:46
 msgid "Hali hech qanday kitob sotib olmagansiz."
 msgstr "Вы ещё не купили ни одной книги."
 
@@ -2625,11 +2674,11 @@ msgstr "В каталог"
 msgid "Keyinroq sotib olmoqchi bo'lgan kitoblaringiz."
 msgstr "Книги, которые вы хотите купить позже."
 
-#: templates/books/wishlist.html:33
+#: templates/books/wishlist.html:34
 msgid "Ro'yxatdan olib tashlash"
 msgstr "Убрать из списка"
 
-#: templates/books/wishlist.html:40
+#: templates/books/wishlist.html:41
 msgid "Ro'yxat bo'sh. Katalogdagi kitob sahifasida ☆ tugmasini bosing."
 msgstr "Список пуст. Нажмите ☆ на странице книги в каталоге."
 
@@ -2959,11 +3008,11 @@ msgstr[1] "%(counter)s пользователя"
 msgstr[2] "%(counter)s пользователей"
 msgstr[3] "%(counter)s пользователя"
 
-#: templates/core/home.html:126
+#: templates/core/home.html:139
 msgid "Hozircha kitoblar yo'q."
 msgstr "Пока нет книг."
 
-#: templates/core/home.html:137
+#: templates/core/home.html:150
 msgid "Hozircha baholangan kitoblar yo'q."
 msgstr "Пока нет оценённых книг."
 

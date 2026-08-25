@@ -1,0 +1,127 @@
+{% load i18n %}
+{% comment %}
+Chap tarafdagi doimiy menyu.
+
+Belgilar emoji emas, SVG. Sabab: emoji har qurilmada boshqacha chiziladi va
+ba'zi yangi belgilar (masalan 🛟) eski Windows shriftlarida umuman yo'q —
+o'rniga bo'sh to'rtburchak chiqadi. SVG hamma joyda bir xil ko'rinadi va
+mavzu rangiga moslashadi (`currentColor`).
+
+Faol bo'lim `view_name` bo'yicha aniqlanadi ("books:catalog") — manzilni
+qo'lda solishtirishdan ko'ra ishonchli.
+{% endcomment %}
+
+{% with active=request.resolver_match.view_name %}
+<aside class="sidebar" id="sidebar" aria-label="{% trans 'Asosiy menyu' %}">
+  <a href="{% url 'core:home' %}" class="sidebar-logo">
+    <span class="sidebar-logo-mark">📚</span>
+    <span class="sidebar-logo-text">{% trans "Elektron" %}<b>{% trans "Kutubxona" %}</b></span>
+  </a>
+
+  <nav class="sidebar-nav">
+    <a href="{% url 'core:home' %}" class="side-link {% if active == 'core:home' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+      <span>{% trans "Asosiy" %}</span>
+    </a>
+
+    <a href="{% url 'books:catalog' %}" class="side-link {% if active == 'books:catalog' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h6a2 2 0 0 1 2 2V20a2 2 0 0 0-2-2H4z"/><path d="M20 4.5h-6a2 2 0 0 0-2 2V20a2 2 0 0 1 2-2h6z"/></svg>
+      <span>{% trans "Kitoblar" %}</span>
+    </a>
+
+    <a href="{% url 'books:author_list' %}" class="side-link {% if active == 'books:author_list' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>
+      <span>{% trans "Mualliflar" %}</span>
+    </a>
+
+    {% if user.is_authenticated and user.is_buyer %}
+      <a href="{% url 'books:my_library' %}" class="side-link {% if active == 'books:my_library' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5A2 2 0 0 1 5 3.5h5v17H5a2 2 0 0 0-2 2z"/><path d="M21 5.5a2 2 0 0 0-2-2h-5v17h5a2 2 0 0 1 2 2z"/></svg>
+        <span>{% trans "Kutubxonam" %}</span>
+      </a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'books:wishlist' %}" class="side-link {% if active == 'books:wishlist' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 4 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 9.7l5.4-.8z"/></svg>
+        <span>{% trans "Istaklarim" %}</span>
+      </a>
+
+      <a href="{% url 'books:conversations' %}" class="side-link {% if active == 'books:conversations' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12.5c0 3.6-3.6 6.5-8 6.5-.9 0-1.8-.1-2.6-.4L4 20.5l1.4-3.6C4.5 15.7 4 14.2 4 12.5 4 8.9 7.6 6 12 6s8 2.9 8 6.5z"/></svg>
+        <span>{% trans "Xabarlar" %}</span>
+        {% if unread_messages %}<span class="side-badge">{{ unread_messages }}</span>{% endif %}
+      </a>
+
+      <a href="{% url 'payments:history' %}" class="side-link {% if active == 'payments:history' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10.5h18"/><path d="M7 14.5h3"/></svg>
+        <span>{% trans "To'lovlarim" %}</span>
+      </a>
+    {% endif %}
+
+    {% if user.is_authenticated and user.is_seller %}
+      <div class="sidebar-group">{% trans "Sotuvchi" %}</div>
+
+      <a href="{% url 'books:book_create' %}" class="side-link {% if active == 'books:book_create' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 8.5v7M8.5 12h7"/></svg>
+        <span>{% trans "Kitob qo'shish" %}</span>
+      </a>
+
+      <a href="{% url 'books:my_books' %}" class="side-link {% if active == 'books:my_books' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 8 4-8 4-8-4z"/><path d="m4 12 8 4 8-4"/><path d="m4 16.5 8 4 8-4"/></svg>
+        <span>{% trans "Kitoblarim" %}</span>
+      </a>
+
+      <a href="{% url 'books:seller_dashboard' %}" class="side-link {% if active == 'books:seller_dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
+        <span>{% trans "Kabinet" %}</span>
+      </a>
+
+      <a href="{% url 'accounts:withdrawal' %}" class="side-link {% if active == 'accounts:withdrawal' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8.5A2 2 0 0 1 5 6.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M16.5 12.5h2"/></svg>
+        <span>{% trans "Pul yechish" %}</span>
+      </a>
+    {% endif %}
+
+    {% if user.is_staff or user.is_superuser %}
+      <div class="sidebar-group">{% trans "Administrator" %}</div>
+
+      <a href="{% url 'core:admin_dashboard' %}" class="side-link {% if active == 'core:admin_dashboard' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5H12z"/><path d="M14.5 3.9A8.5 8.5 0 0 1 20 9.4h-5.5z"/></svg>
+        <span>{% trans "Statistika" %}</span>
+      </a>
+
+      <a href="{% url 'core:admin_users' %}" class="side-link {% if active == 'core:admin_users' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.2a3 3 0 0 1 0 5.6"/><path d="M17.5 14.4c1.9.6 3 2.2 3 4.6"/></svg>
+        <span>{% trans "Foydalanuvchilar" %}</span>
+      </a>
+
+      <a href="{% url 'core:admin_withdrawals' %}" class="side-link {% if active == 'core:admin_withdrawals' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7.5A2 2 0 0 1 5 5.5h11a2 2 0 0 1 2 2v1"/><path d="M3 7.5v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2H5"/><circle cx="16.5" cy="13.5" r="1.2"/></svg>
+        <span>{% trans "Pul so'rovlari" %}</span>
+      </a>
+    {% endif %}
+
+    <div class="sidebar-group">{% trans "Boshqa" %}</div>
+
+    <a href="{% url 'core:weather' %}" class="side-link {% if active == 'core:weather' %}active{% endif %}">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8.5" r="3"/><path d="M8 2.5v1.5M8 13v1.5M2.5 8.5H4M12 8.5h1.5M4.1 4.6l1 1M11 11.5l1 1M11.9 4.6l-1 1M5.1 11.5l-1 1"/><path d="M11.5 19.5a3 3 0 0 1 .4-6 4.4 4.4 0 0 1 8.3 1.3 2.4 2.4 0 0 1-.7 4.7z"/></svg>
+      <span>{% trans "Ob-havo" %}</span>
+    </a>
+
+    {% if user.is_authenticated %}
+      <a href="{% url 'accounts:settings' %}" class="side-link {% if active == 'accounts:settings' %}active{% endif %}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 14.5a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5v.2a2 2 0 0 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1h.2a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+        <span>{% trans "Sozlamalar" %}</span>
+      </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-foot">
+    <a href="{{ admin_telegram }}" target="_blank" rel="noopener" class="side-link side-link-soft">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4 3 11l6 2.2L11 20l3-4 5 3z"/><path d="m9 13.2 8.5-6.6"/></svg>
+      <span>{% trans "Administrator" %}</span>
+    </a>
+  </div>
+</aside>
+{% endwith %}

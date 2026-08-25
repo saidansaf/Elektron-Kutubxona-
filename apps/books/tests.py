@@ -23,6 +23,7 @@ from apps.books.models import (
     Message,
     Purchase,
     ReadingProgress,
+    Reply,
     Review,
     Wish,
 )
@@ -527,3 +528,52 @@ class PurchaseServiceTests(TestCase):
         self.seller.refresh_from_db()
         self.assertEqual(self.seller.balance, Decimal("0"))
         self.assertFalse(Purchase.objects.exists())
+
+
+class AnchorRedirectTests(TestCase):
+    """Izoh yozilgandan keyin sahifa boshiga qaytib ketmasligi kerak.
+
+    Ilgari forma yuborilgach oddiy `/kitoblar/3/` ga qaytarilardi va
+    brauzer sahifani tepasidan ochardi — foydalanuvchi o'z izohini ko'rish
+    uchun qaytadan pastga aylantirib tushishi kerak edi.
+
+    Endi manzil oxirida langar bo'ladi (`#izoh-12`) va brauzer aynan o'sha
+    joyga tushadi.
+    """
+
+    def setUp(self):
+        self.seller = make_user("sotuvchi", Role.SELLER)
+        self.buyer = make_user("xaridor", Role.BUYER)
+        author = Author.objects.create(full_name="Test Muallif")
+        self.book = Book.objects.create(
+            title="Kitob", author=author, seller=self.seller, pages=10, price=Decimal("45000")
+        )
+        self.client.force_login(self.buyer)
+
+    def test_izoh_yozilgach_izohga_qaytariladi(self):
+        response = self.client.post(
+            reverse("books:review_create", args=[self.book.pk]),
+            {"rating": 5, "comment": "Ajoyib kitob"},
+        )
+        review = Review.objects.get(book=self.book, buyer=self.buyer)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response["Location"].endswith(f"#izoh-{review.pk}"))
+
+    def test_javob_yozilgach_javobga_qaytariladi(self):
+        review = Review.objects.create(book=self.book, buyer=self.buyer, rating=4)
+        response = self.client.post(
+            reverse("books:reply_create", args=[review.pk]), {"text": "Roziman"}
+        )
+        reply = Reply.objects.get(review=review)
+        self.assertTrue(response["Location"].endswith(f"#javob-{reply.pk}"))
+
+    def test_izohni_yoqtirgach_osha_joyga_qaytariladi(self):
+        review = Review.objects.create(book=self.book, buyer=self.buyer, rating=4)
+        response = self.client.post(reverse("books:toggle_review_like", args=[review.pk]))
+        self.assertTrue(response["Location"].endswith(f"#izoh-{review.pk}"))
+
+    def test_langar_shablonda_ham_bor(self):
+        """Manzildagi langar sahifadagi element bilan mos kelishi kerak."""
+        review = Review.objects.create(book=self.book, buyer=self.buyer, rating=5, comment="Zo'r")
+        page = self.client.get(reverse("books:detail", args=[self.book.pk]))
+        self.assertContains(page, f'id="izoh-{review.pk}"')

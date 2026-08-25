@@ -9,7 +9,8 @@
   {% for purchase in purchases %}
     <div class="book-card">
       {% if purchase.book.cover %}
-        <img src="{{ purchase.book.cover.url }}" class="book-cover" alt="{{ purchase.book.title }}" />
+        <img src="{{ purchase.book.cover.url }}" class="book-cover" alt="{{ purchase.book.title }}"
+             loading="lazy" decoding="async" />
       {% endif %}
       <div class="book-card-body">
         <div class="book-title">{{ purchase.book.title }}</div>

@@ -76,7 +76,11 @@ def _catalog_cache_key(request, page_number):
 
 
 def catalog_view(request):
-    books = Book.objects.filter(is_active=True).select_related("author", "genre", "seller")
+    books = (
+        Book.objects.filter(is_active=True)
+        .select_related("author", "genre", "seller")
+        .with_counts()
+    )
     filter_form = BookFilterForm(request.GET or None)
 
     sort = DEFAULT_SORT
@@ -98,13 +102,11 @@ def catalog_view(request):
             books = books.filter(price__lte=data["max_price"])
         sort = data.get("sort") or DEFAULT_SORT
 
-    # Reyting va sotuvlar soni bo'yicha saralash uchun ular hisoblanishi kerak.
-    # Ikkalasini bitta `annotate` da hisoblab bo'lmaydi - sharhlar va xaridlar
-    # bir-biriga ko'payib ketadi, shuning uchun `distinct=True` ishlatiladi.
-    books = books.annotate(
-        avg_rating=Avg("reviews__rating"),
-        sales_total=Count("purchases", distinct=True),
-    ).order_by(*SORT_OPTIONS[sort][1])
+    # Reyting `with_counts()` da hisoblangan. Sotuvlar soni faqat saralash
+    # uchun kerak, shuning uchun shu yerda qo'shiladi.
+    books = books.annotate(sales_total=Count("purchases", distinct=True)).order_by(
+        *SORT_OPTIONS[sort][1]
+    )
 
     paginator = Paginator(books, 9)
     page_obj = paginator.get_page(request.GET.get("page"))
@@ -123,7 +125,12 @@ def catalog_view(request):
 
 
 def book_detail_view(request, pk):
-    book = get_object_or_404(Book.objects.select_related("author", "genre", "seller"), pk=pk)
+    # `with_counts()`: reyting, sharh va yoqtirish soni bitta so'rovda keladi.
+    # Ular shablonda bir necha joyda chiqadi va ilgari har biri uchun alohida
+    # so'rov ketardi.
+    book = get_object_or_404(
+        Book.objects.select_related("author", "genre", "seller").with_counts(), pk=pk
+    )
     reviews = (
         book.reviews.select_related("buyer")
         .prefetch_related("replies__author", "likes", "replies__likes")
@@ -245,7 +252,9 @@ def reading_progress_view(request, pk):
 def buy_book_view(request, pk):
     """Sotib olish sahifasi: buyurtma xulosasi, karta to'lovi, yoqtirish va izohlar."""
     book = get_object_or_404(
-        Book.objects.select_related("author", "genre", "seller"), pk=pk, is_active=True
+        Book.objects.select_related("author", "genre", "seller").with_counts(),
+        pk=pk,
+        is_active=True,
     )
     buyer = request.user
 
@@ -319,11 +328,26 @@ def my_library_view(request):
     return render(request, "books/my_library.html", {"purchases": purchases})
 
 
+def _back_to_book(book_pk, anchor=""):
+    """Kitob sahifasiga qaytaradi va aynan kerakli joyga tushiradi.
+
+    Ilgari izoh yozilgandan yoki yoqtirilgandan keyin sahifa boshidan
+    ochilardi va foydalanuvchi o'z izohini ko'rish uchun qaytadan pastga
+    aylantirib tushishi kerak edi. Manzil oxiridagi langar (#izoh-12)
+    brauzerga qayerga tushishni aytadi.
+    """
+    from django.urls import reverse
+
+    url = reverse("books:detail", args=[book_pk])
+    return redirect(f"{url}#{anchor}" if anchor else url)
+
+
 @login_required
 def review_create_view(request, pk):
     """Baho va izoh qoldirish - sotib olish shart emas."""
     book = get_object_or_404(Book, pk=pk)
     existing = Review.objects.filter(buyer=request.user, book=book).first()
+    anchor = f"izoh-{existing.pk}" if existing else "sharhlar"
     if request.method == "POST":
         form = ReviewForm(request.POST, instance=existing)
         if form.is_valid():
@@ -331,8 +355,9 @@ def review_create_view(request, pk):
             review.book = book
             review.buyer = request.user
             review.save()
+            anchor = f"izoh-{review.pk}"
             messages.success(request, _("Fikringiz uchun rahmat!"))
-    return redirect("books:detail", pk=pk)
+    return _back_to_book(pk, anchor)
 
 
 @login_required
@@ -346,9 +371,11 @@ def reply_create_view(request, review_id):
         reply.review = review
         reply.author = request.user
         reply.save()
+        anchor = f"javob-{reply.pk}"
     else:
+        anchor = f"izoh-{review.pk}"
         messages.error(request, _("Javob bo'sh bo'lmasligi kerak."))
-    return redirect("books:detail", pk=review.book_id)
+    return _back_to_book(review.book_id, anchor)
 
 
 @login_required
@@ -359,7 +386,7 @@ def toggle_review_like_view(request, review_id):
     like, created = ReviewLike.objects.get_or_create(review=review, user=request.user)
     if not created:
         like.delete()
-    return redirect("books:detail", pk=review.book_id)
+    return _back_to_book(review.book_id, f"izoh-{review.pk}")
 
 
 @login_required
@@ -370,12 +397,16 @@ def toggle_reply_like_view(request, reply_id):
     like, created = ReplyLike.objects.get_or_create(reply=reply, user=request.user)
     if not created:
         like.delete()
-    return redirect("books:detail", pk=reply.review.book_id)
+    return _back_to_book(reply.review.book_id, f"javob-{reply.pk}")
 
 
 @seller_required
 def my_books_view(request):
-    books = Book.objects.filter(seller=request.user).select_related("author", "genre")
+    books = (
+        Book.objects.filter(seller=request.user)
+        .select_related("author", "genre")
+        .with_counts()
+    )
     return render(request, "books/my_books.html", {"books": books})
 
 

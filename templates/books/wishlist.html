@@ -10,7 +10,8 @@
   {% for wish in wishes %}
     <div class="book-card">
       {% if wish.book.cover %}
-        <img src="{{ wish.book.cover.url }}" alt="{{ wish.book.title }}" class="book-cover" />
+        <img src="{{ wish.book.cover.url }}" alt="{{ wish.book.title }}" class="book-cover"
+             loading="lazy" decoding="async" />
       {% else %}
         <div class="book-cover">📖</div>
       {% endif %}

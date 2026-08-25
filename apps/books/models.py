@@ -3,10 +3,67 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.validators import FileExtensionValidator, MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from .storage import private_storage
+
+
+def _cached_count(instance, relation):
+    """Bog'lanish soni.
+
+    `prefetch_related` bilan olingan bo'lsa xotiradagi ro'yxatdan
+    sanaladi. Diqqat: `.count()` prefetch keshini ISHLATMAYDI — u har
+    safar bazaga COUNT so'rovini yuboradi. Izohlar ro'yxatida bu har bir
+    izoh uchun alohida so'rov degani edi.
+    """
+    cache = getattr(instance, "_prefetched_objects_cache", {})
+    if relation in cache:
+        return len(cache[relation])
+    return getattr(instance, relation).count()
+
+
+def _cached_liked_by(instance, relation, user):
+    """Foydalanuvchi yoqtirganmi (prefetch bo'lsa bazaga bormaydi)."""
+    if not user.is_authenticated:
+        return False
+    cache = getattr(instance, "_prefetched_objects_cache", {})
+    if relation in cache:
+        return any(like.user_id == user.pk for like in cache[relation])
+    return getattr(instance, relation).filter(user=user).exists()
+
+
+class BookQuerySet(models.QuerySet):
+    """Kitob ro'yxatlari uchun umumiy so'rovlar."""
+
+    def with_counts(self):
+        """Reyting, sharh va yoqtirish sonini bitta so'rovda oladi.
+
+        Busiz har bir kitob uchun uchta qo'shimcha so'rov ketardi —
+        bosh sahifada 6 ta kitob 18 ta so'rov degani.
+
+        Nega `annotate(Avg(...), Count(...))` emas, `Subquery`: bitta
+        annotate ichida ikkita bog'lanish bo'yicha hisoblansa, SQL ularni
+        bir-biriga ko'paytirib yuboradi va sonlar noto'g'ri chiqadi.
+        Loyihada bu xato bir marta sotuvchi daromadida chiqqan (9 barobar
+        ko'p ko'rsatgan), shuning uchun bu yerda ham xavfsiz yo'l tanlandi.
+        """
+        reviews = Review.objects.filter(book=models.OuterRef("pk")).values("book")
+        likes = Like.objects.filter(book=models.OuterRef("pk")).values("book")
+
+        def sub(queryset, expression, output):
+            return models.Subquery(
+                queryset.annotate(value=expression).values("value")[:1], output_field=output
+            )
+
+        return self.annotate(
+            avg_rating=sub(reviews, models.Avg("rating"), models.FloatField()),
+            reviews_total=Coalesce(
+                sub(reviews, models.Count("id"), models.IntegerField()), 0
+            ),
+            likes_total=Coalesce(sub(likes, models.Count("id"), models.IntegerField()), 0),
+        )
 
 
 class Genre(models.Model):
@@ -72,6 +129,8 @@ class Book(models.Model):
         verbose_name = _("Kitob")
         verbose_name_plural = _("Kitoblar")
 
+    objects = BookQuerySet.as_manager()
+
     def __str__(self):
         return f"{self.title} ({self.author})"
 
@@ -80,21 +139,33 @@ class Book(models.Model):
 
     @property
     def average_rating(self):
-        agg = self.reviews.aggregate(avg=models.Avg("rating"))["avg"]
-        return round(agg, 1) if agg else 0
+        """O'rtacha baho (0 dan 5 gacha).
+
+        `with_counts()` bilan olingan bo'lsa tayyor qiymat ishlatiladi.
+        Aks holda bir marta hisoblanadi va obyektda saqlanadi — shablonda
+        bu qiymat ikki joyda chiqadi va ilgari ikkita so'rov ketardi.
+        """
+        if hasattr(self, "avg_rating"):
+            return round(self.avg_rating, 1) if self.avg_rating else 0
+        if not hasattr(self, "_avg_cache"):
+            agg = self.reviews.aggregate(avg=models.Avg("rating"))["avg"]
+            self._avg_cache = round(agg, 1) if agg else 0
+        return self._avg_cache
 
     @property
     def reviews_count(self):
-        return self.reviews.count()
+        if hasattr(self, "reviews_total"):
+            return self.reviews_total
+        return _cached_count(self, "reviews")
 
     @property
     def likes_count(self):
-        return self.likes.count()
+        if hasattr(self, "likes_total"):
+            return self.likes_total
+        return _cached_count(self, "likes")
 
     def liked_by(self, user):
-        if not user.is_authenticated:
-            return False
-        return self.likes.filter(user=user).exists()
+        return _cached_liked_by(self, "likes", user)
 
     def readable_by(self, user):
         """Kitob faylini ochishga haqli-yo'qligi.
@@ -280,12 +351,10 @@ class Review(models.Model):
 
     @property
     def likes_count(self):
-        return self.likes.count()
+        return _cached_count(self, "likes")
 
     def liked_by(self, user):
-        if not user.is_authenticated:
-            return False
-        return self.likes.filter(user=user).exists()
+        return _cached_liked_by(self, "likes", user)
 
 
 class ReviewLike(models.Model):
@@ -322,12 +391,10 @@ class Reply(models.Model):
 
     @property
     def likes_count(self):
-        return self.likes.count()
+        return _cached_count(self, "likes")
 
     def liked_by(self, user):
-        if not user.is_authenticated:
-            return False
-        return self.likes.filter(user=user).exists()
+        return _cached_liked_by(self, "likes", user)
 
 
 class ReplyLike(models.Model):

@@ -100,8 +100,8 @@
 
       <form action="{% url 'books:toggle_like' book.pk %}" method="post" style="margin-top:10px">
         {% csrf_token %}
-        <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-        <button type="submit" class="like-btn {% if liked %}liked{% endif %} btn-block">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}#yoqtirish" />
+        <button type="submit" id="yoqtirish" class="like-btn {% if liked %}liked{% endif %} btn-block">
           <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
           <span>{% if liked %}{% trans "Yoqtirdingiz" %}{% else %}{% trans "Yoqtirish" %}{% endif %}</span>
           <span class="like-count">{{ book.likes_count }}</span>
@@ -111,7 +111,7 @@
   </aside>
 </div>
 
-<section class="section-title">
+<section class="section-title" id="sharhlar">
   <h2>{% trans "Xaridorlar fikri" %}</h2>
   <span class="text-muted">
     ❤ {{ book.likes_count }} · 💬 {{ book.reviews_count }}

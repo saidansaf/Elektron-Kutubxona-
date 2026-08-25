@@ -39,7 +39,7 @@
     {% if book.description %}<p>{{ book.description|linebreaks }}</p>{% endif %}
     <p class="text-muted">{% trans "Sotuvchi" %}: {{ book.seller.username }}</p>
 
-    <div class="detail-actions">
+    <div class="detail-actions" id="amallar">
       {% if user.is_authenticated and user.is_buyer %}
         {% if has_purchased %}
           <span class="badge success">✓ {% trans "Siz bu kitobni sotib olgansiz" %}</span>
@@ -65,7 +65,7 @@
       {% if user.is_authenticated %}
         <form action="{% url 'books:toggle_like' book.pk %}" method="post">
           {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+          <input type="hidden" name="next" value="{{ request.get_full_path }}#amallar" />
           <button type="submit" class="like-btn {% if book|liked:user %}liked{% endif %}">
             <span class="like-heart"><svg viewBox="0 0 24 24" class="heart-icon" aria-hidden="true"><path d="M12 20.3s-7.5-4.6-10-9.1C.5 8 1.7 4.6 5 3.4c2.4-.9 5 .1 6.5 2.2l.5.7.5-.7C14 3.5 16.6 2.5 19 3.4c3.3 1.2 4.5 4.6 3 7.8-2.5 4.5-10 9.1-10 9.1z"/></svg></span>
             <span class="like-count">{{ book.likes_count }}</span>
@@ -75,7 +75,7 @@
         {% if not has_purchased %}
           <form action="{% url 'books:toggle_wish' book.pk %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            <input type="hidden" name="next" value="{{ request.get_full_path }}#amallar" />
             <button type="submit" class="btn btn-outline">
               {% if wished %}★ {% trans "Istaklarda" %}{% else %}☆ {% trans "Istaklarga" %}{% endif %}
             </button>
@@ -103,7 +103,7 @@
   </div>
 </div>
 
-<section class="section-title">
+<section class="section-title" id="sharhlar">
   <h2>{% trans "Sharhlar" %}</h2>
   <span class="text-muted">❤ {{ book.likes_count }} · 💬 {{ book.reviews_count }}</span>
 </section>

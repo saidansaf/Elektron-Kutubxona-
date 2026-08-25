@@ -6,7 +6,8 @@ tugma ko'rinishidagi element oddiy <span>.
 {% endcomment %}
 <a href="{% url 'books:detail' book.pk %}" class="book-card">
   {% if book.cover %}
-    <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover" />
+    <img src="{{ book.cover.url }}" alt="{{ book.title }}" class="book-cover"
+         loading="lazy" decoding="async" />
   {% else %}
     <div class="book-cover placeholder">📖</div>
   {% endif %}

@@ -92,12 +92,12 @@ Ulanganini tekshirish:
 python manage.py check_cache
 ```
 
-**Redis nima beradi.** Sinovda o'lchangan natija (bitta kitobli baza):
+**Redis nima beradi.** Sinovda o'lchangan natija:
 
 | Sahifa | Kesh bo'sh | Keshdan |
 |---|---|---|
-| Bosh sahifa | 18 ta so'rov | **0 ta so'rov** |
-| Katalog | 10 ta so'rov | **3 ta so'rov** |
+| Bosh sahifa | 5 ta so'rov | **0 ta so'rov** |
+| Katalog | 4 ta so'rov | **2 ta so'rov** |
 
 Nima keshlanadi:
 
@@ -616,6 +616,7 @@ Batafsil (serverdagi bazaga masofadan ulanish ham): `docs/RENDER.md`.
 | `docs/LOYIHA-REJASI.md` | Loyiha rejasi: bajarilgan bosqichlar, qolgan ishlar, xavflar |
 | `docs/RENDER.md` | Render.com ga joylashtirish: sayt va bot, cheklovlar bilan |
 | `docs/TOLOV.md` | To'lov tizimi: Payme va Click, test rejimi, jonli rejimga o'tish |
+| `docs/HIMOYA.md` | Loyihani taqdim etish: demo ssenariysi, savol-javoblar |
 
 Har birining Word (`.docx`) varianti ham shu papkada.
 
