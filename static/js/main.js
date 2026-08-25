@@ -218,36 +218,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ----------------------------------------------------------------------
-  // Sahifalarni oldindan yuklash
+  // Sahifalarni oldindan yuklash — ATAYLAB OLIB TASHLANGAN
   //
-  // Sichqoncha havolaga tekkanda brauzer sahifani jimgina yuklab qo'yadi.
-  // Bosilgunga qadar odatda 100-300 ms o'tadi va shu vaqt yetadi —
-  // sahifa deyarli darrov ochilgandek tuyuladi. Bu ayniqsa kuchsiz
-  // serverda seziladi.
+  // Bu yerda "sichqoncha havolaga tekkanda sahifani oldindan yuklab
+  // qo'yamiz" degan kod turgan edi. Kuchli serverda u sahifani darrov
+  // ochilgandek qiladi. Bizniki esa Render'ning bepul tarifida ishlaydi:
+  // atigi 0.1 protsessor va bitta ishchi.
+  //
+  // Natija teskari bo'ldi. Sichqonchani chap menyu ustidan bir marta
+  // yurgizish 8-10 ta HAQIQIY sahifa so'rovini tug'dirardi — server
+  // ularning hammasini chizishga majbur bo'lardi va foydalanuvchi
+  // haqiqatan bosgan havola navbatning oxirida qolardi. Ya'ni tezlashtirish
+  // uchun qo'shilgan narsa saytni o'zi sekinlashtirardi.
+  //
+  // Xulosa: kuchsiz serverda kerak bo'lmagan so'rov yubormaslik eng yaxshi
+  // optimallashtirishdir. Shuning uchun bu kod qaytarilmaydi.
   // ----------------------------------------------------------------------
-  var prefetched = {};
-  var prefetch = function (url) {
-    if (prefetched[url]) return;
-    prefetched[url] = true;
-    var link = document.createElement("link");
-    link.rel = "prefetch";
-    link.href = url;
-    document.head.appendChild(link);
-  };
-
-  var saveData = navigator.connection && navigator.connection.saveData;
-  if (!saveData) {
-    document.addEventListener("mouseover", function (e) {
-      var a = e.target.closest && e.target.closest("a[href]");
-      if (!a) return;
-      if (a.target === "_blank" || a.hasAttribute("download")) return;
-      // Faqat shu saytning oddiy sahifalari
-      if (a.origin !== window.location.origin) return;
-      if (a.pathname === window.location.pathname) return;
-      if (a.getAttribute("href").indexOf("#") === 0) return;
-      prefetch(a.href);
-    }, { passive: true });
-  }
 
   // "Javob berish" tugmasi - javob formasini ochib/yopadi.
   document.querySelectorAll(".reply-toggle").forEach(function (btn) {

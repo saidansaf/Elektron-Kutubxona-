@@ -271,7 +271,7 @@ qolgan hamma tuzatish ham ko'rinmaydi — avval shuni tekshiring.
 | `background-attachment: fixed` olib tashlandi | Aylantirganda butun ekran qayta bo'yalmaydi |
 | Cheksiz animatsiyalar to'xtatildi | Hech kim tegmasa ham soniyasiga 60 marta qayta chizish yo'q |
 | `backdrop-filter` header va kartochkalardan olib tashlandi | Eng qimmat effekt endi faqat modal oynada |
-| Sichqoncha havolaga tekkanda sahifa oldindan yuklanadi | Bosilganda sahifa deyarli darrov ochiladi |
+| Keraksiz so'rovlar yubormaslik | Havola ustiga sichqoncha kelganda sahifani oldindan yuklash **olib tashlandi**: chap menyu ustidan bir marta yurgizish 8-10 ta ortiqcha sahifa so'rovini tug'dirar va bitta ishchini band qilib qo'yardi |
 
 Server tomoni o'lchandi: sahifalar **4–12 ms** ichida va **11 tadan
 kam** SQL so'rov bilan tayyorlanadi. Ya'ni kod sekin emas — qolgan vaqt

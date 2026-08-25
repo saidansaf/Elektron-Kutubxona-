@@ -42,10 +42,13 @@ services:
     #
     # --max-requests: uzoq ishlagach xotira asta o'sadi, 512 MB da bu
     # sezilarli. Ishchi vaqti-vaqti bilan o'zini yangilab turadi.
+    # Raqam kattaroq olindi: ishchi bitta bo'lgani uchun har qayta
+    # ko'tarilish paytida sayt bir necha soniya javob bermaydi —
+    # bunday to'xtalish qanchalik kam bo'lsa, shuncha yaxshi.
     startCommand: >-
       gunicorn config.wsgi:application
       --workers 1 --threads 8 --worker-class gthread
-      --timeout 120 --max-requests 800 --max-requests-jitter 80
+      --timeout 120 --max-requests 3000 --max-requests-jitter 300
     # Tekshiruv bosh sahifaga emas, yengil `/ping/` ga boradi: u bazaga
     # tegmaydi, ya'ni Render'ning har bir tekshiruvi bepul protsessorni
     # yemaydi.
