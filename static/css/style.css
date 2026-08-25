@@ -2925,9 +2925,9 @@ body {
 }
 .avatar-btn:hover { box-shadow: 0 0 0 4px var(--primary-soft); }
 
-@media (max-width: 900px) {
-  .header-search { display: none; }
-}
+/* Ilgari bu yerda telefonda qidiruvni butunlay yashiradigan qoida turgan
+   edi. Endi qidiruv telefonda ham kerak - u alohida qatorga tushadi
+   (fayl oxiridagi "Tepadagi tasma" bo'limiga qarang). */
 
 /* ---- Kitob kartochkasi: butunlay bosiladigan, muqova ustunlik qiladi ---- */
 .book-card {
@@ -3799,3 +3799,81 @@ body::before {
   }
   .avatar-btn { width: 34px; height: 34px; font-size: 0.9rem; }
 }
+
+/* ==========================================================================
+   Tepadagi tasma: qidiruv, til va "Yuklab olish"
+   ========================================================================== */
+
+.header-inner > .header-search {
+  flex: 1 1 auto;
+  max-width: 420px;
+  min-width: 0;
+}
+.header-search input {
+  height: 36px;
+  padding-block: 0;
+}
+.header-search button {
+  width: 28px;
+  height: 28px;
+  color: var(--fg-muted);
+}
+.header-search button:hover { color: var(--primary); }
+.header-search .ql-svg { width: 17px; height: 17px; }
+
+/* Til tanlagichi tasmada ixcham turadi */
+.nav-actions > .lang-switch {
+  width: auto;
+  flex: none;
+  padding: 2px;
+}
+.nav-actions > .lang-switch button {
+  padding: 4px 9px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* "Yuklab olish" tugmasi */
+.install-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.install-btn .ql-svg { width: 16px; height: 16px; }
+.install-btn[hidden] { display: none; }
+
+/* --- Tor ekranlar ---
+   Hammasi bitta qatorga sig'maydi. Muhimlik tartibi:
+   qidiruv > avatar > til > yuklab olish. Til va yuklab olish yo'qolganda
+   ham foydalanuvchi ularni profil menyusi va brauzer menyusidan topadi. */
+@media (max-width: 900px) {
+  .install-btn span { display: none; }   /* faqat belgi qoladi */
+  .install-btn { padding-inline: 9px; }
+}
+@media (max-width: 760px) {
+  .nav-actions > .lang-switch { display: none; }  /* profil menyusida bor */
+}
+@media (max-width: 560px) {
+  .header-inner > .header-search { flex-basis: 100%; order: 3; }
+  .header-inner { flex-wrap: wrap; row-gap: 8px; }
+}
+
+/* Ilova rejimida (telefon ekranidan ochilganda) manzil satri yo'q -
+   tepadagi tasma ostidagi tizim panelini hisobga olamiz. */
+@media (display-mode: standalone) {
+  .site-header { padding-top: max(10px, env(safe-area-inset-top)); }
+  .install-btn { display: none; }  /* allaqachon o'rnatilgan */
+}
+
+/* O'rnatish yo'riqnomasi ro'yxati */
+.install-steps {
+  margin: 12px 0 0;
+  padding-inline-start: 20px;
+  display: grid;
+  gap: 10px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.install-steps b { color: var(--fg); }

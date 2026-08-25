@@ -235,6 +235,73 @@ document.addEventListener("DOMContentLoaded", function () {
   // optimallashtirishdir. Shuning uchun bu kod qaytarilmaydi.
   // ----------------------------------------------------------------------
 
+  // ----------------------------------------------------------------------
+  // Ilova qilib o'rnatish (PWA)
+  //
+  // Brauzer saytni telefon ekraniga yorliq qilib qo'yishi mumkin. U holda
+  // sayt oddiy ilovadek — o'z belgisi bilan, manzil satrisiz — ochiladi.
+  // Play Market kerak emas, pul to'lanmaydi.
+  //
+  // Brauzer o'rnatish mumkinligini o'zi bildiradi (`beforeinstallprompt`).
+  // Shu paytgacha tugma yashirin turadi: bosilganda hech narsa
+  // bo'lmaydigan tugmadan ko'ra ko'rinmagani afzal.
+  // ----------------------------------------------------------------------
+  if ("serviceWorker" in navigator) {
+    // Sahifa to'liq yuklangach ro'yxatdan o'tkazamiz — birinchi ochilishni
+    // sekinlashtirmasin.
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function () {
+        // O'rnatish imkoni bo'lmasa sayt oddiy holicha ishlayveradi.
+      });
+    });
+  }
+
+  var installBtn = document.getElementById("installBtn");
+  var installHelp = document.getElementById("installHelp");
+  var installEvent = null;
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    // Brauzerning o'z taklifini to'xtatamiz - uni tugma bosilganda
+    // o'zimiz ochamiz.
+    e.preventDefault();
+    installEvent = e;
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener("click", function () {
+      if (installEvent) {
+        installEvent.prompt();
+        installEvent.userChoice.finally(function () {
+          // Taklifni ikkinchi marta ishlatib bo'lmaydi.
+          installEvent = null;
+        });
+        return;
+      }
+      // Safari va Firefox bunday taklif bermaydi - qo'lda o'rnatish
+      // yo'riqnomasini ko'rsatamiz.
+      if (installHelp) installHelp.hidden = false;
+    });
+  }
+
+  if (installHelp) {
+    var closeHelp = function () {
+      installHelp.hidden = true;
+    };
+    document.getElementById("installHelpClose").addEventListener("click", closeHelp);
+    installHelp.addEventListener("click", function (e) {
+      if (e.target === installHelp) closeHelp();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeHelp();
+    });
+  }
+
+  // O'rnatilgach tugma keraksiz.
+  window.addEventListener("appinstalled", function () {
+    installEvent = null;
+    if (installBtn) installBtn.hidden = true;
+  });
+
   // "Javob berish" tugmasi - javob formasini ochib/yopadi.
   document.querySelectorAll(".reply-toggle").forEach(function (btn) {
     btn.addEventListener("click", function () {

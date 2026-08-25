@@ -6,8 +6,15 @@ from django.urls import include, path
 from apps.accounts.views import AdminLoginView
 from apps.books.views import private_file_view
 from apps.core.botlib.webhook import telegram_webhook
+from apps.core.pwa_views import manifest_view, offline_view, service_worker_view
 
 urlpatterns = [
+    # Ilova qilib o'rnatish uchun (PWA). Bu ikkalasi saytning ILDIZIDA
+    # turishi shart: service worker faqat o'zi turgan papkadan pastdagi
+    # manzillarni boshqara oladi (apps/core/pwa_views.py ga qarang).
+    path("manifest.webmanifest", manifest_view, name="manifest"),
+    path("sw.js", service_worker_view, name="service_worker"),
+    path("oflayn/", offline_view, name="offline"),
     # Telegram yangiliklari (webhook rejimi). Manzilda maxfiy so'z bor,
     # shuning uchun uni tashqaridan topib bo'lmaydi.
     path("tg/<str:secret>/", telegram_webhook, name="telegram_webhook"),

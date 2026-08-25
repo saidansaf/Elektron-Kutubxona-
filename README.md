@@ -617,6 +617,7 @@ Batafsil (serverdagi bazaga masofadan ulanish ham): `docs/RENDER.md`.
 | `docs/RENDER.md` | Render.com ga joylashtirish: sayt va bot, cheklovlar bilan |
 | `docs/TOLOV.md` | To'lov tizimi: Payme va Click, test rejimi, jonli rejimga o'tish |
 | `docs/HIMOYA.md` | Loyihani taqdim etish: demo ssenariysi, savol-javoblar |
+| `docs/ILOVA.md` | Saytni telefonga ilova qilib o'rnatish (PWA): qanday ishlaydi, belgilarni yangilash |
 
 Har birining Word (`.docx`) varianti ham shu papkada.
 

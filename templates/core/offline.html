@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Internet yo'q" %} — {% trans "Elektron Kutubxona" %}{% endblock %}
+{% block content %}
+<div class="section-title"><h1>{% trans "Internet yo'q" %}</h1></div>
+
+<div class="card">
+  <p>{% trans "Qurilmangiz internetga ulanmagan, shuning uchun sahifani ko'rsata olmadik." %}</p>
+  <p class="text-muted">{% trans "Ulanish tiklangach sahifani yangilang." %}</p>
+  <p><a href="{% url 'core:home' %}" class="btn btn-primary">{% trans "Qaytadan urinish" %}</a></p>
+</div>
+{% endblock %}

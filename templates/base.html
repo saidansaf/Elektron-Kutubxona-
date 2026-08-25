@@ -7,6 +7,15 @@
   <title>{% block title %}{% trans "Elektron Kutubxona" %}{% endblock %}</title>
   <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}" />
   <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+  {# Telefonga ilova qilib o'rnatish uchun (apps/core/pwa_views.py) #}
+  <link rel="manifest" href="{% url 'manifest' %}" />
+  <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}" />
+  <meta name="theme-color" content="{% if current_theme == 'dark' %}#061626{% else %}#0b5e9e{% endif %}" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="{% trans 'Kutubxona' %}" />
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -23,8 +32,58 @@
 
       <a href="{% url 'core:home' %}" class="logo">📚 <span>{% trans "Elektron Kutubxona" %}</span></a>
 
+      {# Kitob qidirish - natijalar katalog sahifasida ochiladi #}
+      <form class="header-search" action="{% url 'books:catalog' %}" method="get" role="search">
+        <input type="search" name="q" value="{{ request.GET.q|default:'' }}"
+               placeholder="{% trans 'Kitob qidirish...' %}"
+               aria-label="{% trans 'Kitob qidirish' %}" />
+        <button type="submit" aria-label="{% trans 'Qidirish' %}">
+          <svg viewBox="0 0 24 24" class="ql-svg" aria-hidden="true">
+            <circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/>
+          </svg>
+        </button>
+      </form>
 
       <div class="nav-actions">
+        {% comment %}
+        Til tanlagichi endi profil menyusining ichida emas, tasmaning
+        o'zida turadi: mehmon ham, kirgan foydalanuvchi ham uni bir
+        bosishda almashtira oladi.
+        {% endcomment %}
+        <form action="{% url 'core:set_language' %}" method="post" class="segmented lang-switch">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+          <button type="submit" name="language" value="uz"
+                  class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}">UZ</button>
+          <button type="submit" name="language" value="ru"
+                  class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}">RU</button>
+          <button type="submit" name="language" value="en"
+                  class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
+        </form>
+
+        {% comment %}
+        "Yuklab olish" - saytni telefonga ilova qilib o'rnatadi.
+
+        Tugma DOIM ko'rinadi. Chrome o'rnatish taklifini o'zi bersa
+        (`beforeinstallprompt`) shu taklif ochiladi; Safari va Firefox
+        bunday taklif bermaydi, o'sha holda qo'lda o'rnatish yo'riqnomasi
+        ko'rsatiladi. Ilova allaqachon o'rnatilgan bo'lsa tugma
+        yashiriladi (CSS'dagi `display-mode: standalone`).
+
+        Sarlavhadagi matnda apostrof bor. Uni to'g'ridan-to'g'ri
+        `title="{% trans "..." %}"` ichiga yozib bo'lmaydi — qo'shtirnoq
+        atributni erta yopib qo'yadi. Shuning uchun avval o'zgaruvchiga
+        olinadi: Django uni atribut uchun xavfsiz shaklda chiqaradi.
+        {% endcomment %}
+        {% trans "Ilovani telefonga o'rnatish" as install_title %}
+        <button type="button" class="btn btn-outline btn-sm install-btn" id="installBtn"
+                title="{{ install_title }}">
+          <svg viewBox="0 0 24 24" class="ql-svg" aria-hidden="true">
+            <path d="M12 4v11"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M5 19h14"/>
+          </svg>
+          <span>{% trans "Yuklab olish" %}</span>
+        </button>
+
         {% if user.is_authenticated %}
           <div class="user-menu">
             <button type="button" class="avatar-btn" id="avatarBtn"
@@ -84,13 +143,7 @@
             </div>
           </div>
         {% else %}
-          <form action="{% url 'core:set_language' %}" method="post" class="segmented" style="width:auto">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-            <button type="submit" name="language" value="uz" class="{% if LANGUAGE_CODE == 'uz' %}active{% endif %}">UZ</button>
-            <button type="submit" name="language" value="ru" class="{% if LANGUAGE_CODE == 'ru' %}active{% endif %}">RU</button>
-            <button type="submit" name="language" value="en" class="{% if LANGUAGE_CODE == 'en' %}active{% endif %}">EN</button>
-          </form>
+          {# Til tanlagichi yuqorida, hamma uchun bitta joyda turibdi #}
           <a href="{% url 'accounts:login' %}" class="btn btn-outline btn-sm">{% trans "Kirish" %}</a>
           <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">{% trans "Ro'yxatdan o'tish" %}</a>
         {% endif %}
@@ -205,6 +258,26 @@
       </form>
     </div>
   {% endif %}
+
+  {% comment %}
+  Qo'lda o'rnatish yo'riqnomasi. Faqat brauzer o'zi taklif bermaganda
+  ochiladi (Safari, Firefox, eski Chrome).
+  {% endcomment %}
+  <div class="modal-overlay" id="installHelp" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <h3 style="margin:0">{% trans "Ilovani o'rnatish" %}</h3>
+        <button type="button" class="btn btn-ghost btn-sm" id="installHelpClose"
+                aria-label="{% trans 'Yopish' %}">✕</button>
+      </div>
+      <p class="text-muted">{% trans "Brauzeringiz avtomatik o'rnatishni qo'llab-quvvatlamaydi. Qo'lda o'rnatish oson:" %}</p>
+      <ul class="install-steps">
+        <li><b>iPhone (Safari):</b> {% trans "pastdagi «Ulashish» belgisi → «Bosh ekranga qo'shish»" %}</li>
+        <li><b>Android (Chrome):</b> {% trans "o'ng yuqoridagi uch nuqta → «Ilovani o'rnatish»" %}</li>
+        <li><b>{% trans "Kompyuter" %} (Chrome, Edge):</b> {% trans "manzil satrining o'ng chetidagi o'rnatish belgisi" %}</li>
+      </ul>
+    </div>
+  </div>
 
   <script src="{% static 'js/main.js' %}"></script>
   {% block extra_js %}{% endblock %}
