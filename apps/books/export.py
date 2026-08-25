@@ -1,14 +1,40 @@
+"""Excel va PDF hisobotlari.
+
+openpyxl va reportlab bu yerda ATAYLAB fayl boshida chaqirilmagan.
+
+Sabab tezlik. `urls.py` shu modulni har safar o'qiydi, ya'ni ilgari
+server har ko'tarilganda ikkala kutubxona ham yuklanardi — bu qo'shimcha
+~170 ms vaqt va ~27 MB xotira. Render'ning bepul tarifida protsessor
+o'ndan bir (0.1 CPU) bo'lgani uchun o'sha 170 ms bir necha sekundga
+cho'ziladi va foydalanuvchi buni "sayt uyg'onmayapti" deb ko'radi.
+
+Hisobot esa kuniga bir-ikki marta yuklanadi. Shuning uchun kutubxonalar
+faqat tugma bosilganda — funksiya ichida — yuklanadi.
+"""
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from openpyxl import Workbook
-from openpyxl.styles import Font
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import cm
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet
 
 from .models import Author, Book, Purchase
+
+
+def _excel():
+    """openpyxl'ni shu yerda yuklaydi va kerakli nomlarni qaytaradi."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font
+
+    return Workbook, Font
+
+
+def _pdf():
+    """reportlab'ni shu yerda yuklaydi va kerakli nomlarni qaytaradi."""
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.lib.units import cm
+    from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+    return SimpleDocTemplate, A4, cm, getSampleStyleSheet, Paragraph, Spacer, Table, TableStyle, colors
 
 
 def _books_queryset(user):
@@ -26,6 +52,7 @@ def _authors_queryset(user):
 
 @login_required
 def export_books_excel(request):
+    Workbook, Font = _excel()
     books = _books_queryset(request.user)
 
     wb = Workbook()
@@ -61,6 +88,7 @@ def export_books_excel(request):
 
 @login_required
 def export_authors_excel(request):
+    Workbook, Font = _excel()
     authors = _authors_queryset(request.user)
 
     wb = Workbook()
@@ -83,6 +111,8 @@ def export_authors_excel(request):
 
 @login_required
 def export_books_pdf(request):
+    (SimpleDocTemplate, A4, cm, getSampleStyleSheet, Paragraph, Spacer,
+     Table, TableStyle, colors) = _pdf()
     books = _books_queryset(request.user)
 
     response = HttpResponse(content_type="application/pdf")
@@ -116,6 +146,8 @@ def export_books_pdf(request):
 
 @login_required
 def export_authors_pdf(request):
+    (SimpleDocTemplate, A4, cm, getSampleStyleSheet, Paragraph, Spacer,
+     Table, TableStyle, colors) = _pdf()
     authors = _authors_queryset(request.user)
 
     response = HttpResponse(content_type="application/pdf")
@@ -153,6 +185,7 @@ def export_sales_excel(request):
 
     Administrator uchun - barcha savdolar, sotuvchi uchun - faqat o'ziniki.
     """
+    Workbook, Font = _excel()
     sales = Purchase.objects.select_related("book", "book__author", "buyer")
     if not (request.user.is_staff or request.user.is_superuser):
         sales = sales.filter(book__seller=request.user)

@@ -234,22 +234,58 @@ Bot ham darrov javob beradi.
 > soat, ya'ni bitta xizmatni doim uyg'oq ushlab turish chegaraga
 > sig'adi. Ikkita bepul xizmatingiz bo'lsa sig'maydi.
 
-### 2. Nima allaqachon qilingan
+### 2. Avval tekshiring: yangilanish serverga yetib bordimi?
+
+Bu eng ko'p uchraydigan "sekin" holat: kodda tuzatish bor, lekin
+serverda hali eski nusxa turibdi. Tekshirish 10 soniya:
+
+1. Render → xizmat → **Events**. Eng yuqoridagi `Deploy live` ning
+   vaqti sizning oxirgi `git push` ingizdan **keyinmi**? Yo'q bo'lsa —
+   deploy bo'lmagan.
+2. Bo'lmagan bo'lsa: **Manual Deploy → Deploy latest commit**.
+3. Brauzerda esa **Ctrl+F5** bosing (yoki telefonda saytni yopib qayta
+   oching). Eski CSS brauzer keshida qolgan bo'lishi mumkin.
+
+Sinov o'lchovi shundayki, `git push` qilingani bilan sayt o'zgarmasa,
+qolgan hamma tuzatish ham ko'rinmaydi — avval shuni tekshiring.
+
+### 3. Nima allaqachon qilingan
+
+**Serverda:**
 
 | Chora | Nima beradi |
 |---|---|
 | `GZipMiddleware` | HTML/JSON siqiladi — sekin internetda 4–5 barobar kam ma'lumot yuklanadi |
-| WhiteNoise + hash'langan fayl nomlari | CSS/JS bir marta yuklanadi, keyin brauzer keshidan olinadi |
-| `gthread` ishchilari (`render.yaml`) | Kutayotgan so'rov boshqalarini to'sib qo'ymaydi |
+| WhiteNoise + brotli + hash'langan fayl nomlari | CSS/JS gzip'dan ham ~20% kichik; bir marta yuklanib, keyin brauzer keshidan olinadi |
+| **Bitta** `gthread` ishchisi, 8 oqim | 0.1 CPU ni jarayonlar bo'lishib olmaydi; xotira ikki barobar tejaladi |
 | `CONN_MAX_AGE=600` | Har so'rovda bazaga qaytadan ulanilmaydi |
 | Bosh sahifa va katalog keshi | Takroriy so'rovlar bazaga bormaydi |
-| `select_related` / `prefetch_related` | Ro'yxatlarda N+1 so'rov yo'q |
+| `Subquery` bilan hisoblangan reyting/izoh/like | Bosh sahifa 26 ta so'rov o'rniga 5 ta so'rov bilan chiziladi |
+| Excel/PDF kutubxonalari kech yuklanadi | Server ko'tarilishi ~170 ms va ~27 MB yengillashdi |
+| `healthCheckPath: /ping/` | Render tekshiruvi bazaga tegmaydi |
+
+**Brauzerda** (bu tomoni ham "sekin" tuyulishiga sabab bo'ladi):
+
+| Chora | Nima beradi |
+|---|---|
+| `background-attachment: fixed` olib tashlandi | Aylantirganda butun ekran qayta bo'yalmaydi |
+| Cheksiz animatsiyalar to'xtatildi | Hech kim tegmasa ham soniyasiga 60 marta qayta chizish yo'q |
+| `backdrop-filter` header va kartochkalardan olib tashlandi | Eng qimmat effekt endi faqat modal oynada |
+| Sichqoncha havolaga tekkanda sahifa oldindan yuklanadi | Bosilganda sahifa deyarli darrov ochiladi |
+
+Server tomoni o'lchandi: sahifalar **4–12 ms** ichida va **11 tadan
+kam** SQL so'rov bilan tayyorlanadi. Ya'ni kod sekin emas — qolgan vaqt
+uyqudan uyg'onish va internet yo'liga ketadi.
 
 > **Diqqat:** `render.yaml` ni o'zgartirish allaqachon yaratilgan
 > xizmatga o'z-o'zidan ta'sir qilmaydi. Start Command'ni qo'lda
-> yangilash kerak: Render → xizmat → **Settings → Start Command**.
+> yangilash kerak: Render → xizmat → **Settings → Start Command**:
+>
+> ```
+> gunicorn config.wsgi:application --workers 1 --threads 8 --worker-class gthread --timeout 120 --max-requests 800 --max-requests-jitter 80
+> ```
 
-### 3. Redis qo'shish (ixtiyoriy, bepul)
+### 4. Redis qo'shish (ixtiyoriy, bepul)
 
 Hozir kesh xotirada saqlanadi va har ishchida alohida. Tashqi Redis
 ulansa kesh umumiy bo'ladi va sessiyalar ham tezlashadi.
@@ -258,12 +294,17 @@ ulansa kesh umumiy bo'ladi va sessiyalar ham tezlashadi.
 Render → **Environment** ga `REDIS_URL` nomi bilan qo'ying — kod
 o'zgarmaydi, loyiha uni o'zi ko'radi.
 
-### 4. Nima yordam bermaydi
+### 5. Nima yordam bermaydi
 
 - **Region almashtirish** — Frankfurt O'zbekistonga eng yaqin bepul
   mintaqa, boshqasi faqat yomonlashtiradi.
-- **Ishchilar sonini oshirish** — 512 MB xotirada 3+ ishchi sig'maydi,
-  natijada xizmat qayta ishga tushaveradi.
+- **Ishchilar sonini oshirish** — 0.1 CPU ni bo'lishib olishdan ish
+  tezlashmaydi, 512 MB xotira esa 2+ ishchiga yetmaydi va xizmat qayta
+  ishga tushaveradi. Shuning uchun bitta ishchi qo'yilgan.
+- **Kodni yana optimallashtirish** — sahifalar allaqachon 4–12 ms da
+  tayyorlanadi. Bepul tarifda qolgan vaqt uyqu va tarmoqqa ketadi; uni
+  faqat pullik tarif (Starter, $7/oy) yoki uyg'oq ushlab turish
+  qisqartiradi.
 
 ---
 

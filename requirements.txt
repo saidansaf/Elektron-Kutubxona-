@@ -11,4 +11,8 @@ pyTelegramBotAPI>=4.20
 
 # --- Serverga joylashtirish (Render, VPS) ---
 gunicorn>=22.0        # ishlab chiqarish uchun veb-server
-whitenoise>=6.7       # statik fayllarni Django o'zi bersin (Nginx yo'q joyda)
+# Statik fayllarni Django o'zi bersin (Nginx yo'q joyda).
+# [brotli] - CSS/JS ni gzip'dan ham ~20% kichikroq qilib siqadi. Sekin
+# mobil internetda bu bir necha yuz millisekund tejaydi va hech qanday
+# kod o'zgarishi talab qilmaydi: WhiteNoise mos brauzerga o'zi beradi.
+whitenoise[brotli]>=6.7

@@ -1583,15 +1583,15 @@ select.field {
   /* Qo'shimcha rang oilasi - kartochka, belgi va chiplar shu ranglarni
      navbat bilan oladi.
 
-     Ilgari beshalasi ham ko'k-turkuaz edi va sayt bir xil ko'k bo'lib
-     ko'rinardi. Endi ranglar haqiqatan farq qiladi, lekin bir xil
-     to'yinganlikda - shuning uchun sahifa rang-barang bo'lsa ham
-     ola-quroq bo'lib ketmaydi. */
-  --hue-1: #2563eb; /* ko'k       */
-  --hue-2: #7c3aed; /* binafsha   */
-  --hue-3: #0891b2; /* turkuaz    */
-  --hue-4: #ea580c; /* to'q sariq */
-  --hue-5: #059669; /* yashil     */
+     Beshala rang bitta oilaga tegishli: ko'k-turkuaz. Bir vaqtlar bu yerda
+     binafsha, sariq va yashil ham bor edi, lekin sahifa o'shanda bolalar
+     saytiga o'xshab ola-quroq bo'lib ketdi. Jiddiy dizayn bitta rangdan
+     va uning ohanglaridan quriladi - farq rangda emas, joy va soyada. */
+  --hue-1: #0b5e9e; /* quyuq ko'k   */
+  --hue-2: #12a5c8; /* ko'k-turkuaz */
+  --hue-3: #22d3d9; /* turkuaz      */
+  --hue-4: #5b8def; /* moviy        */
+  --hue-5: #0e9f8f; /* teal         */
 
   /* Footer mokapdagidek ikkala temada ham quyuq */
   --footer-bg: linear-gradient(150deg, #0a2540 0%, #103a5c 55%, #0d4a63 100%);
@@ -1617,11 +1617,11 @@ html[data-theme="dark"] {
   --gradient: linear-gradient(120deg, #10639f 0%, #1a8fd0 35%, #16b8d8 70%, #2ce6ee 100%);
   --gradient-soft: linear-gradient(120deg, rgba(16,99,159,.18), rgba(22,184,216,.16), rgba(44,230,238,.14));
 
-  --hue-1: #60a5fa;
-  --hue-2: #a78bfa;
-  --hue-3: #22d3ee;
-  --hue-4: #fb923c;
-  --hue-5: #34d399;
+  --hue-1: #3b9fe0;
+  --hue-2: #16b8d8;
+  --hue-3: #2ce6ee;
+  --hue-4: #6ea8f5;
+  --hue-5: #22c9b4;
 
   --footer-bg: linear-gradient(150deg, #04101d 0%, #071f33 55%, #062a3c 100%);
   --footer-fg: #a8c8de;
@@ -1860,11 +1860,12 @@ body {
 }
 .nav-actions .btn-outline:hover { background: rgba(255,255,255,.2); box-shadow: none; }
 
+/* Avatar atrofida oq gardish yo'q - faqat harfli doiraning o'zi ko'rinadi. */
 .avatar-btn {
-  border-color: rgba(255,255,255,.65);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.2);
+  border: 0;
+  box-shadow: none;
 }
-.avatar-btn:hover { box-shadow: 0 0 0 4px rgba(255,255,255,.35); }
+.avatar-btn:hover { box-shadow: 0 0 0 3px rgba(255,255,255,.28); }
 
 @media (max-width: 760px) {
   .nav-links { background: rgba(0,0,0,.08); border-radius: 12px; padding: 6px; }
@@ -2916,11 +2917,13 @@ body {
   box-shadow: none;
 }
 
+/* Doiraning atrofidagi yorug' gardish olib tashlandi: header'da faqat
+   harfli doira turadi, uning ortida oq/och ko'k plastinka ko'rinmaydi. */
 .avatar-btn {
-  border-color: color-mix(in srgb, var(--primary) 55%, transparent);
-  box-shadow: 0 0 0 2px var(--primary-soft);
+  border: 0;
+  box-shadow: none;
 }
-.avatar-btn:hover { box-shadow: 0 0 0 5px var(--primary-soft); }
+.avatar-btn:hover { box-shadow: 0 0 0 4px var(--primary-soft); }
 
 @media (max-width: 900px) {
   .header-search { display: none; }
@@ -3439,37 +3442,23 @@ body {
    AI yordamchi: dumaloq tugma va yon oyna
    ========================================================================== */
 
-/* Neon halqali dumaloq "AI" belgisi */
+/* Dumaloq "AI" belgisi.
+   Ilgari atrofida rang-barang aylanma halqa bor edi — u belgini bezash
+   o'rniga chalg'itardi. Endi bitta toza doira: quyuq fon, oq harflar. */
 .ai-mark {
-  position: relative;
   display: grid;
   place-items: center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #0b1020 0%, #05070f 70%);
+  background: var(--gradient);
   flex: none;
-}
-.ai-mark::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  padding: 2px;
-  background: conic-gradient(from 210deg, #22d3ee, #6366f1 40%, #d946ef 62%, transparent 78%, #22d3ee);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
 }
 .ai-mark > span {
   font-weight: 800;
   font-size: 0.86rem;
   letter-spacing: 0.02em;
-  background: linear-gradient(135deg, #67e8f9, #a78bfa 55%, #f0abfc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: #fff;
 }
 .ai-mark.sm { width: 30px; height: 30px; }
 .ai-mark.sm > span { font-size: 0.68rem; }
@@ -3649,44 +3638,164 @@ body {
 .nav-actions { margin-inline-start: auto; }
 
 /* ==========================================================================
-   Rang-baranglik
+   Bitta rang, tinch dizayn
+   ==========================================================================
+
+   Bu yerda ilgari "har bir element boshqa rangda bo'lsin" degan qoidalar
+   turardi: kartochkalar sariq-binafsha-yashil chiziqlar bilan, yon
+   menyudagi har bir belgi boshqa rangda. Natijada sayt jiddiy do'kondek
+   emas, o'yin saytidek ko'rinib qoldi.
+
+   Endi qoida boshqa: rang bitta (ko'k oila), farq esa tartib, oraliq va
+   soyada. Bu qimmatroq va tozaroq ko'rinadi.
    ========================================================================== */
 
-/*
-  Sayt bir xil ko'k bo'lib qolmasligi uchun ranglar takrorlanuvchi tartibda
-  qo'llanadi. Har bir element o'z rangini o'rnidan oladi — qo'shimcha klass
-  yozish shart emas.
-*/
+/* Katta kartochkalarning tepa chizig'i bitta rangda, ammo ochiqroq soyada -
+   ko'z birinchi kartochkadan boshlab tabiiy harakatlanadi. */
+.tile-row > .tile { border-top: 3px solid color-mix(in srgb, var(--primary) 55%, transparent); }
+.tile-row > .tile .tile-icon { background: color-mix(in srgb, var(--primary) 12%, transparent); }
 
-/* Bosh sahifadagi uchta katta kartochka */
-.tile-row > .tile:nth-child(1) { border-top: 3px solid var(--hue-1); }
-.tile-row > .tile:nth-child(2) { border-top: 3px solid var(--hue-2); }
-.tile-row > .tile:nth-child(3) { border-top: 3px solid var(--hue-4); }
-
-.tile-row > .tile:nth-child(1) .tile-icon { background: color-mix(in srgb, var(--hue-1) 16%, transparent); }
-.tile-row > .tile:nth-child(2) .tile-icon { background: color-mix(in srgb, var(--hue-2) 16%, transparent); }
-.tile-row > .tile:nth-child(3) .tile-icon { background: color-mix(in srgb, var(--hue-4) 16%, transparent); }
-
-/* Tezkor havolalar: to'rt emas, besh rang bo'yicha aylanadi */
-.quick-links .quick-link:nth-child(5n+5) .quick-link-icon {
-  background: color-mix(in srgb, var(--hue-5) 18%, transparent);
+/* Tezkor havolalar belgilari - hammasi asosiy rangda */
+.quick-links .quick-link .quick-link-icon {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
 }
-.quick-links .quick-link:nth-child(5n+1) .quick-link-icon { color: var(--hue-1); }
-.quick-links .quick-link:nth-child(5n+2) .quick-link-icon { color: var(--hue-2); }
-.quick-links .quick-link:nth-child(5n+3) .quick-link-icon { color: var(--hue-3); }
-.quick-links .quick-link:nth-child(5n+4) .quick-link-icon { color: var(--hue-4); }
-.quick-links .quick-link:nth-child(5n+5) .quick-link-icon { color: var(--hue-5); }
 
-/* Chap menyudagi belgilar ham bir xil ko'k bo'lmasin */
-.sidebar-nav .side-link:not(.active):nth-of-type(5n+1) svg { color: var(--hue-1); }
-.sidebar-nav .side-link:not(.active):nth-of-type(5n+2) svg { color: var(--hue-2); }
-.sidebar-nav .side-link:not(.active):nth-of-type(5n+3) svg { color: var(--hue-3); }
-.sidebar-nav .side-link:not(.active):nth-of-type(5n+4) svg { color: var(--hue-4); }
-.sidebar-nav .side-link:not(.active):nth-of-type(5n+5) svg { color: var(--hue-5); }
-.sidebar-nav .side-link svg { opacity: 1; }
+/* Yon menyudagi belgilar ham bir xil, faqat faoli to'yingan */
+.sidebar-nav .side-link svg { color: var(--fg-muted); opacity: 1; }
+.sidebar-nav .side-link:hover svg { color: var(--primary); }
+.sidebar-nav .side-link.active svg { color: var(--primary); }
 
-/* Narx yorlig'i - ko'k emas, yashil (pul bilan bog'liq) */
-.price-tag { color: var(--hue-5); }
+/* Narx yorlig'i - matn rangida emas, ammo o'ta yorqin ham emas */
+.price-tag { color: var(--primary); }
 
-/* Janr chipi - binafsha */
-.book-card .badge.muted { background: color-mix(in srgb, var(--hue-2) 16%, transparent); color: var(--hue-2); }
+/* Janr chipi - neytral */
+.book-card .badge.muted {
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--fg-muted);
+}
+
+/* Kartochkalarning rangdor tepa chiziqlari ham bitta oilaga qaytadi */
+.grid-3 > .book-card, .grid-2 > .book-card,
+.stat-grid > .stat-card, .stat-card, .card {
+  border-top-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+.badge:not(.muted):not(.success):not(.danger) { background: var(--primary); }
+
+/* Tezkor havola ichidagi SVG belgilar.
+   Bularga qoida yozilmagani uchun brauzer ularni qora bo'yoq bilan
+   to'ldirib, qop-qora dog' qilib ko'rsatardi ("Administrator bilan
+   bog'lanish" belgisi shunday buzilgan edi). SVG chizma bo'lgani uchun
+   to'ldirish emas, chiziq kerak. */
+.ql-svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ==========================================================================
+   Tezlik: brauzerni bo'sh ishlatmaslik
+   ==========================================================================
+
+   Sayt sekin his qilinishining bir qismi serverdan emas, brauzerdan
+   keladi. Quyidagilar har bir kadrni qayta chizishga majbur qiladi:
+
+   1. `background-attachment: fixed` — sahifa aylantirilganda fon
+      joyida qolishi kerak, shuning uchun brauzer butun ekranni qaytadan
+      bo'yaydi. Bir nechta radial-gradient bilan birga bu telefonda
+      aylantirishni sekinlashtiradi.
+   2. Cheksiz animatsiyalar (`sheenText`, `heroFlow`, `auraDrift`) —
+      hech kim bosmasa ham soniyasiga 60 marta qayta bo'yash. Katalogda
+      ekranda 9 ta narx bo'lsa, 9 ta animatsiya bir vaqtda ishlaydi.
+   3. `backdrop-filter: blur()` — orqa fonni xiralashtirish eng qimmat
+      effektlardan biri. U yopishqoq header'da va HAR BIR kitob
+      kartochkasida turgan edi.
+
+   Ko'rinish deyarli o'zgarmaydi (fon o'sha nurli fon, kartochka o'sha
+   kartochka), lekin aylantirish silliq bo'ladi.
+   ========================================================================== */
+
+/* 1. Fon: `fixed` o'rniga alohida, qimirlamaydigan qatlam.
+      U bir marta chiziladi va aylantirishda qayta bo'yalmaydi. */
+body {
+  background: var(--bg);
+  background-attachment: scroll;
+}
+body::before {
+  content: "";
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  width: auto;
+  height: auto;
+  opacity: 1;
+  animation: none;
+  will-change: auto;
+  background:
+    radial-gradient(46% 42% at 8% 0%, color-mix(in srgb, var(--hue-3) 22%, transparent), transparent 68%),
+    radial-gradient(40% 40% at 98% 6%, color-mix(in srgb, var(--hue-2) 18%, transparent), transparent 70%),
+    radial-gradient(46% 40% at 20% 100%, color-mix(in srgb, var(--hue-1) 16%, transparent), transparent 72%),
+    var(--bg);
+}
+
+/* 2. Cheksiz animatsiyalar to'xtatiladi. Gradient qoladi — faqat u
+      endi joyida turadi, sirg'alib yurmaydi. */
+.logo span,
+.gradient-text,
+.price-block,
+.stat-card .value,
+.avatar-btn,
+.user-menu-avatar,
+.review-avatar,
+.hero,
+.site-header,
+.site-header::after,
+.segmented button.active,
+.segmented input:checked + .seg-option {
+  animation: none;
+}
+
+/* 3. Xiralashtirish faqat kam uchraydigan joylarda (modal, yon menyu)
+      qoladi. Header va kartochkalarda fon shunchaki quyuqroq qilinadi —
+      ko'z farqni sezmaydi, brauzer esa sezadi. */
+.header-inner {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.book-card,
+.tile {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.book-card { background: var(--surface); }
+.tile { background: var(--surface); }
+
+/* Kartochka ustiga sichqoncha kelganda butun sahifa emas, faqat
+   kartochkaning o'zi qayta chizilsin. (`.book-card` da allaqachon
+   `overflow: hidden` bor, shuning uchun bu hech narsani kesmaydi.) */
+.book-card { contain: paint; }
+
+/* --------------------------------------------------------------------------
+   Yuqoridagi tasma
+   --------------------------------------------------------------------------
+   Qidiruv olib tashlangach va logo chap menyuga ko'chgach bu tasmada
+   faqat avatar qoldi. Baland tasma bo'sh joyni ko'z-ko'z qilib turadi -
+   shuning uchun u ingichka qilinadi. Ingichka tasma "unutilgan" emas,
+   "ataylab shunday" bo'lib ko'rinadi.
+   -------------------------------------------------------------------------- */
+@media (min-width: 1001px) {
+  .site-header { padding: 10px 0 4px; }
+  .header-inner {
+    padding: 6px 14px;
+    border-radius: 14px;
+    gap: 12px;
+  }
+  .avatar-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+}
