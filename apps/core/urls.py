@@ -17,7 +17,6 @@ urlpatterns = [
     path("ai/yuborish/", ai_views.assistant_send_view, name="ai_send"),
     path("ai/tozalash/", ai_views.assistant_clear_view, name="ai_clear"),
     path("ai/tavsif/", ai_views.describe_book_view, name="ai_describe"),
-    path("ai/rasm/", ai_views.generate_image_view, name="ai_image"),
     # Administrator boshqaruvi
     path("boshqaruv-panel/statistika/", views.admin_dashboard_view, name="admin_dashboard"),
     path("boshqaruv-panel/foydalanuvchilar/", admin_views.user_list_view, name="admin_users"),

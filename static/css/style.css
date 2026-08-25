@@ -1285,7 +1285,7 @@ html[data-theme="dark"] {
   --shadow-xl: 0 24px 60px -12px rgba(0, 0, 0, 0.65), 0 8px 20px -8px rgba(0, 0, 0, 0.5);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: auto; }
 
 ::selection {
   background: color-mix(in srgb, var(--primary) 35%, transparent);
@@ -1580,13 +1580,18 @@ select.field {
   --gradient-soft: linear-gradient(120deg, rgba(11,94,158,.10), rgba(18,165,200,.10), rgba(34,211,217,.12));
   --hero-glow: radial-gradient(70% 80% at 50% 0%, rgba(20,200,212,.22), transparent 72%);
 
-  /* Qo'shimcha rang oilasi - badge/chip/ikonalarda aylanma ishlatiladi.
-     Hammasi ko'k-turkuaz oilasidan, shunda sahifa yaxlit ko'rinadi. */
-  --hue-1: #0b5e9e; /* chuqur ko'k   */
-  --hue-2: #12a5c8; /* moviy         */
-  --hue-3: #22d3d9; /* turkuaz       */
-  --hue-4: #5b8def; /* siyoh-ko'k    */
-  --hue-5: #0e9f8f; /* dengiz yashil */
+  /* Qo'shimcha rang oilasi - kartochka, belgi va chiplar shu ranglarni
+     navbat bilan oladi.
+
+     Ilgari beshalasi ham ko'k-turkuaz edi va sayt bir xil ko'k bo'lib
+     ko'rinardi. Endi ranglar haqiqatan farq qiladi, lekin bir xil
+     to'yinganlikda - shuning uchun sahifa rang-barang bo'lsa ham
+     ola-quroq bo'lib ketmaydi. */
+  --hue-1: #2563eb; /* ko'k       */
+  --hue-2: #7c3aed; /* binafsha   */
+  --hue-3: #0891b2; /* turkuaz    */
+  --hue-4: #ea580c; /* to'q sariq */
+  --hue-5: #059669; /* yashil     */
 
   /* Footer mokapdagidek ikkala temada ham quyuq */
   --footer-bg: linear-gradient(150deg, #0a2540 0%, #103a5c 55%, #0d4a63 100%);
@@ -1612,11 +1617,11 @@ html[data-theme="dark"] {
   --gradient: linear-gradient(120deg, #10639f 0%, #1a8fd0 35%, #16b8d8 70%, #2ce6ee 100%);
   --gradient-soft: linear-gradient(120deg, rgba(16,99,159,.18), rgba(22,184,216,.16), rgba(44,230,238,.14));
 
-  --hue-1: #3b9fe0;
-  --hue-2: #16b8d8;
-  --hue-3: #2ce6ee;
-  --hue-4: #6ea8f5;
-  --hue-5: #22c9b4;
+  --hue-1: #60a5fa;
+  --hue-2: #a78bfa;
+  --hue-3: #22d3ee;
+  --hue-4: #fb923c;
+  --hue-5: #34d399;
 
   --footer-bg: linear-gradient(150deg, #04101d 0%, #071f33 55%, #062a3c 100%);
   --footer-fg: #a8c8de;
@@ -3417,78 +3422,6 @@ body {
   .sidebar { transition: none; }
 }
 
-/* ==========================================================================
-   Suzuvchi AI tugmasi
-   ========================================================================== */
-
-.ai-fab {
-  position: fixed;
-  inset-inline-end: 22px;
-  bottom: 22px;
-  z-index: 130;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 58px;
-  height: 58px;
-  border-radius: 999px;
-  background: var(--gradient, var(--primary));
-  color: #fff;
-  box-shadow: 0 10px 28px -10px rgba(0, 0, 0, .55);
-  transition: transform .16s ease, box-shadow .16s ease;
-}
-.ai-fab:hover {
-  transform: translateY(-2px);
-  text-decoration: none;
-  box-shadow: 0 14px 32px -10px rgba(0, 0, 0, .6);
-}
-.ai-fab:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
-
-.ai-fab svg {
-  width: 26px;
-  height: 26px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-}
-
-/*
-  Tugma faqat dumaloq belgi. Matn ekranda ko'rinmaydi, lekin ekran
-  o'quvchisi uni o'qiydi — shuning uchun o'chirilmaydi, yashiriladi.
-*/
-.ai-fab-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ai-fab { transition: none; }
-  .ai-fab:hover { transform: none; }
-}
-
-/*
-  Ba'zi belgilar (masalan 🛟) eski shriftlarda yo'q va bo'sh to'rtburchak
-  bo'lib chiqadi. Shunday joylarda emoji o'rniga SVG ishlatiladi.
-*/
-.quick-link-icon .ql-svg {
-  width: 1.35em;
-  height: 1.35em;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  display: block;
-}
-
 /*
   Katta ekranda logotip chapdagi menyuda turibdi — tepada takrorlanmasin.
   Telefonda esa menyu yashiringan, shuning uchun logotip tepada kerak.
@@ -3501,3 +3434,259 @@ body {
   Pastki o'ng burchakdagi AI tugmasi oxirgi qatorni yopib qo'ymasin.
 */
 .app-shell main.container { padding-bottom: 96px; }
+
+/* ==========================================================================
+   AI yordamchi: dumaloq tugma va yon oyna
+   ========================================================================== */
+
+/* Neon halqali dumaloq "AI" belgisi */
+.ai-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #0b1020 0%, #05070f 70%);
+  flex: none;
+}
+.ai-mark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from 210deg, #22d3ee, #6366f1 40%, #d946ef 62%, transparent 78%, #22d3ee);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.ai-mark > span {
+  font-weight: 800;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, #67e8f9, #a78bfa 55%, #f0abfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ai-mark.sm { width: 30px; height: 30px; }
+.ai-mark.sm > span { font-size: 0.68rem; }
+
+.ai-fab {
+  position: fixed;
+  inset-inline-end: 22px;
+  bottom: 22px;
+  z-index: 130;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, .45), 0 0 0 1px var(--border);
+  cursor: pointer;
+  transition: transform .16s ease;
+}
+.ai-fab:hover { transform: translateY(-2px); }
+.ai-fab:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+.ai-fab .ai-mark { width: 46px; height: 46px; }
+.ai-fab .ai-mark > span { font-size: 0.98rem; }
+
+/* --- Yon oyna --- */
+
+.ai-panel {
+  position: fixed;
+  inset-inline-end: 22px;
+  bottom: 94px;
+  z-index: 131;
+  width: min(380px, calc(100vw - 32px));
+  height: min(520px, calc(100vh - 140px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.ai-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--gradient);
+  color: #fff;
+}
+.ai-panel-title { font-weight: 700; flex: 1; }
+.ai-panel-close {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .18);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.ai-panel-close:hover { background: rgba(255, 255, 255, .3); }
+
+.ai-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg);
+}
+
+.ai-msg {
+  max-width: 85%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ai-msg.bot {
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  border-start-start-radius: 4px;
+}
+.ai-msg.me {
+  align-self: flex-end;
+  background: var(--primary);
+  color: var(--on-primary);
+  border-end-end-radius: 4px;
+}
+.ai-msg.error {
+  align-self: stretch;
+  max-width: none;
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+  color: var(--danger);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+}
+
+/* Javob kutilayotgani: uchta nuqta */
+.ai-typing { display: inline-flex; gap: 4px; align-items: center; }
+.ai-typing i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--fg-muted);
+  animation: ai-bounce 1s infinite ease-in-out;
+}
+.ai-typing i:nth-child(2) { animation-delay: .15s; }
+.ai-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes ai-bounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: .45; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+.ai-panel-form {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.ai-panel-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.92rem;
+}
+.ai-panel-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+.ai-panel-form button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  cursor: pointer;
+}
+.ai-panel-form button svg {
+  width: 18px; height: 18px;
+  fill: currentColor;
+}
+.ai-panel-form button:disabled { opacity: .55; cursor: default; }
+
+@media (max-width: 520px) {
+  .ai-panel {
+    inset-inline: 12px;
+    width: auto;
+    bottom: 88px;
+    height: min(70vh, 480px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-fab { transition: none; }
+  .ai-fab:hover { transform: none; }
+  .ai-typing i { animation: none; }
+}
+
+/* Foydalanuvchi tugmalari o'ng chetga suriladi (qidiruv olib tashlangach) */
+.nav-actions { margin-inline-start: auto; }
+
+/* ==========================================================================
+   Rang-baranglik
+   ========================================================================== */
+
+/*
+  Sayt bir xil ko'k bo'lib qolmasligi uchun ranglar takrorlanuvchi tartibda
+  qo'llanadi. Har bir element o'z rangini o'rnidan oladi — qo'shimcha klass
+  yozish shart emas.
+*/
+
+/* Bosh sahifadagi uchta katta kartochka */
+.tile-row > .tile:nth-child(1) { border-top: 3px solid var(--hue-1); }
+.tile-row > .tile:nth-child(2) { border-top: 3px solid var(--hue-2); }
+.tile-row > .tile:nth-child(3) { border-top: 3px solid var(--hue-4); }
+
+.tile-row > .tile:nth-child(1) .tile-icon { background: color-mix(in srgb, var(--hue-1) 16%, transparent); }
+.tile-row > .tile:nth-child(2) .tile-icon { background: color-mix(in srgb, var(--hue-2) 16%, transparent); }
+.tile-row > .tile:nth-child(3) .tile-icon { background: color-mix(in srgb, var(--hue-4) 16%, transparent); }
+
+/* Tezkor havolalar: to'rt emas, besh rang bo'yicha aylanadi */
+.quick-links .quick-link:nth-child(5n+5) .quick-link-icon {
+  background: color-mix(in srgb, var(--hue-5) 18%, transparent);
+}
+.quick-links .quick-link:nth-child(5n+1) .quick-link-icon { color: var(--hue-1); }
+.quick-links .quick-link:nth-child(5n+2) .quick-link-icon { color: var(--hue-2); }
+.quick-links .quick-link:nth-child(5n+3) .quick-link-icon { color: var(--hue-3); }
+.quick-links .quick-link:nth-child(5n+4) .quick-link-icon { color: var(--hue-4); }
+.quick-links .quick-link:nth-child(5n+5) .quick-link-icon { color: var(--hue-5); }
+
+/* Chap menyudagi belgilar ham bir xil ko'k bo'lmasin */
+.sidebar-nav .side-link:not(.active):nth-of-type(5n+1) svg { color: var(--hue-1); }
+.sidebar-nav .side-link:not(.active):nth-of-type(5n+2) svg { color: var(--hue-2); }
+.sidebar-nav .side-link:not(.active):nth-of-type(5n+3) svg { color: var(--hue-3); }
+.sidebar-nav .side-link:not(.active):nth-of-type(5n+4) svg { color: var(--hue-4); }
+.sidebar-nav .side-link:not(.active):nth-of-type(5n+5) svg { color: var(--hue-5); }
+.sidebar-nav .side-link svg { opacity: 1; }
+
+/* Narx yorlig'i - ko'k emas, yashil (pul bilan bog'liq) */
+.price-tag { color: var(--hue-5); }
+
+/* Janr chipi - binafsha */
+.book-card .badge.muted { background: color-mix(in srgb, var(--hue-2) 16%, transparent); color: var(--hue-2); }

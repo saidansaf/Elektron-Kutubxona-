@@ -23,11 +23,6 @@
 
       <a href="{% url 'core:home' %}" class="logo">📚 <span>{% trans "Elektron Kutubxona" %}</span></a>
 
-      <form action="{% url 'books:catalog' %}" method="get" class="header-search" role="search">
-        <input type="search" name="q" value="{{ request.GET.q|default:'' }}"
-               placeholder="{% trans 'Kitob qidirish...' %}" aria-label="{% trans 'Kitob qidirish' %}" />
-        <button type="submit" aria-label="{% trans 'Qidirish' %}">🔍</button>
-      </form>
 
       <div class="nav-actions">
         {% if user.is_authenticated %}
@@ -174,17 +169,41 @@
 
   {% if user.is_authenticated %}
     {% comment %}
-    AI yordamchi endi menyuni band qilmaydi: u pastki o'ng burchakda
-    suzib turadigan dumaloq tugma. Sahifa qayerda bo'lmasin qo'l ostida.
+    AI yordamchi sahifani almashtirmaydi: pastki o'ng burchakdagi dumaloq
+    tugma yon oynani ochadi. Suhbat shu yerda davom etadi, foydalanuvchi
+    turgan sahifasidan chiqmaydi.
     {% endcomment %}
-    <a href="{% url 'core:ai_assistant' %}" class="ai-fab"
-       aria-label="{% trans 'AI yordamchi' %}" title="{% trans 'AI yordamchi' %}">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m12 3 1.9 4.9L19 9.8l-4.4 2.4L13.4 17 12 12.9 10.6 17l-1.2-4.8L5 9.8l5.1-1.9z"/>
-        <path d="M18.5 3.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>
-      </svg>
-      <span class="ai-fab-label">{% trans "AI" %}</span>
-    </a>
+    <button type="button" class="ai-fab" id="aiFab"
+            aria-controls="aiPanel" aria-expanded="false"
+            aria-label="{% trans 'AI yordamchi' %}" title="{% trans 'AI yordamchi' %}">
+      <span class="ai-mark" aria-hidden="true"><span>AI</span></span>
+    </button>
+
+    <div class="ai-panel" id="aiPanel" role="dialog" aria-modal="false"
+         aria-labelledby="aiPanelTitle" hidden>
+      <div class="ai-panel-head">
+        <span class="ai-mark sm" aria-hidden="true"><span>AI</span></span>
+        <span class="ai-panel-title" id="aiPanelTitle">{% trans "AI yordamchi" %}</span>
+        <button type="button" class="ai-panel-close" id="aiPanelClose"
+                aria-label="{% trans 'Yopish' %}">✕</button>
+      </div>
+
+      <div class="ai-panel-body" id="aiPanelBody">
+        <div class="ai-msg bot">{% trans "Salom! Kitoblar haqida savol bering — tavsiya qilaman yoki qidirishga yordam beraman." %}</div>
+      </div>
+
+      <form class="ai-panel-form" id="aiPanelForm"
+            data-send-url="{% url 'core:ai_send' %}"
+            data-error="{% trans 'Javob olinmadi. Qaytadan urinib ko`ring.' %}">
+        {% csrf_token %}
+        <input type="text" id="aiPanelInput" autocomplete="off"
+               placeholder="{% trans 'Savolingizni yozing...' %}"
+               aria-label="{% trans 'Savolingiz' %}" />
+        <button type="submit" aria-label="{% trans 'Yuborish' %}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 16-8-6 8 6 8z"/></svg>
+        </button>
+      </form>
+    </div>
   {% endif %}
 
   <script src="{% static 'js/main.js' %}"></script>

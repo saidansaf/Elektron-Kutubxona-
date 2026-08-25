@@ -45,15 +45,6 @@
       {% blocktrans with left=ai_messages_left %}Shu soatda yana {{ left }} ta so'rov qoldi{% endblocktrans %}
     </p>
 
-    <div class="ai-panel-divider">
-      <span class="card-title">🎨 {% trans "Rasm generatsiya qilish" %}</span>
-      <p class="card-hint">{% trans "Kitob muqovasi uchun rasm yaratib beraman." %}</p>
-    </div>
-    <div class="chat-form">
-      <input type="text" id="imgPrompt" placeholder="{% trans 'Masalan: eski kutubxona, kuzgi rang' %}" />
-      <button type="button" class="btn btn-outline" id="imgBtn">{% trans "Yaratish" %}</button>
-    </div>
-    <div id="imgResult" class="img-result"></div>
   </div>
 </div>
 {% endblock %}
@@ -132,37 +123,6 @@
       .then(function () { window.location.reload(); });
   });
 
-  // Rasm generatsiya
-  document.getElementById("imgBtn").addEventListener("click", function () {
-    var p = document.getElementById("imgPrompt").value.trim();
-    var box = document.getElementById("imgResult");
-    if (!p) return;
-    box.innerHTML = "<p class='text-muted'>…</p>";
-    fetch("{% url 'core:ai_image' %}", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-CSRFToken": token() },
-      body: JSON.stringify({ prompt: p })
-    })
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (d.url) {
-          box.innerHTML = "";
-          var img = new Image();
-          img.src = d.url;
-          img.alt = p;
-          box.appendChild(img);
-          var a = document.createElement("a");
-          a.href = d.url;
-          a.target = "_blank";
-          a.rel = "noopener";
-          a.className = "btn btn-outline btn-sm";
-          a.textContent = "{% trans 'Rasmni ochish' %}";
-          box.appendChild(a);
-        } else {
-          box.innerHTML = "<p class='form-errors'>" + (d.error || "Xatolik") + "</p>";
-        }
-      });
-  });
 })();
 </script>
 {% endblock %}

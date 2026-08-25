@@ -1,3 +1,8 @@
+// Brauzer o'zi tiklaydigan joyni o'chiramiz — biz o'zimiz boshqaramiz.
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Manzil oxirida "#admin" bo'lsa - maxfiy administrator kirish sahifasi.
   if (window.location.hash === "#admin") {
@@ -38,7 +43,10 @@ document.addEventListener("DOMContentLoaded", function () {
       sessionStorage.removeItem(SCROLL_KEY);
       // 30 soniyadan eski qiymat boshqa tashrifga tegishli bo'lishi mumkin.
       if (saved && saved.y > 0 && Date.now() - saved.at < 30000) {
-        window.scrollTo(0, saved.y);
+        // `behavior: "instant"` majburiy: CSS'da `scroll-behavior: smooth`
+        // turibdi va usiz sahifa tepadan pastga sirg'alib tushardi —
+        // foydalanuvchiga bu "sayt sekin" bo'lib ko'rinadi.
+        window.scrollTo({ top: saved.y, left: 0, behavior: "instant" });
       }
     } catch (e) {
       /* e'tiborsiz qoldiramiz */
@@ -116,6 +124,130 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   restoreScroll();
+
+
+  // ----------------------------------------------------------------------
+  // AI yordamchi: yon oyna
+  //
+  // Ilgari tugma alohida sahifaga olib borardi va foydalanuvchi turgan
+  // joyini yo'qotardi. Endi suhbat shu sahifaning ustida ochiladi.
+  // ----------------------------------------------------------------------
+  var aiFab = document.getElementById("aiFab");
+  var aiPanel = document.getElementById("aiPanel");
+
+  if (aiFab && aiPanel) {
+    var aiBody = document.getElementById("aiPanelBody");
+    var aiForm = document.getElementById("aiPanelForm");
+    var aiInput = document.getElementById("aiPanelInput");
+    var aiClose = document.getElementById("aiPanelClose");
+    var aiSendBtn = aiForm.querySelector("button[type=submit]");
+
+    var aiOpen = function (open) {
+      aiPanel.hidden = !open;
+      aiFab.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) aiInput.focus();
+    };
+
+    var aiAdd = function (text, kind) {
+      var el = document.createElement("div");
+      el.className = "ai-msg " + kind;
+      el.textContent = text;
+      aiBody.appendChild(el);
+      aiBody.scrollTop = aiBody.scrollHeight;
+      return el;
+    };
+
+    var aiTyping = function () {
+      var el = document.createElement("div");
+      el.className = "ai-msg bot";
+      el.innerHTML = '<span class="ai-typing"><i></i><i></i><i></i></span>';
+      aiBody.appendChild(el);
+      aiBody.scrollTop = aiBody.scrollHeight;
+      return el;
+    };
+
+    aiFab.addEventListener("click", function () {
+      aiOpen(aiPanel.hidden);
+    });
+    aiClose.addEventListener("click", function () {
+      aiOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !aiPanel.hidden) aiOpen(false);
+    });
+
+    aiForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var text = aiInput.value.trim();
+      if (!text) return;
+
+      aiAdd(text, "me");
+      aiInput.value = "";
+      aiSendBtn.disabled = true;
+      var waiting = aiTyping();
+
+      var token = aiForm.querySelector("[name=csrfmiddlewaretoken]").value;
+
+      fetch(aiForm.dataset.sendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": token },
+        body: JSON.stringify({ message: text })
+      })
+        .then(function (r) {
+          return r.json().then(function (data) {
+            return { ok: r.ok, data: data };
+          });
+        })
+        .then(function (res) {
+          waiting.remove();
+          if (res.ok && res.data.answer) {
+            aiAdd(res.data.answer, "bot");
+          } else {
+            aiAdd(res.data.error || aiForm.dataset.error, "error");
+          }
+        })
+        .catch(function () {
+          waiting.remove();
+          aiAdd(aiForm.dataset.error, "error");
+        })
+        .finally(function () {
+          aiSendBtn.disabled = false;
+          aiInput.focus();
+        });
+    });
+  }
+
+  // ----------------------------------------------------------------------
+  // Sahifalarni oldindan yuklash
+  //
+  // Sichqoncha havolaga tekkanda brauzer sahifani jimgina yuklab qo'yadi.
+  // Bosilgunga qadar odatda 100-300 ms o'tadi va shu vaqt yetadi —
+  // sahifa deyarli darrov ochilgandek tuyuladi. Bu ayniqsa kuchsiz
+  // serverda seziladi.
+  // ----------------------------------------------------------------------
+  var prefetched = {};
+  var prefetch = function (url) {
+    if (prefetched[url]) return;
+    prefetched[url] = true;
+    var link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = url;
+    document.head.appendChild(link);
+  };
+
+  var saveData = navigator.connection && navigator.connection.saveData;
+  if (!saveData) {
+    document.addEventListener("mouseover", function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a) return;
+      if (a.target === "_blank" || a.hasAttribute("download")) return;
+      // Faqat shu saytning oddiy sahifalari
+      if (a.origin !== window.location.origin) return;
+      if (a.pathname === window.location.pathname) return;
+      if (a.getAttribute("href").indexOf("#") === 0) return;
+      prefetch(a.href);
+    }, { passive: true });
+  }
 
   // "Javob berish" tugmasi - javob formasini ochib/yopadi.
   document.querySelectorAll(".reply-toggle").forEach(function (btn) {

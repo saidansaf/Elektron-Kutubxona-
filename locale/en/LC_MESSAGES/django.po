@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-25 13:18+0500\n"
+"POT-Creation-Date: 2026-08-25 14:07+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -113,11 +113,11 @@ msgstr "The card number must contain 12 to 19 digits."
 msgid "Tanlanmagan"
 msgstr "Not selected"
 
-#: apps/accounts/models.py:18 templates/base.html:62
+#: apps/accounts/models.py:18 templates/base.html:57
 msgid "Yorug'"
 msgstr "Light"
 
-#: apps/accounts/models.py:19 templates/base.html:64
+#: apps/accounts/models.py:19 templates/base.html:59
 msgid "Qorong'i"
 msgstr "Dark"
 
@@ -127,12 +127,12 @@ msgid "Rol"
 msgstr "Role"
 
 #: apps/accounts/models.py:24 templates/accounts/settings.html:34
-#: templates/base.html:58
+#: templates/base.html:53
 msgid "Mavzu"
 msgstr "Theme"
 
 #: apps/accounts/models.py:26 apps/books/forms.py:121
-#: templates/accounts/settings.html:46 templates/base.html:69
+#: templates/accounts/settings.html:46 templates/base.html:64
 #: templates/books/checkout.html:80 templates/books/my_books.html:19
 #: templates/core/admin_user_detail.html:38
 msgid "Til"
@@ -402,7 +402,7 @@ msgstr "Author's full name"
 msgid "Muallif haqida"
 msgstr "About the author"
 
-#: apps/books/models.py:94 templates/_sidebar.html:34 templates/base.html:157
+#: apps/books/models.py:94 templates/_sidebar.html:34 templates/base.html:152
 #: templates/books/author_list.html:3 templates/books/author_list.html:6
 #: templates/core/admin_dashboard.html:16 templates/core/home.html:24
 msgid "Mualliflar"
@@ -449,7 +449,7 @@ msgstr "On sale"
 msgid "Kitob"
 msgstr "Book"
 
-#: apps/books/models.py:130 templates/_sidebar.html:29 templates/base.html:149
+#: apps/books/models.py:130 templates/_sidebar.html:29 templates/base.html:144
 #: templates/books/seller_dashboard.html:36
 #: templates/core/admin_user_detail.html:28 templates/core/home.html:19
 msgid "Kitoblar"
@@ -696,7 +696,7 @@ msgid ""
 "ko'ring."
 msgstr "You have reached the request limit. Try again in %(minutes)s minutes."
 
-#: apps/core/ai_views.py:60 apps/core/ai_views.py:104 apps/core/ai_views.py:138
+#: apps/core/ai_views.py:60 apps/core/ai_views.py:104
 msgid "So'rovni o'qib bo'lmadi."
 msgstr "Could not read the request."
 
@@ -707,10 +707,6 @@ msgstr "The message is empty."
 #: apps/core/ai_views.py:108 templates/books/book_form.html:57
 msgid "Avval kitob nomini kiriting."
 msgstr "Enter the book title first."
-
-#: apps/core/ai_views.py:142
-msgid "Rasm uchun tavsif kiriting."
-msgstr "Enter a description for the image."
 
 #: apps/core/botlib/handlers.py:149
 msgid "Bu kitob sizda yo'q."
@@ -1477,7 +1473,7 @@ msgstr ""
 "❌ <b>Withdrawal request rejected</b>\n"
 "%(amount)s UZS was returned to your balance."
 
-#: apps/core/telegram.py:135 templates/base.html:112
+#: apps/core/telegram.py:135 templates/base.html:107
 msgid "Administratordan xabar"
 msgstr "Message from the administrator"
 
@@ -1826,14 +1822,14 @@ msgstr "Withdrawal requests"
 msgid "Boshqa"
 msgstr "More"
 
-#: templates/_sidebar.html:109 templates/base.html:158
+#: templates/_sidebar.html:109 templates/base.html:153
 #: templates/core/home.html:100 templates/core/weather.html:3
 msgid "Ob-havo"
 msgstr "Weather"
 
 #: templates/_sidebar.html:115 templates/accounts/settings.html:3
-#: templates/accounts/settings.html:9 templates/base.html:84
-#: templates/base.html:160 templates/core/home.html:106
+#: templates/accounts/settings.html:9 templates/base.html:79
+#: templates/base.html:155 templates/core/home.html:106
 msgid "Sozlamalar"
 msgstr "Settings"
 
@@ -1848,7 +1844,7 @@ msgstr "This page is only for system administrators."
 #: templates/accounts/admin_login.html:18 templates/accounts/login.html:3
 #: templates/accounts/login.html:17
 #: templates/accounts/password_reset_complete.html:8
-#: templates/accounts/register.html:21 templates/base.html:99
+#: templates/accounts/register.html:21 templates/base.html:94
 #: templates/core/home.html:111
 msgid "Kirish"
 msgstr "Login"
@@ -1867,7 +1863,7 @@ msgstr "Don't have an account?"
 
 #: templates/accounts/login.html:20 templates/accounts/register.html:3
 #: templates/accounts/register.html:6 templates/accounts/register.html:18
-#: templates/base.html:100 templates/base.html:162 templates/core/home.html:10
+#: templates/base.html:95 templates/base.html:157 templates/core/home.html:10
 #: templates/core/home.html:42
 msgid "Ro'yxatdan o'tish"
 msgstr "Register"
@@ -1883,9 +1879,10 @@ msgid ""
 "havolasini yuboramiz."
 msgstr "Enter the email you registered with - we'll send you a reset link."
 
-#: templates/accounts/password_reset.html:17 templates/books/_reviews.html:35
-#: templates/books/conversation.html:35 templates/books/detail.html:99
-#: templates/books/detail.html:128 templates/core/admin_broadcast.html:24
+#: templates/accounts/password_reset.html:17 templates/base.html:203
+#: templates/books/_reviews.html:35 templates/books/conversation.html:35
+#: templates/books/detail.html:99 templates/books/detail.html:128
+#: templates/core/admin_broadcast.html:24
 #: templates/core/admin_user_detail.html:61 templates/core/ai_assistant.html:41
 msgid "Yuborish"
 msgstr "Submit"
@@ -2068,7 +2065,7 @@ msgstr "Save"
 msgid "Bekor qilish"
 msgstr "Cancel"
 
-#: templates/accounts/telegram.html:3 templates/base.html:144
+#: templates/accounts/telegram.html:3 templates/base.html:139
 msgid "Telegram"
 msgstr "Telegram"
 
@@ -2221,8 +2218,8 @@ msgstr "Request history"
 msgid "Hali so'rov yuborilmagan."
 msgstr "No requests yet."
 
-#: templates/base.html:7 templates/base.html:24 templates/base.html:138
-#: templates/base.html:168
+#: templates/base.html:7 templates/base.html:24 templates/base.html:133
+#: templates/base.html:163
 msgid "Elektron Kutubxona"
 msgstr "Electronic Library"
 
@@ -2230,66 +2227,69 @@ msgstr "Electronic Library"
 msgid "Menyu"
 msgstr "Menu"
 
-#: templates/base.html:28
-msgid "Kitob qidirish..."
-msgstr "Search books..."
-
-#: templates/base.html:28
-msgid "Kitob qidirish"
-msgstr "Search books"
-
-#: templates/base.html:29 templates/core/admin_users.html:17
-msgid "Qidirish"
-msgstr "Search"
-
-#: templates/base.html:36
+#: templates/base.html:31
 msgid "Profil menyusi"
 msgstr "Profile menu"
 
-#: templates/base.html:87
+#: templates/base.html:82
 msgid "Chiqish"
 msgstr "Logout"
 
-#: templates/base.html:118
+#: templates/base.html:113 templates/base.html:189
 msgid "Yopish"
 msgstr "Close"
 
-#: templates/base.html:139
+#: templates/base.html:134
 msgid "O'zbek, rus va ingliz tillaridagi elektron kitoblar bozori."
 msgstr "A marketplace for e-books in Uzbek, Russian and English."
 
-#: templates/base.html:143
+#: templates/base.html:138
 msgid "Bog'lanish"
 msgstr "Contact"
 
-#: templates/base.html:150 templates/payments/result.html:48
+#: templates/base.html:145 templates/payments/result.html:48
 msgid "Katalog"
 msgstr "Catalogue"
 
-#: templates/base.html:151 templates/core/home.html:134
+#: templates/base.html:146 templates/core/home.html:134
 msgid "Yangi kitoblar"
 msgstr "New books"
 
-#: templates/base.html:152 templates/core/home.html:145
+#: templates/base.html:147 templates/core/home.html:145
 msgid "Eng yuqori baholangan"
 msgstr "Top rated"
 
-#: templates/base.html:156
+#: templates/base.html:151
 msgid "Havolalar"
 msgstr "Links"
 
-#: templates/base.html:168
+#: templates/base.html:163
 msgid "Barcha huquqlar himoyalangan."
 msgstr "All rights reserved."
 
-#: templates/base.html:182 templates/core/ai_assistant.html:3
-#: templates/core/ai_assistant.html:9 templates/core/home.html:84
+#: templates/base.html:179 templates/base.html:187
+#: templates/core/ai_assistant.html:3 templates/core/ai_assistant.html:9
+#: templates/core/home.html:84
 msgid "AI yordamchi"
 msgstr "AI assistant"
 
-#: templates/base.html:187
-msgid "AI"
-msgstr "AI"
+#: templates/base.html:193
+msgid ""
+"Salom! Kitoblar haqida savol bering — tavsiya qilaman yoki qidirishga yordam "
+"beraman."
+msgstr "Hello! Ask me about books — I can recommend one or help you search."
+
+#: templates/base.html:198
+msgid "Javob olinmadi. Qaytadan urinib ko`ring."
+msgstr "No answer received. Please try again."
+
+#: templates/base.html:201 templates/core/ai_assistant.html:40
+msgid "Savolingizni yozing..."
+msgstr "Type your question..."
+
+#: templates/base.html:202
+msgid "Savolingiz"
+msgstr "Your question"
 
 #: templates/books/_book_card.html:28 templates/books/my_library.html:42
 #: templates/books/wishlist.html:28
@@ -2848,6 +2848,10 @@ msgstr "Delete user"
 msgid "Username yoki email"
 msgstr "Username or email"
 
+#: templates/core/admin_users.html:17
+msgid "Qidirish"
+msgstr "Search"
+
 #: templates/core/admin_users.html:27
 msgid "Holat"
 msgstr "Status"
@@ -2920,10 +2924,6 @@ msgstr "Tell me about Abdulla Qodiriy"
 msgid "Kitobga qanday tavsif yozsam bo'ladi?"
 msgstr "How should I write a book description?"
 
-#: templates/core/ai_assistant.html:40
-msgid "Savolingizni yozing..."
-msgstr "Type your question..."
-
 #: templates/core/ai_assistant.html:44
 #, python-brace-format
 msgid "Shu soatda yana {n} ta so'rov qoldi"
@@ -2933,26 +2933,6 @@ msgstr "{n} requests left this hour"
 #, python-format
 msgid "Shu soatda yana %(left)s ta so'rov qoldi"
 msgstr "%(left)s requests left this hour"
-
-#: templates/core/ai_assistant.html:49
-msgid "Rasm generatsiya qilish"
-msgstr "Generate an image"
-
-#: templates/core/ai_assistant.html:50
-msgid "Kitob muqovasi uchun rasm yaratib beraman."
-msgstr "I'll create an image for the book cover."
-
-#: templates/core/ai_assistant.html:53
-msgid "Masalan: eski kutubxona, kuzgi rang"
-msgstr "For example: old library, autumn tones"
-
-#: templates/core/ai_assistant.html:54
-msgid "Yaratish"
-msgstr "Create"
-
-#: templates/core/ai_assistant.html:159
-msgid "Rasmni ochish"
-msgstr "Open image"
 
 #: templates/core/home.html:5
 msgid "Elektron Kutubxona bozori"

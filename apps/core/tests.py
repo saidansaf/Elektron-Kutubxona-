@@ -107,18 +107,16 @@ class AiRateLimitViewTests(TestCase):
         self.assertEqual(response.status_code, 429)
         self.assertIn("error", response.json())
 
-    def test_rasm_chegarasi_alohida(self):
-        self.client.post(
-            reverse("core:ai_image"),
-            data={"prompt": "kitob"},
-            content_type="application/json",
-        )
-        response = self.client.post(
-            reverse("core:ai_image"),
-            data={"prompt": "kitob"},
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 429)
+    def test_rasm_generatsiyasi_olib_tashlangan(self):
+        """Muqova rasmini AI yasashi olib tashlandi.
+
+        Sababi: natija kitobga hech qanday aloqasi yo'q rasm bo'lardi va
+        chegarani bekorga sarflardi. Manzil ham qolmasligi kerak.
+        """
+        from django.urls import NoReverseMatch
+
+        with self.assertRaises(NoReverseMatch):
+            reverse("core:ai_image")
 
     def test_bosh_xabar_chegarani_sarflamaydi(self):
         response = self.client.post(

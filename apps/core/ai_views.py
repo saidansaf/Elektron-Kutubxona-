@@ -126,28 +126,3 @@ def describe_book_view(request):
     except ai.AIError as exc:
         return JsonResponse({"error": str(exc)}, status=502)
     return JsonResponse({"description": text})
-
-
-@login_required
-@require_POST
-def generate_image_view(request):
-    """Muqova rasmi uchun generatsiya manzilini qaytaradi."""
-    try:
-        payload = json.loads(request.body.decode("utf-8"))
-    except (ValueError, UnicodeDecodeError):
-        return JsonResponse({"error": _("So'rovni o'qib bo'lmadi.")}, status=400)
-
-    prompt = (payload.get("prompt") or "").strip()
-    if not prompt:
-        return JsonResponse({"error": _("Rasm uchun tavsif kiriting.")}, status=400)
-
-    allowed, left = rate_limit(
-        "ai-image",
-        request.user.pk,
-        settings.AI_RATE_LIMIT_IMAGES,
-        settings.AI_RATE_LIMIT_WINDOW,
-    )
-    if not allowed:
-        return _limit_exceeded_response()
-
-    return JsonResponse({"url": ai.image_url(f"book cover, {prompt}"), "left": left})
